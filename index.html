@@ -1,539 +1,194 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoVision - Advanced Vigenère Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #4f46e5;
-            --accent: #ef4444;
-            --background: #f8fafc;
-            --text: #1e293b;
-        }
+const Utils = {
+    clamp: (v, min, max) => Math.max(min, Math.min(max, v)),
+    dist: (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
+    tanh: x => { const e = Math.exp(2*x); return (e-1)/(e+1); },
+    safeNumber: (val, fallback = 0) => (typeof val === 'number' && isFinite(val)) ? val : fallback,
+};
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            resize: vertical;
-            font-family: monospace;
-            transition: border-color 0.2s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            background: var(--primary);
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        button:hover {
-            background: var(--secondary);
-        }
-
-        button:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        .chart-container {
-            height: 300px;
-            margin: 2rem 0;
-        }
-
-        .result-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 0.5rem;
-        }
-
-        .key-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .result-item {
-            background: white;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        .error {
-            color: var(--accent);
-            padding: 1rem;
-            margin: 1rem 0;
-            border: 2px solid var(--accent);
-            border-radius: 0.5rem;
-            background: #fef2f2;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <h2>Vigenère Cipher Toolkit</h2>
-            <div class="input-group">
-                <textarea id="inputText" placeholder="Enter your text here..."></textarea>
-            </div>
-            
-            <div class="input-group">
-                <label>Encryption Key:</label>
-                <input type="text" id="keyInput" class="input-field" placeholder="Enter key...">
-            </div>
-
-            <div class="btn-group">
-                <button onclick="handleEncrypt()">🔒 Encrypt</button>
-                <button onclick="handleDecrypt()">🔓 Decrypt</button>
-                <button onclick="handleAnalyze()">🕵️ Auto Analyze</button>
-                <button onclick="clearAll()">🗑️ Clear</button>
-            </div>
-
-            <div id="errorMessage" class="error hidden"></div>
-        </div>
-
-        <div class="card">
-            <h3>Analysis Results</h3>
-            <div class="chart-container">
-                <canvas id="lengthChart"></canvas>
-            </div>
-
-            <div class="result-section">
-                <h4>Probable Key Information</h4>
-                <div class="key-results">
-                    <div class="result-item">
-                        <div class="result-label">Key Length</div>
-                        <div class="result-value" id="bestLength">-</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-label">Suggested Key</div>
-                        <div class="result-value" id="suggestedKey">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="result-section">
-                <h4>Decrypted Text</h4>
-                <div id="decryptedText" class="decrypted-text">-</div>
-            </div>
-        </div>
-    </div>
-
-<script>
-const ENGLISH_FREQ = [
-    8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0, 6.1, 7.0, 0.15,
-    0.77, 4.0, 2.4, 6.7, 7.5, 1.9, 0.095, 6.0, 6.3, 9.1,
-    2.8, 0.98, 2.4, 0.15, 2.0, 0.074
-];
-
-let chartInstance = null;
-
-// Core Functions
-function cleanText(text) {
-    return text.toUpperCase().replace(/[^A-Z]/g, '');
-}
-
-function vigenere(text, key, encrypt = true) {
-    const cleanedText = cleanText(text);
-    const cleanedKey = cleanText(key);
-    if (!cleanedKey.length) return '';
-    
-    return cleanedText.split('').map((c, i) => {
-        const textChar = c.charCodeAt(0) - 65;
-        const keyChar = cleanedKey[i % cleanedKey.length].charCodeAt(0) - 65;
-        const shift = encrypt ? keyChar : (26 - keyChar) % 26;
-        return String.fromCharCode((textChar + shift) % 26 + 65);
-    }).join('');
-}
-
-// Analysis Functions
-function analyzeFriedman(text) {
-    const n = text.length;
-    const freqs = new Array(26).fill(0);
-    
-    for (const c of text) {
-        freqs[c.charCodeAt(0) - 65]++;
-    }
-    
-    const sum = freqs.reduce((acc, val) => acc + val * (val - 1), 0);
-    const kp = 0.067; // English
-    const kr = 1/26;
-    
-    const friedman = (kp - kr) / ((sum / (n * (n - 1))) - kr);
-    return Math.round(friedman);
-}
-
-function analyzeIC(text) {
-    const n = text.length;
-    const freqs = new Array(26).fill(0);
-    
-    for (const c of text) {
-        freqs[c.charCodeAt(0) - 65]++;
-    }
-    
-    const sum = freqs.reduce((acc, val) => acc + val * (val - 1), 0);
-    const ic = sum / (n * (n - 1));
-    
-    // Find key length that would make average IC closest to English (0.0667)
-    const maxLength = Math.min(30, Math.floor(n / 2));
-    const results = [];
-    
-    for (let len = 1; len <= maxLength; len++) {
-        let totalIC = 0;
-        for (let i = 0; i < len; i++) {
-            const group = [];
-            for (let j = i; j < n; j += len) {
-                group.push(text[j]);
-            }
-            
-            const groupFreqs = new Array(26).fill(0);
-            for (const c of group) {
-                groupFreqs[c.charCodeAt(0) - 65]++;
-            }
-            
-            const groupSum = groupFreqs.reduce((acc, val) => acc + val * (val - 1), 0);
-            const groupIC = groupSum / (group.length * (group.length - 1));
-            totalIC += groupIC;
-        }
+class NeuralNetwork {
+    constructor(config) {
+        this.inputDim = config.inputDim || 24;
+        this.hidden1 = config.hidden1 || 48;
+        this.hidden2 = config.hidden2 || 36;
+        this.outputDim = config.outputDim || 16;
+        this.memoryDim = config.memoryDim || 16;
+        this.seed = config.seed || 'default';
+        this.rng = { next: () => Math.random() };
         
-        const avgIC = totalIC / len;
-        const score = 1 - Math.abs(avgIC - 0.0667);
-        results.push([len, score]);
+        this.W1 = this._randMat(this.inputDim + this.memoryDim, this.hidden1, 0.3);
+        this.W2 = this._randMat(this.hidden1, this.hidden2, 0.2);
+        this.W3 = this._randMat(this.hidden2, this.outputDim, 0.1);
+        this.memory = new Array(this.memoryDim).fill(0);
+        this.lr = config.lr || 0.005;
+        this.hebbianRate = config.hebbianRate || 0.002;
     }
     
-    return normalizeScores(new Map(results));
-}
-
-function analyzeKasiski(text) {
-    const seqMap = new Map();
-    for (let i = 0; i < text.length - 3; i++) {
-        const seq = text.substr(i, 3);
-        seqMap.set(seq, (seqMap.get(seq) || []).concat(i));
+    _randMat(rows, cols, scale) {
+        const m = [];
+        for(let i=0; i<rows; i++) {
+            const row = [];
+            for(let j=0; j<cols; j++) row.push((this.rng.next()*2-1)*scale);
+            m.push(row);
+        }
+        return m;
     }
-
-    const factors = new Map();
-    for (const [seq, positions] of seqMap) {
-        if (positions.length > 1) {
-            for (let i = 1; i < positions.length; i++) {
-                const spacing = positions[i] - positions[i-1];
-                for (let len = 2; len <= Math.sqrt(spacing); len++) {
-                    if (spacing % len === 0) {
-                        factors.set(len, (factors.get(len) || 0) + 1);
-                        if (len !== spacing / len) {
-                            factors.set(spacing / len, (factors.get(spacing / len) || 0) + 1);
-                        }
-                    }
+    
+    _matMul(vec, mat) {
+        const out = [];
+        for(let i=0; i<mat[0].length; i++) {
+            let sum = 0;
+            for(let j=0; j<vec.length; j++) sum += vec[j] * mat[j][i];
+            out.push(Utils.tanh(sum));
+        }
+        return out;
+    }
+    
+    forward(inputs) {
+        if (!inputs || inputs.length !== this.inputDim) inputs = new Array(this.inputDim).fill(0);
+        const combined = [...inputs, ...this.memory];
+        let h1 = this._matMul(combined, this.W1);
+        let h2 = this._matMul(h1, this.W2);        let output = this._matMul(h2, this.W3);
+        this.memory = h2.slice(0, this.memoryDim);
+        return { output: output.map(v => Utils.safeNumber(v, 0)), memory: this.memory.slice() };
+    }
+    
+    hebbianUpdate(inputs, outputs, reward) {
+        if (reward <= 0) return;
+        for(let i=0; i<Math.min(inputs.length, this.W1.length); i++) {
+            for(let o=0; o<Math.min(outputs.length, this.W1[0].length); o++) {
+                if (Math.abs(inputs[i]) > 0.4 && Math.abs(outputs[o]) > 0.4) {
+                    const sign = Math.sign(inputs[i]) * Math.sign(outputs[o]);
+                    this.W1[i][o] += this.hebbianRate * reward * sign;
+                    this.W1[i][o] = Utils.clamp(this.W1[i][o], -1, 1);
                 }
             }
         }
     }
-    
-    return normalizeScores(factors);
 }
 
-function normalizeScores(scoresMap) {
-    const entries = Array.from(scoresMap.entries());
-    if (entries.length === 0) return [];
+class MeanMaxAgent {
+    constructor(id) {
+        this.id = id;
+        this.x = 0; this.y = 0;
+        this.vx = 0; this.vy = 0;
+        this.mass = 0.5;
+        this.water = 0;
+        this.playerId = -1;
+        this.cumulativeReward = 0;
+        
+        this.net = new NeuralNetwork({
+            inputDim: 24, hidden1: 48, hidden2: 36, outputDim: 16,
+            memoryDim: 16, seed: 'MM_' + id, lr: 0.005, hebbianRate: 0.002
+        });
+    }
     
-    const maxScore = Math.max(...entries.map(e => e[1]));
-    if (maxScore === 0) return [];
+    getInputs(units, turn) {
+        const inputs = [];
+        const maxDist = 12000;
+        
+        const wrecks = units.filter(u => u.type === 4 && u.extra > 0 && u.player === -1)
+            .map(w => ({...w, d: Utils.dist(this, w)}))
+            .sort((a,b) => a.d - b.d).slice(0, 3);
+        
+        for (let i = 0; i < 3; i++) {
+            const w = wrecks[i];
+            if (w) {
+                inputs.push(Utils.clamp((w.x - this.x) / maxDist, -1, 1));
+                inputs.push(Utils.clamp((w.y - this.y) / maxDist, -1, 1));
+            } else inputs.push(0, 0);
+        }        
+        const enemies = units.filter(u => u.type === 0 && u.player !== -1 && u.player !== this.playerId)
+            .map(e => ({...e, d: Utils.dist(this, e)}))
+            .sort((a,b) => a.d - b.d).slice(0, 3);
+        
+        for (let i = 0; i < 3; i++) {
+            const e = enemies[i];
+            if (e) {
+                inputs.push(Utils.clamp((e.x - this.x) / maxDist, -1, 1));
+                inputs.push(Utils.clamp((e.y - this.y) / maxDist, -1, 1));
+            } else inputs.push(0, 0);
+        }
+        
+        inputs.push(Utils.clamp(this.x / 6000, -1, 1));
+        inputs.push(Utils.clamp(this.y / 6000, -1, 1));
+        inputs.push(Utils.clamp(this.water / 50, 0, 1));
+        inputs.push(Utils.clamp(turn / 200, 0, 1));
+        inputs.push(Utils.clamp(wrecks.filter(w => w.d < 2000).length / 5, 0, 1));
+        inputs.push(Utils.clamp(enemies.filter(e => e.d < 1500).length / 3, 0, 1));
+        inputs.push(Utils.clamp(Math.min(this.x + 6000, 6000 - this.x, this.y + 6000, 6000 - this.y) / 1000, 0, 1));
+        inputs.push(Utils.clamp(this.cumulativeReward / 100, -1, 1));
+        inputs.push(Utils.clamp(Math.hypot(this.vx, this.vy) / 200, 0, 1));
+        inputs.push(this.mass);
+        inputs.push(0, 0);
+        
+        return inputs;
+    }
     
-    return entries.map(([key, value]) => [key, value / maxScore]);
+    decide(units, turn) {
+        const inputs = this.getInputs(units, turn);
+        const { output } = this.net.forward(inputs);
+        
+        const dirX = Utils.tanh(output[9] || 0);
+        const dirY = Utils.tanh(output[10] || 0);
+        const throttle = Math.max(50, Math.min(300, Math.floor((Math.abs(output[11] || 0) + 0.5) * 200)));
+        
+        const scale = 1000;
+        const targetX = Math.floor(this.x + dirX * scale);
+        const targetY = Math.floor(this.y + dirY * scale);
+        
+        return `${targetX} ${targetY} ${throttle}`;
+    }
+    
+    update(unit) {
+        this.x = unit.x; this.y = unit.y;
+        this.vx = unit.vx; this.vy = unit.vy;
+        this.mass = unit.mass;
+        this.playerId = unit.player;
+    }
 }
+const agent = new MeanMaxAgent('ME');
+let turn = 0;
+const myId = parseInt(readline());
 
-function combineResults(...results) {
-    const combined = new Map();
-    const methodCount = results.length;
+while (true) {
+    turn++;
     
-    for (const result of results) {
-        for (const [key, score] of result) {
-            combined.set(key, (combined.get(key) || 0) + score);
+    readline(); readline(); readline();
+    readline(); readline(); readline();
+    
+    const unitCount = parseInt(readline());
+    const units = [];
+    let myUnit = null;
+    
+    for (let i = 0; i < unitCount; i++) {
+        const inputs = readline().split(' ');
+        const unit = {
+            id: parseInt(inputs[0]),
+            type: parseInt(inputs[1]),
+            player: parseInt(inputs[2]),
+            mass: parseFloat(inputs[3]),
+            radius: parseInt(inputs[4]),
+            x: parseFloat(inputs[5]),
+            y: parseFloat(inputs[6]),
+            vx: parseFloat(inputs[7]),
+            vy: parseFloat(inputs[8]),
+            extra: parseInt(inputs[9]),
+            extra2: parseInt(inputs[10])
+        };
+        units.push(unit);
+        
+        if (unit.type === 0 && unit.player === myId) {
+            myUnit = unit;
+            agent.update(unit);
         }
     }
     
-    const sorted = Array.from(combined.entries())
-        .map(([key, score]) => [key, score / methodCount])
-        .sort((a, b) => b[1] - a[1]);
-    
-    return sorted;
-}
-
-function splitIntoGroups(text, length) {
-    const groups = Array(length).fill().map(() => []);
-    for (let i = 0; i < text.length; i++) {
-        groups[i % length].push(text[i]);
-    }
-    return groups;
-}
-
-function frequencyAnalysis(groups) {
-    return groups.map(group => {
-        const freqs = new Array(26).fill(0);
-        for (const c of group) {
-            freqs[c.charCodeAt(0) - 65]++;
-        }
-        
-        let bestShift = 0;
-        let bestScore = -Infinity;
-        
-        for (let shift = 0; shift < 26; shift++) {
-            let score = 0;
-            for (let i = 0; i < 26; i++) {
-                const shifted = (i + shift) % 26;
-                score += (freqs[shifted] / group.length) * (ENGLISH_FREQ[i] / 100);
-            }
-            
-            if (score > bestScore) {
-                bestScore = score;
-                bestShift = shift;
-            }
-        }
-        
-        return String.fromCharCode((26 - bestShift) % 26 + 65);
-    }).join('');
-}
-
-// Combined Analysis Methods
-async function analyzeKeyLengths(text) {
-    const methods = [
-        analyzeKasiski(text),
-        analyzeFriedman(text),
-        analyzeIC(text)
-    ];
-    
-    // Handle case where some methods return empty results
-    const validMethods = methods.filter(m => m.length > 0);
-    if (validMethods.length === 0) return [[3, 1]]; // Default if all methods fail
-    
-    return combineResults(...validMethods);
-}
-
-async function fullAnalysis(ciphertext) {
-    if (ciphertext.length < 100) throw new Error('Minimum 100 characters required for analysis');
-    
-    const lengthResults = await analyzeKeyLengths(ciphertext);
-    const bestLength = lengthResults[0][0];
-    
-    const groups = splitIntoGroups(ciphertext, bestLength);
-    const probableKey = frequencyAnalysis(groups);
-    const decrypted = vigenere(ciphertext, probableKey, false);
-    
-    return {
-        lengthResults,
-        bestLength,
-        probableKey,
-        decrypted,
-        groups
-    };
-}
-
-// UI Handlers
-function handleEncrypt() {
-    try {
-        const text = document.getElementById('inputText').value;
-        const key = document.getElementById('keyInput').value;
-        
-        if (!text) throw new Error('Please enter text to encrypt');
-        if (!key) throw new Error('Please enter an encryption key');
-        
-        const encrypted = vigenere(text, key, true);
-        document.getElementById('inputText').value = encrypted;
-        showError('Text encrypted successfully!', false);
-    } catch (error) {
-        showError(error.message);
-    }
-}
-
-function handleDecrypt() {
-    try {
-        const text = document.getElementById('inputText').value;
-        const key = document.getElementById('keyInput').value;
-        
-        if (!text) throw new Error('Please enter text to decrypt');
-        if (!key) throw new Error('Please enter a decryption key');
-        
-        const decrypted = vigenere(text, key, false);
-        document.getElementById('decryptedText').textContent = decrypted;
-        showError('Text decrypted successfully!', false);
-    } catch (error) {
-        showError(error.message);
-    }
-}
-
-async function handleAnalyze() {
-    try {
-        showLoading(true);
-        const ciphertext = cleanText(document.getElementById('inputText').value);
-        if (!ciphertext) throw new Error('Please enter some text to analyze');
-        
-        const analysis = await fullAnalysis(ciphertext);
-        updateResultsUI(analysis);
-        renderChart(analysis.lengthResults);
-        showError('Analysis completed successfully!', false);
-    } catch (error) {
-        showError(error.message);
-    } finally {
-        showLoading(false);
-    }
-}
-
-function clearAll() {
-    document.getElementById('inputText').value = '';
-    document.getElementById('keyInput').value = '';
-    document.getElementById('bestLength').textContent = '-';
-    document.getElementById('suggestedKey').textContent = '-';
-    document.getElementById('decryptedText').textContent = '-';
-    document.getElementById('errorMessage').classList.add('hidden');
-    
-    if (chartInstance) {
-        chartInstance.destroy();
-        chartInstance = null;
-    }
-}
-
-function renderChart(results) {
-    const ctx = document.getElementById('lengthChart').getContext('2d');
-    
-    if (chartInstance) chartInstance.destroy();
-    
-    chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: results.map(r => r[0]),
-            datasets: [{
-                label: 'Key Length Probability',
-                data: results.map(r => r[1] * 100),
-                backgroundColor: '#2563eb',
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: { display: true, text: 'Probability (%)' }
-                },
-                x: {
-                    title: { display: true, text: 'Key Length' }
-                }
-            }
-        }
-    });
-}
-
-// UI Utilities
-function showLoading(show) {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(btn => btn.disabled = show);
-}
-
-function showError(message, isError = true) {
-    const errorEl = document.getElementById('errorMessage');
-    errorEl.textContent = message;
-    errorEl.classList.remove('hidden');
-    
-    if (isError) {
-        errorEl.style.color = 'var(--accent)';
-        errorEl.style.borderColor = 'var(--accent)';
-        errorEl.style.backgroundColor = '#fef2f2';
+    if (myUnit) {
+        const action = agent.decide(units, turn);
+        console.log(action);
+        console.error(`Turn ${turn}: pos=(${myUnit.x.toFixed(0)},${myUnit.y.toFixed(0)}) → ${action}`);
     } else {
-        errorEl.style.color = 'var(--primary)';
-        errorEl.style.borderColor = 'var(--primary)';
-        errorEl.style.backgroundColor = '#eff6ff';
+        console.log('WAIT');
+        console.error('ERROR: My unit not found!');
     }
-    
-    setTimeout(() => errorEl.classList.add('hidden'), 5000);
 }
-
-function updateResultsUI(analysis) {
-    document.getElementById('bestLength').textContent = analysis.bestLength;
-    document.getElementById('suggestedKey').textContent = analysis.probableKey;
-    document.getElementById('decryptedText').textContent = analysis.decrypted;
-}
-
-// Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('inputText').addEventListener('input', e => {
-        // Don't clean automatically to allow for spaces/punctuation in input
-    });
-});
-</script>
-</body>
-</html>
