@@ -5460,7 +5460,146 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
         };
         console.log('✅ v8.0.3g: Added logging');
     }
-    
+    // REWARD SYSTEM v3.0 — CORRECT ANGLES
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype.calculateReward) {
+        FootballAgent.prototype.calculateReward = function(world, decision) {
+            if (!world || !world.ball || !this.alive) return 0;
+            
+            let reward = 0;
+            const role = FOOTBALL_ROLES[this.role];
+            const hasBall = world.ball.owner === this.id;
+            const ballDist = Utils.dist(this, world.ball);
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 1. ANTI-CLUSTERING — штраф за толпу
+            // ═══════════════════════════════════════════════════════════════
+            const teammates = (world.agents || []).filter(a => a.team === this.team && a.id !== this.id && a.alive);
+            let clusterPenalty = 0;
+            
+            for (const tm of teammates) {
+                const distToTm = Utils.dist(this, tm);
+                if (distToTm < 70) {
+                    clusterPenalty += (70 - distToTm) / 70;
+                }
+            }
+            reward -= clusterPenalty * 0.1;
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 2. ATTACK ANGLE — мяч между агентом и воротами врага
+            // ═══════════════════════════════════════════════════════════════
+            if (hasBall) {
+                const enemyGoal = this.team === 'blue' ?
+                    { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y } :
+                    { x: 0, y: FOOTBALL_CONFIG.GOAL_Y };
+                
+                // Вектор: Агент → Мяч
+                const agentToBallX = world.ball.x - this.x;
+                const agentToBallY = world.ball.y - this.y;
+                
+                // Вектор: Мяч → Ворота
+                const ballToGoalX = enemyGoal.x - world.ball.x;
+                const ballToGoalY = enemyGoal.y - world.ball.y;
+                
+                // Скалярное произведение (косинус угла)
+                const dot = agentToBallX * ballToGoalX + agentToBallY * ballToGoalY;
+                const mag1 = Math.hypot(agentToBallX, agentToBallY);
+                const mag2 = Math.hypot(ballToGoalX, ballToGoalY);
+                const alignment = dot / (mag1 * mag2); // 1 = идеально, -1 = наоборот
+                
+                // Поощрение если мяч между агентом и воротами (alignment > 0)
+                if (alignment > 0.5) {
+                    reward += 0.1 * alignment;
+                } else if (alignment < 0) {                    reward -= 0.15; // Штраф если мяч ЗА агентом (не может ударить)
+                }
+                
+                // Движение к воротам с мячом
+                const distToGoal = Utils.dist(this, enemyGoal);
+                reward += (1 - distToGoal / 600) * 0.05;
+            }
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 3. DEFENSE ANGLE — агент между мячом и своими воротами
+            // ═══════════════════════════════════════════════════════════════
+            if (!hasBall && (this.role === 'defender' || this.role === 'goalkeeper')) {
+                const myGoal = this.team === 'blue' ?
+                    { x: 0, y: FOOTBALL_CONFIG.GOAL_Y } :
+                    { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y };
+                
+                // Вектор: Мяч → Свои ворота
+                const ballToGoalX = myGoal.x - world.ball.x;
+                const ballToGoalY = myGoal.y - world.ball.y;
+                
+                // Вектор: Мяч → Агент
+                const ballToAgentX = this.x - world.ball.x;
+                const ballToAgentY = this.y - world.ball.y;
+                
+                const dot = ballToGoalX * ballToAgentX + ballToGoalY * ballToAgentY;
+                const mag1 = Math.hypot(ballToGoalX, ballToGoalY);
+                const mag2 = Math.hypot(ballToAgentX, ballToAgentY);
+                const alignment = dot / (mag1 * mag2);
+                
+                // Поощрение если агент между мячом и своими воротами
+                if (alignment > 0.5) {
+                    reward += 0.1 * alignment;
+                } else if (alignment < 0) {
+                    reward -= 0.1; // Агент за мячом (плохая позиция)
+                }
+            }
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 4. SMART PASSING — пас только если teammate в лучшей позиции
+            // ═══════════════════════════════════════════════════════════════
+            if (hasBall && decision?.intent === 'pass' && decision.target) {
+                const targetAgent = world.agents.find(a => a.id === decision.target.id);
+                const enemyGoal = this.team === 'blue' ?
+                    { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y } :
+                    { x: 0, y: FOOTBALL_CONFIG.GOAL_Y };
+                
+                if (targetAgent) {
+                    const myDistToGoal = Utils.dist(this, enemyGoal);
+                    const targetDistToGoal = Utils.dist(targetAgent, enemyGoal);
+                                        // Пас тому кто БЛИЖЕ к воротам
+                    if (targetDistToGoal < myDistToGoal - 30) {
+                        reward += 0.25;
+                    } else {
+                        reward -= 0.15; // Пас назад или в толпу
+                    }
+                }
+            }
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 5. SHOOTING — удар с хорошей позиции
+            // ═══════════════════════════════════════════════════════════════
+            if (hasBall && decision?.intent === 'shoot') {
+                const enemyGoal = this.team === 'blue' ?
+                    { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y } :
+                    { x: 0, y: FOOTBALL_CONFIG.GOAL_Y };
+                const distToGoal = Utils.dist(this, enemyGoal);
+                
+                if (distToGoal < 200) {
+                    reward += 0.3; // Хорошая позиция
+                } else if (distToGoal > 400) {
+                    reward -= 0.2; // Удар издалека
+                }
+            }
+            
+            // ═══════════════════════════════════════════════════════════════
+            // 6. BALL CHASING — погоня за мячом
+            // ═══════════════════════════════════════════════════════════════
+            if (!hasBall && ballDist < 150) {
+                if (ballDist < this.lastDistToBall) {
+                    reward += 0.03;
+                } else {
+                    reward -= 0.02;
+                }
+            }
+            
+            this.lastDistToBall = ballDist;
+            
+            return isFinite(reward) ? Utils.clamp(reward, -0.5, 0.5) : 0;
+        };
+        console.log('✅ Reward System v3.0: CORRECT angles for attack/defense');
+                                                          }
     console.log('🎉 Patch v8.0.3g applied! Physics disabled for owner — controlled kicks only!');
 </script>
 </body>
