@@ -5033,6 +5033,89 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
                     if (scorer.net?.emotions) {
                         scorer.net.emotions.frustration = Utils.clamp(scorer.net.emotions.frustration + 0.5, 0, 1);
                     }
+// ═══════════════════════════════════════════════════════════════
+// COMBINED PATCH v8.0.3ab — Own Goal Learning + Kick/Pass Fix
+// Both fixes in one patch
+// ═══════════════════════════════════════════════════════════════
+
+(function() {
+    'use strict';
+    
+    console.log('🔧 Applying Combined Patch v8.0.3ab...');
+    
+    // ═══════════════════════════════════════════════════════════════
+    // PART 1: Own Goal Learning System (NO blocking, pure RL)
+    // ═══════════════════════════════════════════════════════════════
+    
+    // 1. Extend FootballAgent.calculateReward with own-goal penalty
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype.calculateReward) {
+        const _originalCalculateReward = FootballAgent.prototype.calculateReward;
+        FootballAgent.prototype.calculateReward = function(world, decision) {
+            let reward = _originalCalculateReward.call(this, world, decision);
+            
+            if (!world?.ball || !this.alive) return reward;
+            
+            // Own goal penalty: if ball is moving toward OUR goal while we control it
+            if (world.ball.owner === this.id) {
+                const myGoalX = this.team === 'blue' ? 0 : FOOTBALL_CONFIG.FIELD_WIDTH;
+                const enemyGoalX = this.team === 'blue' ? FOOTBALL_CONFIG.FIELD_WIDTH : 0;
+                
+                const ballToMyGoal = Math.abs(world.ball.x - myGoalX);
+                const ballToEnemyGoal = Math.abs(world.ball.x - enemyGoalX);
+                
+                // If ball is closer to our goal AND moving toward it = dangerous
+                if (ballToMyGoal < ballToEnemyGoal) {
+                    const movingTowardOwn = this.team === 'blue' 
+                        ? world.ball.vx < -0.5 
+                        : world.ball.vx > 0.5;
+                    
+                    if (movingTowardOwn) {
+                        // Strong penalty proportional to danger level
+                        const dangerFactor = 1 - (ballToMyGoal / (FOOTBALL_CONFIG.FIELD_WIDTH / 2));
+                        reward -= 0.5 * dangerFactor;
+                    }
+                }
+            }
+            
+            // Small positive reward for moving ball toward ENEMY goal
+            if (world.ball.owner === this.id) {
+                const enemyGoalX = this.team === 'blue' ? FOOTBALL_CONFIG.FIELD_WIDTH : 0;
+                const movingTowardEnemy = this.team === 'blue'
+                    ? world.ball.vx > 0.3
+                    : world.ball.vx < -0.3;                
+                if (movingTowardEnemy && Math.abs(world.ball.x - enemyGoalX) < 400) {
+                    reward += 0.02; // small shaping reward
+                }
+            }
+            
+            return isFinite(reward) ? Utils.clamp(reward, -1.0, 0.5) : 0;
+        };
+        console.log('✅ Part 1.1: Fixed calculateReward (own goal penalty)');
+    }
+    
+    // 2. Add own goal detection in _checkGoal with learning signal
+    if (typeof FootballWorld !== 'undefined' && FootballWorld.prototype._checkGoal) {
+        const _originalCheckGoal = FootballWorld.prototype._checkGoal;
+        FootballWorld.prototype._checkGoal = function() {
+            const goalTop = FOOTBALL_CONFIG.GOAL_Y - FOOTBALL_CONFIG.GOAL_HEIGHT / 2;
+            const goalBottom = FOOTBALL_CONFIG.GOAL_Y + FOOTBALL_CONFIG.GOAL_HEIGHT / 2;
+            let goalScored = false;
+            
+            // Blue team scores (ball in red goal)
+            if (this.ball.x > FOOTBALL_CONFIG.FIELD_WIDTH - 15 &&
+                this.ball.y > goalTop && this.ball.y < goalBottom &&
+                this.ball.vx > 0) {
+                
+                // Check if it was an own goal (red player last touched)
+                const scorer = this.ball.owner ? this.agents.find(a => a.id === this.ball.owner) : null;
+                if (scorer && scorer.team === 'red') {
+                    // OWN GOAL by red player
+                    Logger.log(`⚠️ OWN GOAL! ${scorer.id} scored against their own team!`, 'warn');
+                    // Strong negative reward for the scorer
+                    scorer.cumulativeReward -= 3;
+                    if (scorer.net?.emotions) {
+                        scorer.net.emotions.frustration = Utils.clamp(scorer.net.emotions.frustration + 0.5, 0, 1);
+                    }
                     // Blue team still gets the point (realistic)
                     this.score.blue++;
                 } else {
@@ -5048,8 +5131,7 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
             if (this.ball.x < 15 &&
                 this.ball.y > goalTop && this.ball.y < goalBottom &&
                 this.ball.vx < 0) {
-                
-                const scorer = this.ball.owner ? this.agents.find(a => a.id === this.ball.owner) : null;
+                                const scorer = this.ball.owner ? this.agents.find(a => a.id === this.ball.owner) : null;
                 if (scorer && scorer.team === 'blue') {
                     // OWN GOAL by blue player
                     Logger.log(`⚠️ OWN GOAL! ${scorer.id} scored against their own team!`, 'warn');
@@ -5069,36 +5151,301 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
             
             return goalScored;
         };
+        console.log('✅ Part 1.2: Fixed _checkGoal (own goal detection)');
     }
     
-    // 4. Ensure getInputs provides clear enemy goal direction signal
-    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype.getInputs) {        const _originalGetInputs = FootballAgent.prototype.getInputs;
-        FootballAgent.prototype.getInputs = function(world) {
-            const inputs = _originalGetInputs.call(this, world);
+    // ═══════════════════════════════════════════════════════════════
+    // PART 2: Kick/Pass Execution Fix
+    // ═══════════════════════════════════════════════════════════════
+    
+    // 3. Fix _executeBallControl to actually trigger kicks/passes
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._executeBallControl) {
+        const _originalExecuteBallControl = FootballAgent.prototype._executeBallControl;
+        FootballAgent.prototype._executeBallControl = function(world) {
+            const decision = this.lastDecision;
+            if (!decision || !world?.ball) {
+                return;
+            }
             
-            // Enhance goal direction signal (inputs 6-9)
-            const enemyGoal = this.team === 'blue' ?
-                { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y } :
-                { x: 0, y: FOOTBALL_CONFIG.GOAL_Y };
+            // Check if we can actually control the ball
+            if (!world.ball.canBeControlledBy(this, world.step)) {
+                return;
+            }
             
-            const goalDx = enemyGoal.x - this.x;
-            const goalDy = enemyGoal.y - this.y;
-            const viewRadius = arenaConfig.viewRadius || 300;
-            
-            // Make goal direction signal stronger and unambiguous
-            if (inputs[6] !== undefined) inputs[6] = Utils.clamp(goalDx / viewRadius, -1, 1);
-            if (inputs[7] !== undefined) inputs[7] = Utils.clamp(goalDy / viewRadius, -1, 1);
-            
-            return inputs;
+            // Execute based on intent
+            switch(decision.intent) {
+                case 'shoot':
+                    if (decision.target && decision.power) {
+                        this._executeShot(world, decision);
+                    } else {
+                        this._executeDribble(world, decision);
+                    }
+                    break;                    
+                case 'pass':
+                    if (decision.target && decision.power && decision.angle !== undefined) {
+                        this._executePass(world, decision);
+                    } else {
+                        const passTarget = this._findSmartPassTarget(world, decision.behaviors);
+                        if (passTarget && passTarget.confidence > 0.5) {
+                            this._executePass(world, {
+                                ...decision,
+                                target: passTarget.target,
+                                interceptPoint: passTarget.leadPoint,
+                                power: passTarget.power,
+                                angle: Math.atan2(passTarget.leadPoint.y - this.y, passTarget.leadPoint.x - this.x)
+                            });
+                        } else {
+                            this._executeDribble(world, decision);
+                        }
+                    }
+                    break;
+                    
+                case 'dribble':
+                    this._executeDribble(world, decision);
+                    break;
+                    
+                default:
+                    this._holdBall(world);
+            }
         };
+        console.log('✅ Part 2.1: Fixed _executeBallControl');
     }
     
-    // 5. Add debug logging for own goal learning
-    console.log('🔧 Patch v8.0.3a applied: Own Goal Learning System (RL-based, no blocking)');
+    // 4. Fix _executeShot to ensure it actually kicks
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._executeShot) {
+        const _originalExecuteShot = FootballAgent.prototype._executeShot;
+        FootballAgent.prototype._executeShot = function(world, decision) {
+            if (!world?.ball) return;
+            
+            // Calculate angle to target
+            let angle = decision.angle;
+            if (angle === undefined && decision.target) {
+                angle = Math.atan2(
+                    decision.target.y - this.y,
+                    decision.target.x - this.x
+                );
+            }
+            
+            if (angle === undefined) {
+                // Fallback: kick toward enemy goal
+                const enemyGoal = this.team === 'blue' ?
+                    { x: FOOTBALL_CONFIG.FIELD_WIDTH, y: FOOTBALL_CONFIG.GOAL_Y } :                    { x: 0, y: FOOTBALL_CONFIG.GOAL_Y };
+                angle = Math.atan2(enemyGoal.y - this.y, enemyGoal.x - this.x);
+            }
+            
+            // Calculate power
+            const power = decision.power || FOOTBALL_CONFIG.KICK_POWER;
+            
+            // Add accuracy variation
+            const accuracy = this.stats.accuracy || 0.7;
+            const confidence = decision.behaviors?.confidence || 0.5;
+            const angleError = (Math.random() - 0.5) * (1 - accuracy) * (1 - confidence * 0.5) * 0.5;
+            
+            // Actually kick the ball!
+            world.ball.kick(angle + angleError, power, this.id, { x: this.x, y: this.y });
+            
+            // Update stats
+            this.totalKicks++;
+            this.shotsOnTarget++;
+            
+            // Log shot
+            if (this.id === 'blue_0' || this.id === 'red_0') {
+                console.log(`⚽ ${this.id} SHOT! Power: ${power.toFixed(1)}, Angle: ${(angle * 180 / Math.PI).toFixed(0)}°`);
+            }
+            
+            // Update emotions
+            if (this.net?.emotions) {
+                this.net.emotions.confidence = Utils.clamp(this.net.emotions.confidence + 0.05, 0, 1);
+            }
+        };
+        console.log('✅ Part 2.2: Fixed _executeShot');
+    }
+    
+    // 5. Fix _executePass to ensure passes happen
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._executePass) {
+        const _originalExecutePass = FootballAgent.prototype._executePass;
+        FootballAgent.prototype._executePass = function(world, decision) {
+            if (!world?.ball || !decision.target) {
+                console.warn(`⚠️ ${this.id} pass failed: ball=${!!world?.ball}, target=${!!decision.target}`);
+                return;
+            }
+            
+            // Calculate pass angle and power
+            let angle = decision.angle;
+            if (angle === undefined) {
+                angle = Math.atan2(
+                    decision.target.y - this.y,
+                    decision.target.x - this.x
+                );
+            }
+                        const power = decision.power || FOOTBALL_CONFIG.PASS_POWER;
+            
+            // Actually kick the ball toward teammate!
+            world.ball.kick(angle, power, this.id, { x: this.x, y: this.y });
+            
+            // Update stats
+            this.totalKicks++;
+            this.passStats.total++;
+            
+            // Store pass target for tracking
+            this._lastPassTarget = decision.target;
+            
+            // Log pass
+            if (this.id === 'blue_0' || this.id === 'red_0') {
+                console.log(`🎯 ${this.id} PASS to ${decision.target.id}! Power: ${power.toFixed(1)}`);
+            }
+            
+            // Update emotions
+            if (this.net?.emotions && decision.behaviors?.coordinationSignal > 0.7) {
+                this.net.emotions.confidence = Utils.clamp(this.net.emotions.confidence + 0.03, 0, 1);
+            }
+        };
+        console.log('✅ Part 2.3: Fixed _executePass');
+    }
+    
+    // 6. Fix _executeDribble to use small controlled kicks
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._executeDribble) {
+        const _originalExecuteDribble = FootballAgent.prototype._executeDribble;
+        FootballAgent.prototype._executeDribble = function(world, decision) {
+            if (!world?.ball) return;
+            
+            // Calculate where we want the ball to be (slightly in front)
+            const desiredOffset = 25;
+            const desiredBallX = this.x + Math.cos(this.facingAngle) * desiredOffset;
+            const desiredBallY = this.y + Math.sin(this.facingAngle) * desiredOffset;
+            
+            // Calculate difference
+            const ballDx = world.ball.x - desiredBallX;
+            const ballDy = world.ball.y - desiredBallY;
+            const ballDist = Math.hypot(ballDx, ballDy);
+            
+            // If ball is not in desired position, gently kick it there
+            if (ballDist > 8) {
+                const correctionAngle = Math.atan2(ballDy, ballDx);
+                const correctionPower = Utils.clamp(ballDist * 0.2, 1.5, 5);
+                
+                // Small controlled kick to maintain possession
+                world.ball.kick(correctionAngle, correctionPower, this.id, { x: this.x, y: this.y });
+                
+                if (this.id === 'blue_0' && world.step % 120 === 0) {                    console.log(`👟 ${this.id} dribbling, correction: ${correctionPower.toFixed(1)}`);
+                }
+            }
+            
+            // Protect ball if needed
+            if (decision.protectBall) {
+                const nearestOpp = (world.agents || [])
+                    .filter(a => a.team !== this.team && a.alive)
+                    .reduce((nearest, curr) => {
+                        const d = Utils.dist(this, curr);
+                        return !nearest || d < Utils.dist(this, nearest) ? curr : nearest;
+                    }, null);
+                
+                if (nearestOpp) {
+                    const shieldAngle = Math.atan2(this.y - nearestOpp.y, this.x - nearestOpp.x);
+                    this.facingAngle = Utils.lerp(this.facingAngle, shieldAngle, 0.1);
+                }
+            }
+        };
+        console.log('✅ Part 2.4: Fixed _executeDribble');
+    }
+    
+    // 7. Fix _holdBall to actually control the ball
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._holdBall) {
+        const _originalHoldBall = FootballAgent.prototype._holdBall;
+        FootballAgent.prototype._holdBall = function(world) {
+            if (!world?.ball) return;
+            
+            const ballDx = world.ball.x - this.x;
+            const ballDy = world.ball.y - this.y;
+            const ballDist = Math.hypot(ballDx, ballDy);
+            
+            // If ball is too far, gently bring it closer
+            if (ballDist > 20) {
+                const angle = Math.atan2(ballDy, ballDx);
+                world.ball.kick(angle, 2.5, this.id, { x: this.x, y: this.y });
+            }
+        };
+        console.log('✅ Part 2.5: Fixed _holdBall');
+    }
+    
+    // 8. Fix ball ownership to allow kicking
+    if (typeof FootballWorld !== 'undefined' && FootballWorld.prototype._handleBallInteractionsProfessional) {
+        const _originalHandleBall = FootballWorld.prototype._handleBallInteractionsProfessional;
+        FootballWorld.prototype._handleBallInteractionsProfessional = function() {
+            // If ball has owner, let them control it
+            if (this.ball.owner) {
+                const owner = this.agents.find(a => a.id === this.ball.owner);
+                
+                // Check if owner is alive and can control                if (owner?.alive && owner._kickCooldown <= 0) {
+                    const canControl = this.ball.canBeControlledBy(owner, this.step);
+                    
+                    if (canControl) {
+                        // Owner controls the ball - execute their decision
+                        owner._executeBallControl(this);
+                        owner._kickCooldown = 20; // Reduced from 25 for faster response
+                        return;
+                    } else {
+                        // Owner too far - clear ownership
+                        this.ball.owner = null;
+                    }
+                } else if (!owner?.alive) {
+                    // Owner dead - clear ownership
+                    this.ball.owner = null;
+                }
+            }
+            
+            // Ball is free - find closest eligible player
+            const candidates = this.agents.filter(a => 
+                a.alive && 
+                Utils.dist(a, this.ball) < (a.stats.kickRange || 35) && 
+                a._kickCooldown <= 0
+            );
+            
+            if (candidates.length === 0) return;
+            
+            // Sort by distance and role priority
+            candidates.sort((a, b) => {
+                const aGoaliePriority = (a.role === 'goalkeeper' && a._isInGoalZone?.()) ? 10 : 0;
+                const bGoaliePriority = (b.role === 'goalkeeper' && b._isInGoalZone?.()) ? 10 : 0;
+                if (aGoaliePriority !== bGoaliePriority) return bGoaliePriority - aGoaliePriority;
+                
+                const distA = Utils.dist(a, this.ball);
+                const distB = Utils.dist(b, this.ball);
+                if (Math.abs(distA - distB) > 5) return distA - distB;
+                
+                return b.cumulativeReward - a.cumulativeReward;
+            });
+            
+            const controller = candidates[0];
+            
+            // Assign ownership
+            this.ball.owner = controller.id;
+            controller._lastTouchTime = this.step;
+            
+            // Set cooldown for others
+            candidates.forEach(a => {
+                if (a !== controller) {
+                    a._kickCooldown = 10;                }
+            });
+            
+            // Execute control immediately
+            if (controller._kickCooldown <= 0) {
+                controller._executeBallControl(this);
+                controller._kickCooldown = 20;
+            }
+        };
+        console.log('✅ Part 2.6: Fixed _handleBallInteractionsProfessional');
+    }
+    
+    console.log('🎉 Combined Patch v8.0.3ab applied successfully!');
+    console.log('📝 Features:');
+    console.log('   - Own goal learning (agents learn NOT to score own goals via RL)');
+    console.log('   - Fixed kick/pass execution (agents will actually kick the ball!)');
+    console.log('   - Watch console for ⚽ SHOT and 🎯 PASS logs');
     
 })();
 // ═══════════════════════════════════════════════════════════════
-// END PATCH v8.0.3a
+// END COMBINED PATCH v8.0.3ab
 // ═══════════════════════════════════════════════════════════════
 </script>
 </body>
