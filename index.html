@@ -5294,6 +5294,118 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
     
 })();
 // ═══════════════════════════════════════════════════════════════
+    // PATCH v8.0.3f — KICK RANGE FIX (50px instead of 35px)
+    // ═══════════════════════════════════════════════════════════════
+    
+    // 1. Увеличиваем kickRange для всех агентов
+    if (window.arenaGame?.world?.agents) {
+        window.arenaGame.world.agents.forEach(agent => {
+            if (agent?.stats) {
+                agent.stats.kickRange = 50; // БЫЛО 35 → СТАЛО 50
+            }
+        });
+        console.log('✅ v8.0.3f: kickRange increased to 50px');
+    }
+    
+    // 2. Исправляем canBeControlledBy
+    if (typeof FootballBall !== 'undefined' && FootballBall.prototype.canBeControlledBy) {
+        FootballBall.prototype.canBeControlledBy = function(agent, worldStep) {
+            if (!this.owner || this.owner !== agent.id) return false;
+            const dist = Utils.dist(this, agent);
+            const kickRange = agent.stats?.kickRange || 50;
+            const inRange = dist <= kickRange;
+            const recentKick = this.lastKickerPos && worldStep - this.kickTimestamp < 20;
+            return inRange || (recentKick && dist < 55);
+        };
+        console.log('✅ v8.0.3f: canBeControlledBy updated (50px range)');
+    }
+    
+    // 3. Отключаем физику для владельца мяча
+    if (typeof FootballWorld !== 'undefined' && FootballWorld.prototype.update) {
+        const _originalUpdate = FootballWorld.prototype.update;
+        FootballWorld.prototype.update = function(dt) {
+            if (!isFinite(dt) || dt <= 0) dt = 1;
+            dt = Math.min(dt, 2);
+            
+            if (this.isMatchOver) return;
+            
+            this.step++;
+            this.matchTime = Math.floor(this.step / 60);
+            
+            if (this.matchTime >= this.matchDuration) {
+                this._endMatch();
+                return;
+            }
+            
+            const events = this._collectMatchEvents();
+            if (this.teamEmotions && arenaConfig.enableProfessional) {
+                this.teamEmotions.blue.update(events, this);
+                this.teamEmotions.red.update(events, this);
+                this.teamEmotions.blue.propagateEmotions(this.agents);
+                this.teamEmotions.red.propagateEmotions(this.agents);            }
+            
+            if (this.sharedMaps && arenaConfig.enableProfessional) {
+                this.sharedMaps.blue.update(this);
+                this.sharedMaps.red.update(this);
+            }
+            
+            this.ball.update(dt, this);
+            this._checkGoal();
+            
+            const aliveAgents = (this.agents || []).filter(a => a?.alive);
+            
+            // 🔧 ФИКС: НЕ толкаем мяч если агент им ВЛАДЕЕТ
+            for (const agent of aliveAgents) {
+                if (agent.alive && this.ball.owner !== agent.id) {
+                    this.ball.collideWithPlayer(agent);
+                }
+            }
+            
+            for (const agent of aliveAgents) {
+                agent.world = this;
+                const decision = agent.decide(this);
+                agent.move(decision, this.walls, dt, aliveAgents);
+                
+                const reward = agent.calculateReward(this, decision);
+                const nextInputs = agent.getInputs(this);
+                const safeReward = isFinite(reward) ? reward : 0;
+                
+                if (nextInputs && nextInputs.length > 0 && arenaConfig.enableTraining) {
+                    const validInputs = nextInputs.every(v => isFinite(v));
+                    if (validInputs) {
+                        agent.learn(safeReward, decision, nextInputs);
+                    }
+                }
+            }
+            
+            this._handleBallInteractionsProfessional();
+            
+            for (const agent of aliveAgents) {
+                agent._combatEvents = [];
+            }
+        };
+        console.log('✅ v8.0.3f: Physics disabled for ball owner');
+    }
+    
+    // 4. Логирование для проверки
+    if (typeof FootballAgent !== 'undefined' && FootballAgent.prototype._executeBallControl) {
+        const _original = FootballAgent.prototype._executeBallControl;
+        FootballAgent.prototype._executeBallControl = function(world) {
+            const decision = this.lastDecision;            if (!decision || !world?.ball) return;
+            
+            const dist = Utils.dist(this, world.ball);
+            
+            if ((this.id === 'blue_0' || this.id === 'red_0') && world.step % 60 === 0) {
+                console.log(`⚽ ${this.id} CONTROL: dist=${dist.toFixed(1)}px, intent=${decision.intent}, range=${this.stats.kickRange}px`);
+            }
+            
+            _original.call(this, world);
+        };
+        console.log('✅ v8.0.3f: Added control logging');
+    }
+    
+    console.log('🎉 Patch v8.0.3f applied! Agents can now kick at 50px distance!');
+// ═══════════════════════════════════════════════════════════════
 // END COMBINED PATCH v8.0.3ab (FIXED)
 // ═══════════════════════════════════════════════════════════════
 </script>
