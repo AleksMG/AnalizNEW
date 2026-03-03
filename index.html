@@ -325,8 +325,8 @@ const FOOTBALL_CONFIG = Object.freeze({
     BALL_RADIUS: 12,
     BALL_FRICTION: 0.99,
     BALL_MAX_VELOCITY: 40,
-    KICK_POWER: 85,
-    PASS_POWER: 60,
+    KICK_POWER: 65,
+    PASS_POWER: 30,
     SHOT_ACCURACY_BASE: 0.8,
     PASS_ACCURACY_BASE: 0.9,
     PLAYER_RADIUS: 22,
@@ -5394,7 +5394,7 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
                                         if (canControl) {
                         // ВЛАДЕЛЕЦ КОНТРОЛИРУЕТ — вызываем удар/пас!
                         owner._executeBallControl(this);
-                        owner._kickCooldown = 10;
+                        owner._kickCooldown = 3;
                         return;
                     } else {
                         // Не может контролировать — очищаем
@@ -5562,7 +5562,7 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
                     if (targetDistToGoal < myDistToGoal - 30) {
                         reward += 0.25;
                     } else {
-                        reward -= 0.15; // Пас назад или в толпу
+                        reward -= 0.05; // Пас назад или в толпу
                     }
                 }
             }
@@ -5588,9 +5588,9 @@ console.log('🔧 Cortex-2 architecture PRESERVED: P32→A64→M144→C256→S32
             // ═══════════════════════════════════════════════════════════════
             if (!hasBall && ballDist < 150) {
                 if (ballDist < this.lastDistToBall) {
-                    reward += 0.03;
+                    reward += 0.02;
                 } else {
-                    reward -= 0.02;
+                    reward -= 0.01;
                 }
             }
             
