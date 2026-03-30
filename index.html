@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neural Football — Real Dribble & Passing</title>
+<title>Neural Football — Collective Transformer AGI</title>
 <style>
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM
+   ═══════════════════════════════════════════════════════ */
 :root {
     --color-bg-primary: #0b0e14;
     --color-bg-surface: #151922;
@@ -12,145 +15,403 @@
     --color-bg-elevated: #222d3d;
     --color-border: #1e2530;
     --color-border-light: #2d3748;
+
     --color-red: #e84545;
     --color-red-light: #ff6b6b;
     --color-red-dark: #c0392b;
     --color-red-glow: rgba(232, 69, 69, 0.25);
+
     --color-blue: #4a9eff;
     --color-blue-light: #74b9ff;
     --color-blue-dark: #2471a3;
     --color-blue-glow: rgba(74, 158, 255, 0.25);
+
     --color-gold: #ffc857;
     --color-gold-dim: rgba(255, 200, 87, 0.15);
     --color-green: #2ecc71;
     --color-orange: #f39c12;
     --color-danger: #e74c3c;
+
     --color-text: #c9d1d9;
     --color-text-dim: #484f58;
     --color-text-muted: #30363d;
+
     --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-mono: 'Consolas', 'SF Mono', 'Courier New', monospace;
+
     --radius-small: 6px;
     --radius-medium: 10px;
     --radius-large: 14px;
     --radius-round: 50%;
+
     --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
     --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.5);
+
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
 }
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════ */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     background: var(--color-bg-primary);
     font-family: var(--font-main);
     color: var(--color-text);
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+/* ═══════════════════════════════════════════════════════
+   SCOREBOARD HEADER
+   ═══════════════════════════════════════════════════════ */
 .scoreboard {
-    display: flex; align-items: center; justify-content: center;
-    gap: 36px; padding: 18px 32px; width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    padding: 18px 32px;
+    width: 100%;
     background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-primary) 100%);
-    border-bottom: 1px solid var(--color-border); position: relative; z-index: 10;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    z-index: 10;
 }
-.scoreboard__team { display: flex; align-items: center; gap: 16px; }
+
+.scoreboard__team {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .scoreboard__badge {
-    width: 48px; height: 48px; border-radius: var(--radius-round);
-    display: flex; align-items: center; justify-content: center;
-    font: 900 18px/1 var(--font-main); color: #fff; position: relative; flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-round);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 900 18px/1 var(--font-main);
+    color: #fff;
+    position: relative;
+    flex-shrink: 0;
 }
+
 .scoreboard__badge::after {
-    content: ''; position: absolute; inset: -3px; border-radius: var(--radius-round);
-    border: 2px solid currentColor; opacity: 0.25;
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: var(--radius-round);
+    border: 2px solid currentColor;
+    opacity: 0.25;
 }
+
 .scoreboard__badge--red {
     background: linear-gradient(135deg, var(--color-red-dark), var(--color-red));
-    box-shadow: 0 0 20px var(--color-red-glow); color: var(--color-red-light);
+    box-shadow: 0 0 20px var(--color-red-glow);
+    color: var(--color-red-light);
 }
+
 .scoreboard__badge--blue {
     background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue));
-    box-shadow: 0 0 20px var(--color-blue-glow); color: var(--color-blue-light);
+    box-shadow: 0 0 20px var(--color-blue-glow);
+    color: var(--color-blue-light);
 }
-.scoreboard__team-info { text-align: center; }
-.scoreboard__team-name { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--color-text-dim); margin-bottom: 2px; }
-.scoreboard__score { font-size: 52px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+
+.scoreboard__team-info {
+    text-align: center;
+}
+
+.scoreboard__team-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--color-text-dim);
+    margin-bottom: 2px;
+}
+
+.scoreboard__score {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
 .scoreboard__score--red { color: var(--color-red-light); }
 .scoreboard__score--blue { color: var(--color-blue-light); }
-.scoreboard__center { text-align: center; min-width: 105px; }
+
+.scoreboard__center {
+    text-align: center;
+    min-width: 105px;
+}
+
 .scoreboard__clock {
-    font: 700 26px/1 var(--font-mono); color: var(--color-gold);
-    background: rgba(0, 0, 0, 0.4); padding: 8px 20px;
-    border-radius: var(--radius-large); border: 1px solid var(--color-gold-dim);
-    letter-spacing: 1px; display: inline-block;
+    font: 700 26px/1 var(--font-mono);
+    color: var(--color-gold);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 20px;
+    border-radius: var(--radius-large);
+    border: 1px solid var(--color-gold-dim);
+    letter-spacing: 1px;
+    display: inline-block;
 }
-.scoreboard__phase { font-size: 9px; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 2.5px; margin-top: 5px; }
+
+.scoreboard__phase {
+    font-size: 9px;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-top: 5px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOOLBAR
+   ═══════════════════════════════════════════════════════ */
 .toolbar {
-    display: flex; gap: 8px; padding: 10px 16px; flex-wrap: wrap;
-    justify-content: center; background: var(--color-bg-surface);
-    width: 100%; border-bottom: 1px solid var(--color-border);
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: var(--color-bg-surface);
+    width: 100%;
+    border-bottom: 1px solid var(--color-border);
 }
+
 .toolbar__button {
-    padding: 10px 24px; border: none; border-radius: var(--radius-small);
-    cursor: pointer; font: 700 11px/1 var(--font-main);
-    text-transform: uppercase; letter-spacing: 0.8px; color: #fff;
-    transition: all var(--transition-fast); position: relative;
-    overflow: hidden; white-space: nowrap;
+    padding: 10px 24px;
+    border: none;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    font: 700 11px/1 var(--font-main);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #fff;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
 }
-.toolbar__button:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
-.toolbar__button:active { transform: translateY(0); }
+
+.toolbar__button:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar__button:active {
+    transform: translateY(0);
+}
+
 .toolbar__button--start   { background: linear-gradient(135deg, #1e8449, #27ae60); }
 .toolbar__button--pause   { background: linear-gradient(135deg, #9e6a03, #d4a017); }
 .toolbar__button--reset   { background: linear-gradient(135deg, #b71c1c, #e53935); }
 .toolbar__button--mode    { background: linear-gradient(135deg, #6a1b9a, #8e24aa); }
 .toolbar__button--speed   { background: linear-gradient(135deg, #0d47a1, #1565c0); }
 .toolbar__button--turbo   { background: linear-gradient(135deg, #00695c, #00897b); }
-.toolbar__button--active { outline: 2px solid var(--color-gold); outline-offset: 2px; box-shadow: 0 0 12px var(--color-gold-dim); }
+
+.toolbar__button--active {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    box-shadow: 0 0 12px var(--color-gold-dim);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PITCH CONTAINER
+   ═══════════════════════════════════════════════════════ */
 .pitch-container {
-    position: relative; margin: 10px 0; border-radius: var(--radius-medium);
-    overflow: hidden; box-shadow: var(--shadow-elevated);
+    position: relative;
+    margin: 10px 0;
+    border-radius: var(--radius-medium);
+    overflow: hidden;
+    box-shadow: var(--shadow-elevated);
 }
-.pitch-container canvas { display: block; }
-.pitch-container__hud { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+
+.pitch-container canvas {
+    display: block;
+}
+
+.pitch-container__hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .pitch-container__hud-text {
-    font: 900 32px/1.3 var(--font-main); color: var(--color-gold);
+    font: 900 32px/1.3 var(--font-main);
+    color: var(--color-gold);
     text-shadow: 0 3px 16px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 200, 87, 0.15);
-    opacity: 0; transition: opacity var(--transition-normal); text-align: center; white-space: pre-line;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    text-align: center;
+    white-space: pre-line;
 }
+
+/* ═══════════════════════════════════════════════════════
+   STATS BAR
+   ═══════════════════════════════════════════════════════ */
 .stats-bar {
-    display: flex; gap: 2px; padding: 3px; background: var(--color-bg-surface);
-    border-radius: var(--radius-medium); margin: 6px 8px; flex-wrap: wrap; justify-content: center;
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-medium);
+    margin: 6px 8px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
-.stats-bar__card { text-align: center; min-width: 76px; padding: 8px 12px; background: var(--color-bg-surface-2); border-radius: var(--radius-small); }
-.stats-bar__label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-dim); margin-bottom: 3px; }
-.stats-bar__value { font: 700 18px/1.2 var(--font-main); color: var(--color-text); }
-.brain-panel { display: flex; gap: 16px; padding: 8px; justify-content: center; flex-wrap: wrap; }
-.brain-panel__card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-medium); padding: 10px 14px; text-align: center; }
-.brain-panel__title { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-dim); margin-bottom: 6px; }
-.brain-panel__canvas { border-radius: var(--radius-small); background: #050508; display: block; margin: 0 auto; }
-.evolution-panel { display: flex; gap: 18px; padding: 8px 16px; justify-content: center; flex-wrap: wrap; font-size: 11px; }
-.evolution-panel__stat { display: flex; align-items: center; gap: 6px; color: var(--color-text-dim); }
-.evolution-panel__stat strong { color: var(--color-text); font-weight: 700; }
-.evolution-panel__dot { width: 8px; height: 8px; border-radius: var(--radius-round); display: inline-block; flex-shrink: 0; }
+
+.stats-bar__card {
+    text-align: center;
+    min-width: 76px;
+    padding: 8px 12px;
+    background: var(--color-bg-surface-2);
+    border-radius: var(--radius-small);
+}
+
+.stats-bar__label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-text-dim);
+    margin-bottom: 3px;
+}
+
+.stats-bar__value {
+    font: 700 18px/1.2 var(--font-main);
+    color: var(--color-text);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRAIN VISUALIZATION
+   ═══════════════════════════════════════════════════════ */
+.brain-panel {
+    display: flex;
+    gap: 16px;
+    padding: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.brain-panel__card {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.brain-panel__title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-text-dim);
+    margin-bottom: 6px;
+}
+
+.brain-panel__canvas {
+    border-radius: var(--radius-small);
+    background: #050508;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════
+   EVOLUTION PANEL
+   ═══════════════════════════════════════════════════════ */
+.evolution-panel {
+    display: flex;
+    gap: 18px;
+    padding: 8px 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 11px;
+}
+
+.evolution-panel__stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-dim);
+}
+
+.evolution-panel__stat strong {
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+.evolution-panel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-round);
+    display: inline-block;
+    flex-shrink: 0;
+}
+
 .evolution-panel__dot--red { background: var(--color-red); }
 .evolution-panel__dot--blue { background: var(--color-blue); }
 .evolution-panel__dot--green { background: var(--color-green); }
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════ */
 .footer {
-    font-size: 10px; color: var(--color-text-muted); padding: 12px 20px;
-    text-align: center; max-width: 920px; line-height: 1.7;
-    border-top: 1px solid var(--color-border); margin-top: 8px; width: 100%;
+    font-size: 10px;
+    color: var(--color-text-muted);
+    padding: 12px 20px;
+    text-align: center;
+    max-width: 920px;
+    line-height: 1.7;
+    border-top: 1px solid var(--color-border);
+    margin-top: 8px;
+    width: 100%;
 }
-.footer strong { color: var(--color-text-dim); }
+
+.footer strong {
+    color: var(--color-text-dim);
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
 @media (max-width: 940px) {
-    .pitch-container canvas { width: 100vw; height: auto; }
-    .scoreboard { gap: 16px; padding: 10px 16px; }
-    .scoreboard__score { font-size: 38px; }
-    .scoreboard__clock { font-size: 20px; padding: 6px 14px; }
+    .pitch-container canvas {
+        width: 100vw;
+        height: auto;
+    }
+    .scoreboard {
+        gap: 16px;
+        padding: 10px 16px;
+    }
+    .scoreboard__score {
+        font-size: 38px;
+    }
+    .scoreboard__clock {
+        font-size: 20px;
+        padding: 6px 14px;
+    }
 }
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════════
+     SCOREBOARD
+     ═══════════════════════════════════════════════════════ -->
 <header class="scoreboard">
     <div class="scoreboard__team">
         <div class="scoreboard__badge scoreboard__badge--red">R</div>
@@ -172,6 +433,9 @@ body {
     </div>
 </header>
 
+<!-- ═══════════════════════════════════════════════════════
+     TOOLBAR
+     ═══════════════════════════════════════════════════════ -->
 <nav class="toolbar">
     <button class="toolbar__button toolbar__button--start" id="buttonStart" onclick="UserInterface.start()">▶ Start</button>
     <button class="toolbar__button toolbar__button--pause" id="buttonPause" onclick="UserInterface.pause()">⏸ Pause</button>
@@ -182,6 +446,9 @@ body {
     <button class="toolbar__button toolbar__button--turbo" id="buttonTurbo" onclick="UserInterface.toggleTurbo()">Turbo: OFF</button>
 </nav>
 
+<!-- ═══════════════════════════════════════════════════════
+     PITCH
+     ═══════════════════════════════════════════════════════ -->
 <div class="pitch-container">
     <canvas id="pitchCanvas"></canvas>
     <div class="pitch-container__hud">
@@ -189,6 +456,9 @@ body {
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     STATS
+     ═══════════════════════════════════════════════════════ -->
 <div class="stats-bar">
     <div class="stats-bar__card"><div class="stats-bar__label">Passes Red</div><div class="stats-bar__value" id="statPassesRed">0</div></div>
     <div class="stats-bar__card"><div class="stats-bar__label">Passes Blue</div><div class="stats-bar__value" id="statPassesBlue">0</div></div>
@@ -200,6 +470,9 @@ body {
     <div class="stats-bar__card"><div class="stats-bar__label">Neurons</div><div class="stats-bar__value" id="statNeurons">0</div></div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     BRAIN VISUALIZATION
+     ═══════════════════════════════════════════════════════ -->
 <div class="brain-panel">
     <div class="brain-panel__card">
         <div class="brain-panel__title">🔴 Red Transformer Activations</div>
@@ -211,18 +484,32 @@ body {
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     EVOLUTION INFO
+     ═══════════════════════════════════════════════════════ -->
 <div class="evolution-panel">
-    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--green"></span>Generation: <strong id="evoGeneration">0</strong></div>
-    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--red"></span>Red Fitness: <strong id="evoFitnessRed">0</strong></div>
-    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--blue"></span>Blue Fitness: <strong id="evoFitnessBlue">0</strong></div>
-    <div class="evolution-panel__stat">Matches: <strong id="evoMatches">0</strong></div>
+    <div class="evolution-panel__stat">
+        <span class="evolution-panel__dot evolution-panel__dot--green"></span>
+        Generation: <strong id="evoGeneration">0</strong>
+    </div>
+    <div class="evolution-panel__stat">
+        <span class="evolution-panel__dot evolution-panel__dot--red"></span>
+        Red Fitness: <strong id="evoFitnessRed">0</strong>
+    </div>
+    <div class="evolution-panel__stat">
+        <span class="evolution-panel__dot evolution-panel__dot--blue"></span>
+        Blue Fitness: <strong id="evoFitnessBlue">0</strong>
+    </div>
+    <div class="evolution-panel__stat">
+        Matches: <strong id="evoMatches">0</strong>
+    </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════ -->
 <div class="footer">
-    <strong>Real Football Mechanics:</strong> Ball is <strong>always a free physics object</strong> — never glued to players.
-    Dribbling = periodic small kicks forward at the player's feet. Passing is the primary action; players look for open teammates first.
-    The Transformer AGI (~400 neurons, 4-head attention) modulates tactical parameters: pressing intensity, support positioning, pass/shoot balance, run depth, defensive line.
-    Evolution improves tactics through self-play across generations.
+    <strong>Hybrid Architecture:</strong> Players possess built-in football competence — they know how to hold formation, pass to open teammates, shoot at the correct goal, make support runs, press the ball, and clear from danger. The collective Transformer AGI (~400 neurons per team, 4-head cross-attention across all player tokens) sits on top as a <strong>tactical modulator</strong> — adjusting pressing intensity, support positioning, pass/shoot/dribble balance, forward run depth, and defensive line height. The network <strong>improves</strong> tactics through evolutionary self-play; the football engine ensures the game always looks like real football from the very first frame.
 </div>
 
 <script>
@@ -231,115 +518,219 @@ body {
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 1: MATHEMATICS LIBRARY
 // ═══════════════════════════════════════════════════════════════════
+
 const MathUtils = (() => {
-    const PI = Math.PI, TAU = PI * 2, HALF_PI = PI / 2;
+    const PI = Math.PI;
+    const TAU = PI * 2;
+    const HALF_PI = PI / 2;
+
     function randomFloat() { return Math.random(); }
+
     function randomGaussian() {
         let u = 0, v = 0;
         while (u === 0) u = Math.random();
         while (v === 0) v = Math.random();
         return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
     }
-    function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
-    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function clamp(value, minimum, maximum) {
+        if (value < minimum) return minimum;
+        if (value > maximum) return maximum;
+        return value;
+    }
+
+    function lerp(start, end, factor) { return start + (end - start) * factor; }
     function distance(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); }
-    function distanceSquared(x1, y1, x2, y2) { const dx = x2 - x1, dy = y2 - y1; return dx * dx + dy * dy; }
-    function normalize(x, y) { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; }
+    function distanceSquared(x1, y1, x2, y2) { const dx = x2 - x1; const dy = y2 - y1; return dx * dx + dy * dy; }
+    function normalize(x, y) { const length = Math.hypot(x, y) || 1; return [x / length, y / length]; }
     function dotProduct(ax, ay, bx, by) { return ax * bx + ay * by; }
     function angleBetween(x1, y1, x2, y2) { return Math.atan2(y2 - y1, x2 - x1); }
-    function angleDifference(a1, a2) { let d = a1 - a2; while (d > PI) d -= TAU; while (d < -PI) d += TAU; return Math.abs(d); }
-    function pointToSegmentDistance(px, py, sx, sy, ex, ey) {
-        const dx = ex - sx, dy = ey - sy, ls = dx * dx + dy * dy;
-        if (ls === 0) return distance(px, py, sx, sy);
-        let t = ((px - sx) * dx + (py - sy) * dy) / ls;
-        t = clamp(t, 0, 1);
-        return distance(px, py, sx + t * dx, sy + t * dy);
+
+    function angleDifference(angle1, angle2) {
+        let diff = angle1 - angle2;
+        while (diff > PI) diff -= TAU;
+        while (diff < -PI) diff += TAU;
+        return Math.abs(diff);
     }
-    function geluActivation(x) { return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / PI) * (x + 0.044715 * x * x * x))); }
+
+    function pointToSegmentDistance(pointX, pointY, segStartX, segStartY, segEndX, segEndY) {
+        const dx = segEndX - segStartX;
+        const dy = segEndY - segStartY;
+        const lengthSquared = dx * dx + dy * dy;
+        if (lengthSquared === 0) return distance(pointX, pointY, segStartX, segStartY);
+        let t = ((pointX - segStartX) * dx + (pointY - segStartY) * dy) / lengthSquared;
+        t = clamp(t, 0, 1);
+        return distance(pointX, pointY, segStartX + t * dx, segStartY + t * dy);
+    }
+
+    function geluActivation(x) {
+        return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / PI) * (x + 0.044715 * x * x * x)));
+    }
+
     return Object.freeze({
         PI, TAU, HALF_PI,
         abs: Math.abs, sqrt: Math.sqrt, min: Math.min, max: Math.max,
         floor: Math.floor, round: Math.round, sign: Math.sign,
         cos: Math.cos, sin: Math.sin, atan2: Math.atan2, tanh: Math.tanh,
-        hypot: Math.hypot, exp: Math.exp, log: Math.log,
+        hypot: Math.hypot, exp: Math.exp, log: Math.log, pow: Math.pow,
         randomFloat, randomGaussian, clamp, lerp,
         distance, distanceSquared, normalize, dotProduct,
-        angleBetween, angleDifference, pointToSegmentDistance, geluActivation
+        angleBetween, angleDifference, pointToSegmentDistance,
+        geluActivation
     });
 })();
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 2: TENSOR OPERATIONS
 // ═══════════════════════════════════════════════════════════════════
+
 const TensorOps = (() => {
-    function createZeros(s) { return new Float32Array(s); }
-    function createOnes(s) { const b = new Float32Array(s); b.fill(1); return b; }
-    function createXavierWeights(iS, oS) {
-        const sc = MathUtils.sqrt(2.0 / (iS + oS)), b = new Float32Array(iS * oS);
-        for (let i = 0; i < b.length; i++) b[i] = MathUtils.randomGaussian() * sc;
-        return b;
+    function createZeros(size) { return new Float32Array(size); }
+    function createOnes(size) { const buffer = new Float32Array(size); buffer.fill(1); return buffer; }
+
+    function createXavierWeights(inputSize, outputSize) {
+        const scale = MathUtils.sqrt(2.0 / (inputSize + outputSize));
+        const buffer = new Float32Array(inputSize * outputSize);
+        for (let i = 0; i < buffer.length; i++) buffer[i] = MathUtils.randomGaussian() * scale;
+        return buffer;
     }
-    function matrixMultiply(A, nR, iD, B, nC, R) {
-        for (let r = 0; r < nR; r++) { const ro = r * iD, rro = r * nC;
-            for (let c = 0; c < nC; c++) { let s = 0; for (let k = 0; k < iD; k++) s += A[ro + k] * B[k * nC + c]; R[rro + c] = s; }
+
+    function matrixMultiply(matrixA, numRows, innerDim, matrixB, numCols, result) {
+        for (let row = 0; row < numRows; row++) {
+            const rowOffset = row * innerDim;
+            const resultOffset = row * numCols;
+            for (let col = 0; col < numCols; col++) {
+                let sum = 0;
+                for (let k = 0; k < innerDim; k++) sum += matrixA[rowOffset + k] * matrixB[k * numCols + col];
+                result[resultOffset + col] = sum;
+            }
         }
     }
-    function addBiasToRows(M, B, nR, nC) { for (let r = 0; r < nR; r++) { const o = r * nC; for (let c = 0; c < nC; c++) M[o + c] += B[c]; } }
-    function layerNormalize(d, off, sz, g, b) {
-        let m = 0; for (let i = 0; i < sz; i++) m += d[off + i]; m /= sz;
-        let v = 0; for (let i = 0; i < sz; i++) { const df = d[off + i] - m; v += df * df; } v /= sz;
-        const is = 1.0 / MathUtils.sqrt(v + 1e-5);
-        for (let i = 0; i < sz; i++) d[off + i] = g[i] * ((d[off + i] - m) * is) + b[i];
+
+    function addBiasToRows(matrix, biasVector, numRows, numCols) {
+        for (let row = 0; row < numRows; row++) {
+            const offset = row * numCols;
+            for (let col = 0; col < numCols; col++) matrix[offset + col] += biasVector[col];
+        }
     }
-    function softmax(d, off, len) {
-        let mx = -Infinity; for (let i = 0; i < len; i++) if (d[off + i] > mx) mx = d[off + i];
-        let se = 0; for (let i = 0; i < len; i++) { d[off + i] = MathUtils.exp(d[off + i] - mx); se += d[off + i]; }
-        const iv = 1.0 / se; for (let i = 0; i < len; i++) d[off + i] *= iv;
+
+    function layerNormalize(data, startOffset, size, gammaWeights, betaWeights) {
+        let mean = 0;
+        for (let i = 0; i < size; i++) mean += data[startOffset + i];
+        mean /= size;
+        let variance = 0;
+        for (let i = 0; i < size; i++) { const diff = data[startOffset + i] - mean; variance += diff * diff; }
+        variance /= size;
+        const invStd = 1.0 / MathUtils.sqrt(variance + 1e-5);
+        for (let i = 0; i < size; i++) data[startOffset + i] = gammaWeights[i] * ((data[startOffset + i] - mean) * invStd) + betaWeights[i];
     }
-    function copyRegion(s, so, d, dO, l) { for (let i = 0; i < l; i++) d[dO + i] = s[so + i]; }
-    function addElementwise(a, b, o, l) { for (let i = 0; i < l; i++) o[i] = a[i] + b[i]; }
-    function applyActivation(d, off, l, fn) { for (let i = 0; i < l; i++) d[off + i] = fn(d[off + i]); }
-    return Object.freeze({ createZeros, createOnes, createXavierWeights, matrixMultiply, addBiasToRows, layerNormalize, softmax, copyRegion, addElementwise, applyActivation });
+
+    function softmax(data, startOffset, length) {
+        let maxValue = -Infinity;
+        for (let i = 0; i < length; i++) if (data[startOffset + i] > maxValue) maxValue = data[startOffset + i];
+        let sumExp = 0;
+        for (let i = 0; i < length; i++) { data[startOffset + i] = MathUtils.exp(data[startOffset + i] - maxValue); sumExp += data[startOffset + i]; }
+        const invSum = 1.0 / sumExp;
+        for (let i = 0; i < length; i++) data[startOffset + i] *= invSum;
+    }
+
+    function copyRegion(source, sourceOffset, destination, destOffset, length) {
+        for (let i = 0; i < length; i++) destination[destOffset + i] = source[sourceOffset + i];
+    }
+
+    function addElementwise(bufferA, bufferB, output, length) {
+        for (let i = 0; i < length; i++) output[i] = bufferA[i] + bufferB[i];
+    }
+
+    function applyActivation(data, startOffset, length, activationFunction) {
+        for (let i = 0; i < length; i++) data[startOffset + i] = activationFunction(data[startOffset + i]);
+    }
+
+    return Object.freeze({
+        createZeros, createOnes, createXavierWeights,
+        matrixMultiply, addBiasToRows, layerNormalize, softmax,
+        copyRegion, addElementwise, applyActivation
+    });
 })();
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 3: COLLECTIVE TRANSFORMER BRAIN
 // ═══════════════════════════════════════════════════════════════════
+
 class CollectiveTransformerBrain {
     constructor(numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
         this.modelDimension = 48;
         this.numberOfHeads = 4;
-        this.headDimension = 12;
+        this.headDimension = this.modelDimension / this.numberOfHeads;
         this.feedForwardDimension = 96;
+
         this.allyFeaturesPerPlayer = 8;
         this.opponentFeaturesPerPlayer = 5;
         this.globalFeatures = 5;
-        this.totalInputDimension = this.allyFeaturesPerPlayer * numberOfPlayers + this.opponentFeaturesPerPlayer * numberOfPlayers + this.globalFeatures;
+        this.totalInputDimension =
+            this.allyFeaturesPerPlayer * numberOfPlayers +
+            this.opponentFeaturesPerPlayer * numberOfPlayers +
+            this.globalFeatures;
+
         this.outputsPerPlayer = 10;
-        const D = this.modelDimension, FF = this.feedForwardDimension, N = numberOfPlayers;
+
+        const D = this.modelDimension;
+        const FF = this.feedForwardDimension;
+        const N = numberOfPlayers;
+
         this.inputWeight = TensorOps.createXavierWeights(this.totalInputDimension, D);
         this.inputBias = TensorOps.createZeros(D);
-        this.tokenWeights = []; this.tokenBiases = [];
-        for (let i = 0; i < N; i++) { this.tokenWeights.push(TensorOps.createXavierWeights(D, D)); this.tokenBiases.push(TensorOps.createZeros(D)); }
-        this.block1QueryWeight = TensorOps.createXavierWeights(D, D); this.block1QueryBias = TensorOps.createZeros(D);
-        this.block1KeyWeight = TensorOps.createXavierWeights(D, D); this.block1KeyBias = TensorOps.createZeros(D);
-        this.block1ValueWeight = TensorOps.createXavierWeights(D, D); this.block1ValueBias = TensorOps.createZeros(D);
-        this.block1OutputWeight = TensorOps.createXavierWeights(D, D); this.block1OutputBias = TensorOps.createZeros(D);
-        this.block1AttnNormGamma = TensorOps.createOnes(D); this.block1AttnNormBeta = TensorOps.createZeros(D);
-        this.block1FFWeight1 = TensorOps.createXavierWeights(D, FF); this.block1FFBias1 = TensorOps.createZeros(FF);
-        this.block1FFWeight2 = TensorOps.createXavierWeights(FF, D); this.block1FFBias2 = TensorOps.createZeros(D);
-        this.block1FFNormGamma = TensorOps.createOnes(D); this.block1FFNormBeta = TensorOps.createZeros(D);
-        this.block2QueryWeight = TensorOps.createXavierWeights(D, D); this.block2QueryBias = TensorOps.createZeros(D);
-        this.block2KeyWeight = TensorOps.createXavierWeights(D, D); this.block2KeyBias = TensorOps.createZeros(D);
-        this.block2ValueWeight = TensorOps.createXavierWeights(D, D); this.block2ValueBias = TensorOps.createZeros(D);
-        this.block2OutputWeight = TensorOps.createXavierWeights(D, D); this.block2OutputBias = TensorOps.createZeros(D);
-        this.block2AttnNormGamma = TensorOps.createOnes(D); this.block2AttnNormBeta = TensorOps.createZeros(D);
-        this.block2FFWeight1 = TensorOps.createXavierWeights(D, FF); this.block2FFBias1 = TensorOps.createZeros(FF);
-        this.block2FFWeight2 = TensorOps.createXavierWeights(FF, D); this.block2FFBias2 = TensorOps.createZeros(D);
-        this.block2FFNormGamma = TensorOps.createOnes(D); this.block2FFNormBeta = TensorOps.createZeros(D);
+
+        this.tokenWeights = [];
+        this.tokenBiases = [];
+        for (let i = 0; i < N; i++) {
+            this.tokenWeights.push(TensorOps.createXavierWeights(D, D));
+            this.tokenBiases.push(TensorOps.createZeros(D));
+        }
+
+        // Block 1
+        this.block1QueryWeight = TensorOps.createXavierWeights(D, D);
+        this.block1QueryBias = TensorOps.createZeros(D);
+        this.block1KeyWeight = TensorOps.createXavierWeights(D, D);
+        this.block1KeyBias = TensorOps.createZeros(D);
+        this.block1ValueWeight = TensorOps.createXavierWeights(D, D);
+        this.block1ValueBias = TensorOps.createZeros(D);
+        this.block1OutputWeight = TensorOps.createXavierWeights(D, D);
+        this.block1OutputBias = TensorOps.createZeros(D);
+        this.block1AttnNormGamma = TensorOps.createOnes(D);
+        this.block1AttnNormBeta = TensorOps.createZeros(D);
+        this.block1FFWeight1 = TensorOps.createXavierWeights(D, FF);
+        this.block1FFBias1 = TensorOps.createZeros(FF);
+        this.block1FFWeight2 = TensorOps.createXavierWeights(FF, D);
+        this.block1FFBias2 = TensorOps.createZeros(D);
+        this.block1FFNormGamma = TensorOps.createOnes(D);
+        this.block1FFNormBeta = TensorOps.createZeros(D);
+
+        // Block 2
+        this.block2QueryWeight = TensorOps.createXavierWeights(D, D);
+        this.block2QueryBias = TensorOps.createZeros(D);
+        this.block2KeyWeight = TensorOps.createXavierWeights(D, D);
+        this.block2KeyBias = TensorOps.createZeros(D);
+        this.block2ValueWeight = TensorOps.createXavierWeights(D, D);
+        this.block2ValueBias = TensorOps.createZeros(D);
+        this.block2OutputWeight = TensorOps.createXavierWeights(D, D);
+        this.block2OutputBias = TensorOps.createZeros(D);
+        this.block2AttnNormGamma = TensorOps.createOnes(D);
+        this.block2AttnNormBeta = TensorOps.createZeros(D);
+        this.block2FFWeight1 = TensorOps.createXavierWeights(D, FF);
+        this.block2FFBias1 = TensorOps.createZeros(FF);
+        this.block2FFWeight2 = TensorOps.createXavierWeights(FF, D);
+        this.block2FFBias2 = TensorOps.createZeros(D);
+        this.block2FFNormGamma = TensorOps.createOnes(D);
+        this.block2FFNormBeta = TensorOps.createZeros(D);
+
         this.outputWeight = TensorOps.createXavierWeights(D, this.outputsPerPlayer);
         this.outputBias = TensorOps.createZeros(this.outputsPerPlayer);
+
+        // Buffers
         this.embeddingBuffer = TensorOps.createZeros(D);
         this.tokenBuffer = TensorOps.createZeros(N * D);
         this.tokenTempBuffer = TensorOps.createZeros(D);
@@ -356,307 +747,582 @@ class CollectiveTransformerBrain {
         this.activationSnapshot = TensorOps.createZeros(D);
         this.totalNeuronCount = D + N * D + 2 * (4 * D + FF + D + 2 * D) + N * this.outputsPerPlayer;
     }
+
     getAllParameterArrays() {
-        const p = [this.inputWeight, this.inputBias];
-        for (let i = 0; i < this.numberOfPlayers; i++) p.push(this.tokenWeights[i], this.tokenBiases[i]);
-        p.push(this.block1QueryWeight, this.block1QueryBias, this.block1KeyWeight, this.block1KeyBias,
+        const params = [this.inputWeight, this.inputBias];
+        for (let i = 0; i < this.numberOfPlayers; i++) params.push(this.tokenWeights[i], this.tokenBiases[i]);
+        params.push(
+            this.block1QueryWeight, this.block1QueryBias, this.block1KeyWeight, this.block1KeyBias,
             this.block1ValueWeight, this.block1ValueBias, this.block1OutputWeight, this.block1OutputBias,
             this.block1AttnNormGamma, this.block1AttnNormBeta, this.block1FFWeight1, this.block1FFBias1,
-            this.block1FFWeight2, this.block1FFBias2, this.block1FFNormGamma, this.block1FFNormBeta);
-        p.push(this.block2QueryWeight, this.block2QueryBias, this.block2KeyWeight, this.block2KeyBias,
+            this.block1FFWeight2, this.block1FFBias2, this.block1FFNormGamma, this.block1FFNormBeta,
+            this.block2QueryWeight, this.block2QueryBias, this.block2KeyWeight, this.block2KeyBias,
             this.block2ValueWeight, this.block2ValueBias, this.block2OutputWeight, this.block2OutputBias,
             this.block2AttnNormGamma, this.block2AttnNormBeta, this.block2FFWeight1, this.block2FFBias1,
-            this.block2FFWeight2, this.block2FFBias2, this.block2FFNormGamma, this.block2FFNormBeta);
-        p.push(this.outputWeight, this.outputBias);
-        return p;
+            this.block2FFWeight2, this.block2FFBias2, this.block2FFNormGamma, this.block2FFNormBeta,
+            this.outputWeight, this.outputBias
+        );
+        return params;
     }
+
     clone() {
-        const c = new CollectiveTransformerBrain(this.numberOfPlayers);
-        const sp = this.getAllParameterArrays(), dp = c.getAllParameterArrays();
-        for (let i = 0; i < sp.length; i++) dp[i].set(sp[i]);
-        return c;
+        const cloned = new CollectiveTransformerBrain(this.numberOfPlayers);
+        const sourceParams = this.getAllParameterArrays();
+        const destParams = cloned.getAllParameterArrays();
+        for (let i = 0; i < sourceParams.length; i++) destParams[i].set(sourceParams[i]);
+        return cloned;
     }
-    mutate(rate, strength) {
-        for (const pa of this.getAllParameterArrays()) for (let i = 0; i < pa.length; i++)
-            if (MathUtils.randomFloat() < rate) pa[i] += MathUtils.randomGaussian() * strength;
+
+    mutate(mutationRate, mutationStrength) {
+        for (const paramArray of this.getAllParameterArrays())
+            for (let i = 0; i < paramArray.length; i++)
+                if (MathUtils.randomFloat() < mutationRate) paramArray[i] += MathUtils.randomGaussian() * mutationStrength;
     }
-    static crossover(pA, pB) {
-        const c = pA.clone(), cp = c.getAllParameterArrays(), bp = pB.getAllParameterArrays();
-        for (let i = 0; i < cp.length; i++) for (let j = 0; j < cp[i].length; j++)
-            if (MathUtils.randomFloat() < 0.5) cp[i][j] = bp[i][j];
-        return c;
+
+    static crossover(parentA, parentB) {
+        const child = parentA.clone();
+        const childParams = child.getAllParameterArrays();
+        const parentBParams = parentB.getAllParameterArrays();
+        for (let i = 0; i < childParams.length; i++)
+            for (let j = 0; j < childParams[i].length; j++)
+                if (MathUtils.randomFloat() < 0.5) childParams[i][j] = parentBParams[i][j];
+        return child;
     }
-    _computeCrossAttention(tokens, qW, qB, kW, kB, vW, vB, oW, oB) {
-        const N = this.numberOfPlayers, D = this.modelDimension, H = this.numberOfHeads, hd = this.headDimension;
-        TensorOps.matrixMultiply(tokens, N, D, qW, D, this.queryBuffer); TensorOps.addBiasToRows(this.queryBuffer, qB, N, D);
-        TensorOps.matrixMultiply(tokens, N, D, kW, D, this.keyBuffer); TensorOps.addBiasToRows(this.keyBuffer, kB, N, D);
-        TensorOps.matrixMultiply(tokens, N, D, vW, D, this.valueBuffer); TensorOps.addBiasToRows(this.valueBuffer, vB, N, D);
-        const scale = 1.0 / MathUtils.sqrt(hd);
-        for (let h = 0; h < H; h++) { const ho = h * hd;
-            for (let qi = 0; qi < N; qi++) {
-                for (let ki = 0; ki < N; ki++) { let sc = 0; for (let d = 0; d < hd; d++) sc += this.queryBuffer[qi * D + ho + d] * this.keyBuffer[ki * D + ho + d]; this.attentionScores[qi * N + ki] = sc * scale; }
-                TensorOps.softmax(this.attentionScores, qi * N, N);
+
+    _computeCrossAttention(tokens, queryW, queryB, keyW, keyB, valueW, valueB, outputW, outputB) {
+        const N = this.numberOfPlayers, D = this.modelDimension, H = this.numberOfHeads, headDim = this.headDimension;
+        TensorOps.matrixMultiply(tokens, N, D, queryW, D, this.queryBuffer);
+        TensorOps.addBiasToRows(this.queryBuffer, queryB, N, D);
+        TensorOps.matrixMultiply(tokens, N, D, keyW, D, this.keyBuffer);
+        TensorOps.addBiasToRows(this.keyBuffer, keyB, N, D);
+        TensorOps.matrixMultiply(tokens, N, D, valueW, D, this.valueBuffer);
+        TensorOps.addBiasToRows(this.valueBuffer, valueB, N, D);
+
+        const scale = 1.0 / MathUtils.sqrt(headDim);
+        for (let head = 0; head < H; head++) {
+            const headOffset = head * headDim;
+            for (let queryIdx = 0; queryIdx < N; queryIdx++) {
+                for (let keyIdx = 0; keyIdx < N; keyIdx++) {
+                    let score = 0;
+                    for (let d = 0; d < headDim; d++)
+                        score += this.queryBuffer[queryIdx * D + headOffset + d] * this.keyBuffer[keyIdx * D + headOffset + d];
+                    this.attentionScores[queryIdx * N + keyIdx] = score * scale;
+                }
+                TensorOps.softmax(this.attentionScores, queryIdx * N, N);
             }
-            for (let qi = 0; qi < N; qi++) for (let d = 0; d < hd; d++) { let ws = 0; for (let ki = 0; ki < N; ki++) ws += this.attentionScores[qi * N + ki] * this.valueBuffer[ki * D + ho + d]; this.attentionOutput[qi * D + ho + d] = ws; }
+            for (let queryIdx = 0; queryIdx < N; queryIdx++)
+                for (let d = 0; d < headDim; d++) {
+                    let weightedSum = 0;
+                    for (let keyIdx = 0; keyIdx < N; keyIdx++)
+                        weightedSum += this.attentionScores[queryIdx * N + keyIdx] * this.valueBuffer[keyIdx * D + headOffset + d];
+                    this.attentionOutput[queryIdx * D + headOffset + d] = weightedSum;
+                }
         }
-        TensorOps.matrixMultiply(this.attentionOutput, N, D, oW, D, this.projectionBuffer); TensorOps.addBiasToRows(this.projectionBuffer, oB, N, D);
+        TensorOps.matrixMultiply(this.attentionOutput, N, D, outputW, D, this.projectionBuffer);
+        TensorOps.addBiasToRows(this.projectionBuffer, outputB, N, D);
     }
-    _computeFeedForward(tokens, w1, b1, w2, b2) {
+
+    _computeFeedForward(tokens, weight1, bias1, weight2, bias2) {
         const N = this.numberOfPlayers, D = this.modelDimension, FF = this.feedForwardDimension;
-        TensorOps.matrixMultiply(tokens, N, D, w1, FF, this.ffHiddenBuffer); TensorOps.addBiasToRows(this.ffHiddenBuffer, b1, N, FF);
+        TensorOps.matrixMultiply(tokens, N, D, weight1, FF, this.ffHiddenBuffer);
+        TensorOps.addBiasToRows(this.ffHiddenBuffer, bias1, N, FF);
         for (let i = 0; i < N * FF; i++) this.ffHiddenBuffer[i] = MathUtils.geluActivation(this.ffHiddenBuffer[i]);
-        TensorOps.matrixMultiply(this.ffHiddenBuffer, N, FF, w2, D, this.ffOutputBuffer); TensorOps.addBiasToRows(this.ffOutputBuffer, b2, N, D);
+        TensorOps.matrixMultiply(this.ffHiddenBuffer, N, FF, weight2, D, this.ffOutputBuffer);
+        TensorOps.addBiasToRows(this.ffOutputBuffer, bias2, N, D);
     }
-    encodeGameState(allies, opponents, ball, scoreDiff, timeNorm, atkDir) {
-        const inp = new Float32Array(this.totalInputDimension); let idx = 0;
-        const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT;
-        for (const p of allies) {
-            inp[idx++] = (p.x / W - 0.5) * 2; inp[idx++] = (p.y / H - 0.5) * 2;
-            inp[idx++] = p.vx / 5; inp[idx++] = p.vy / 5; inp[idx++] = p.role / 3;
-            inp[idx++] = (ball.controlledBy === p) ? 1 : -1;
-            inp[idx++] = p.energy * 2 - 1; inp[idx++] = p.kickCooldown > 0 ? 1 : -1;
+
+    encodeGameState(allies, opponents, ball, scoreDifference, timeNormalized, attackDirection) {
+        const input = new Float32Array(this.totalInputDimension);
+        let index = 0;
+        const fieldWidth = FieldConstants.WIDTH, fieldHeight = FieldConstants.HEIGHT;
+        for (const player of allies) {
+            input[index++] = (player.x / fieldWidth - 0.5) * 2;
+            input[index++] = (player.y / fieldHeight - 0.5) * 2;
+            input[index++] = player.vx / 5;
+            input[index++] = player.vy / 5;
+            input[index++] = player.role / 3;
+            input[index++] = player.hasBall ? 1 : -1;
+            input[index++] = player.energy * 2 - 1;
+            input[index++] = player.kickCooldown > 0 ? 1 : -1;
         }
-        for (const p of opponents) {
-            inp[idx++] = (p.x / W - 0.5) * 2; inp[idx++] = (p.y / H - 0.5) * 2;
-            inp[idx++] = p.vx / 5; inp[idx++] = p.vy / 5;
-            inp[idx++] = (ball.controlledBy === p) ? 1 : -1;
+        for (const player of opponents) {
+            input[index++] = (player.x / fieldWidth - 0.5) * 2;
+            input[index++] = (player.y / fieldHeight - 0.5) * 2;
+            input[index++] = player.vx / 5;
+            input[index++] = player.vy / 5;
+            input[index++] = player.hasBall ? 1 : -1;
         }
-        inp[idx++] = (ball.x / W - 0.5) * 2; inp[idx++] = (ball.y / H - 0.5) * 2;
-        inp[idx++] = ball.vx / 12; inp[idx++] = ball.vy / 12;
-        inp[idx++] = MathUtils.tanh(scoreDiff / 3);
-        return inp;
+        input[index++] = (ball.x / fieldWidth - 0.5) * 2;
+        input[index++] = (ball.y / fieldHeight - 0.5) * 2;
+        input[index++] = ball.vx / 12;
+        input[index++] = ball.vy / 12;
+        input[index++] = MathUtils.tanh(scoreDifference / 3);
+        return input;
     }
+
     forward(inputVector) {
-        const N = this.numberOfPlayers, D = this.modelDimension, tts = N * D;
+        const N = this.numberOfPlayers, D = this.modelDimension, totalTokenSize = N * D;
+
         TensorOps.matrixMultiply(inputVector, 1, this.totalInputDimension, this.inputWeight, D, this.embeddingBuffer);
         TensorOps.addBiasToRows(this.embeddingBuffer, this.inputBias, 1, D);
         TensorOps.applyActivation(this.embeddingBuffer, 0, D, MathUtils.geluActivation);
-        for (let pi = 0; pi < N; pi++) {
-            TensorOps.matrixMultiply(this.embeddingBuffer, 1, D, this.tokenWeights[pi], D, this.tokenTempBuffer);
-            TensorOps.addBiasToRows(this.tokenTempBuffer, this.tokenBiases[pi], 1, D);
-            for (let d = 0; d < D; d++) this.tokenBuffer[pi * D + d] = MathUtils.geluActivation(this.tokenTempBuffer[d]);
+
+        for (let playerIdx = 0; playerIdx < N; playerIdx++) {
+            TensorOps.matrixMultiply(this.embeddingBuffer, 1, D, this.tokenWeights[playerIdx], D, this.tokenTempBuffer);
+            TensorOps.addBiasToRows(this.tokenTempBuffer, this.tokenBiases[playerIdx], 1, D);
+            for (let d = 0; d < D; d++) this.tokenBuffer[playerIdx * D + d] = MathUtils.geluActivation(this.tokenTempBuffer[d]);
         }
+
         // Block 1
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, tts);
+        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
         this._computeCrossAttention(this.tokenBuffer, this.block1QueryWeight, this.block1QueryBias, this.block1KeyWeight, this.block1KeyBias, this.block1ValueWeight, this.block1ValueBias, this.block1OutputWeight, this.block1OutputBias);
-        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, tts);
+        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, totalTokenSize);
         for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block1AttnNormGamma, this.block1AttnNormBeta);
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, tts);
+        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
         this._computeFeedForward(this.tokenBuffer, this.block1FFWeight1, this.block1FFBias1, this.block1FFWeight2, this.block1FFBias2);
-        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, tts);
+        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, totalTokenSize);
         for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block1FFNormGamma, this.block1FFNormBeta);
+
         // Block 2
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, tts);
+        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
         this._computeCrossAttention(this.tokenBuffer, this.block2QueryWeight, this.block2QueryBias, this.block2KeyWeight, this.block2KeyBias, this.block2ValueWeight, this.block2ValueBias, this.block2OutputWeight, this.block2OutputBias);
-        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, tts);
+        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, totalTokenSize);
         for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block2AttnNormGamma, this.block2AttnNormBeta);
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, tts);
+        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
         this._computeFeedForward(this.tokenBuffer, this.block2FFWeight1, this.block2FFBias1, this.block2FFWeight2, this.block2FFBias2);
-        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, tts);
+        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, totalTokenSize);
         for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block2FFNormGamma, this.block2FFNormBeta);
-        // Output
+
         TensorOps.matrixMultiply(this.tokenBuffer, N, D, this.outputWeight, this.outputsPerPlayer, this.outputBuffer);
         TensorOps.addBiasToRows(this.outputBuffer, this.outputBias, N, this.outputsPerPlayer);
-        const to = N * this.outputsPerPlayer;
-        for (let i = 0; i < to; i++) this.outputBuffer[i] = MathUtils.tanh(this.outputBuffer[i]);
-        for (let d = 0; d < D; d++) { let avg = 0; for (let p = 0; p < N; p++) avg += MathUtils.abs(this.tokenBuffer[p * D + d]); this.activationSnapshot[d] = avg / N; }
+        const totalOutputs = N * this.outputsPerPlayer;
+        for (let i = 0; i < totalOutputs; i++) this.outputBuffer[i] = MathUtils.tanh(this.outputBuffer[i]);
+
+        for (let d = 0; d < D; d++) {
+            let average = 0;
+            for (let p = 0; p < N; p++) average += MathUtils.abs(this.tokenBuffer[p * D + d]);
+            this.activationSnapshot[d] = average / N;
+        }
         return this.outputBuffer;
     }
 }
 
+
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 4: EVOLUTIONARY TRAINING
+//  MODULE 4: EVOLUTIONARY TRAINING SYSTEM
 // ═══════════════════════════════════════════════════════════════════
+
 const POPULATION_SIZE = 8;
+
 class EvolutionaryPool {
-    constructor(np) {
-        this.numberOfPlayers = np; this.population = []; this.fitnessScores = []; this.generation = 0; this.bestFitnessEver = 0; this.activeIndex = 0;
-        for (let i = 0; i < POPULATION_SIZE; i++) { this.population.push(new CollectiveTransformerBrain(np)); this.fitnessScores.push(0); }
+    constructor(numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
+        this.population = [];
+        this.fitnessScores = [];
+        this.generation = 0;
+        this.bestFitnessEver = 0;
+        this.activeIndex = 0;
+        for (let i = 0; i < POPULATION_SIZE; i++) {
+            this.population.push(new CollectiveTransformerBrain(numberOfPlayers));
+            this.fitnessScores.push(0);
+        }
     }
+
     getActiveBrain() { return this.population[this.activeIndex]; }
-    recordFitness(ms) {
-        let f = 0; f += ms.goalsScored * 150; f -= ms.ownGoals * 300; f += ms.passesCompleted * 8;
-        f += ms.shotsOnTarget * 12; f += ms.possessionFrames * 0.15; f += ms.territoryFrames * 0.1;
-        f += ms.ballProgression * 0.2; f += ms.tacklesWon * 6; f -= ms.goalsConceded * 80;
-        f += ms.spacingReward * 0.05; f -= ms.clusteringPenalty * 0.03;
-        this.fitnessScores[this.activeIndex] = f;
+
+    recordFitness(matchStatistics) {
+        let fitness = 0;
+        fitness += matchStatistics.goalsScored * 150;
+        fitness -= matchStatistics.ownGoals * 300;
+        fitness += matchStatistics.passesCompleted * 8;
+        fitness += matchStatistics.shotsOnTarget * 12;
+        fitness += matchStatistics.possessionFrames * 0.15;
+        fitness += matchStatistics.territoryFrames * 0.1;
+        fitness += matchStatistics.ballProgression * 0.2;
+        fitness += matchStatistics.tacklesWon * 6;
+        fitness -= matchStatistics.goalsConceded * 80;
+        fitness += matchStatistics.spacingReward * 0.05;
+        fitness -= matchStatistics.clusteringPenalty * 0.03;
+        fitness += matchStatistics.dribbleSuccesses * 5;
+        this.fitnessScores[this.activeIndex] = fitness;
     }
+
     advanceToNextCandidate() { this.activeIndex = (this.activeIndex + 1) % POPULATION_SIZE; }
+
     evolve() {
         this.generation++;
-        const si = Array.from({ length: POPULATION_SIZE }, (_, i) => i).sort((a, b) => this.fitnessScores[b] - this.fitnessScores[a]);
-        const bf = this.fitnessScores[si[0]]; if (bf > this.bestFitnessEver) this.bestFitnessEver = bf;
-        const np = [this.population[si[0]].clone(), this.population[si[1]].clone()];
+        const sortedIndices = Array.from({ length: POPULATION_SIZE }, (_, i) => i)
+            .sort((a, b) => this.fitnessScores[b] - this.fitnessScores[a]);
+        const bestFitness = this.fitnessScores[sortedIndices[0]];
+        if (bestFitness > this.bestFitnessEver) this.bestFitnessEver = bestFitness;
+
+        const newPopulation = [
+            this.population[sortedIndices[0]].clone(),
+            this.population[sortedIndices[1]].clone()
+        ];
         for (let i = 2; i < POPULATION_SIZE; i++) {
-            const pA = this._tournamentSelect(si), pB = this._tournamentSelect(si);
-            let child = MathUtils.randomFloat() < 0.65 ? CollectiveTransformerBrain.crossover(this.population[pA], this.population[pB]) : this.population[pA].clone();
-            const af = bf < 100 ? 2 : bf < 300 ? 1.5 : 1;
-            child.mutate(MathUtils.clamp(0.07 * af, 0.03, 0.2), MathUtils.clamp(0.13 * af, 0.05, 0.3));
-            np.push(child);
+            const parentAIndex = this._tournamentSelect(sortedIndices);
+            const parentBIndex = this._tournamentSelect(sortedIndices);
+            let child;
+            if (MathUtils.randomFloat() < 0.65) child = CollectiveTransformerBrain.crossover(this.population[parentAIndex], this.population[parentBIndex]);
+            else child = this.population[parentAIndex].clone();
+            const adaptiveFactor = bestFitness < 100 ? 2.0 : bestFitness < 300 ? 1.5 : 1.0;
+            child.mutate(MathUtils.clamp(0.07 * adaptiveFactor, 0.03, 0.20), MathUtils.clamp(0.13 * adaptiveFactor, 0.05, 0.30));
+            newPopulation.push(child);
         }
-        this.population = np; this.fitnessScores.fill(0); this.activeIndex = 0;
+        this.population = newPopulation;
+        this.fitnessScores.fill(0);
+        this.activeIndex = 0;
     }
-    _tournamentSelect(si) {
-        let best = si[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)];
-        for (let i = 1; i < 3; i++) { const c = si[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)]; if (this.fitnessScores[c] > this.fitnessScores[best]) best = c; }
-        return best;
+
+    _tournamentSelect(sortedIndices) {
+        let bestIndex = sortedIndices[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)];
+        for (let i = 1; i < 3; i++) {
+            const candidate = sortedIndices[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)];
+            if (this.fitnessScores[candidate] > this.fitnessScores[bestIndex]) bestIndex = candidate;
+        }
+        return bestIndex;
     }
+
     getBestCurrentFitness() { return MathUtils.round(MathUtils.max(...this.fitnessScores)); }
 }
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 5: FIELD CONSTANTS
 // ═══════════════════════════════════════════════════════════════════
+
 const FieldConstants = Object.freeze({
-    WIDTH: 900, HEIGHT: 560, GOAL_WIDTH: 110, GOAL_DEPTH: 30,
+    WIDTH: 900, HEIGHT: 560,
+    GOAL_WIDTH: 110, GOAL_DEPTH: 30,
     get GOAL_TOP() { return (this.HEIGHT - this.GOAL_WIDTH) / 2; },
     get GOAL_BOTTOM() { return this.GOAL_TOP + this.GOAL_WIDTH; },
     PLAYER_RADIUS: 12, BALL_RADIUS: 6,
     PLAYER_MAX_SPEED: 2.8, PLAYER_ACCELERATION: 0.38, PLAYER_FRICTION: 0.88,
-    BALL_FRICTION: 0.985, BALL_DRIBBLE_FRICTION: 0.88,
-    MAX_BALL_SPEED: 14, KICK_COOLDOWN_FRAMES: 12,
-    PICKUP_RANGE: 20, CONTROL_LOSE_RANGE: 36,
+    BALL_FRICTION: 0.982, MAX_BALL_SPEED: 14,
+    KICK_COOLDOWN_FRAMES: 12,
+    PICKUP_RANGE: 18,
     MATCH_DURATION_FRAMES: 5400,
-    DRIBBLE_TOUCH_INTERVAL_FAST: 5, DRIBBLE_TOUCH_INTERVAL_SLOW: 10,
-    ROLES_3V3: [0, 1, 3], ROLES_5V5: [0, 1, 1, 2, 3],
+
+    // ══ NEW: Dribbling constants ══
+    DRIBBLE_BALL_OFFSET: 16,       // ball distance ahead of dribbler's feet
+    DRIBBLE_TOUCH_INTERVAL: 7,     // frames between dribble touch-kicks
+    DRIBBLE_TOUCH_POWER: 2.5,      // power of each dribble touch
+    DRIBBLE_WOBBLE: 0.12,          // random angle wobble per touch
+    DRIBBLE_LOSE_DISTANCE: 40,     // if ball gets this far, lose control
+    TACKLE_RANGE: 24,              // how close opponent must be to tackle
+    TACKLE_SUCCESS_RATE: 0.04,     // probability per frame when in range
+    TACKLE_FROM_BEHIND_FACTOR: 0.3,// reduced chance from behind
+    BALL_PLAYER_BOUNCE: true,      // ball bounces off non-controlling players
+
+    ROLES_3V3: [0, 1, 3],
+    ROLES_5V5: [0, 1, 1, 2, 3],
     ROLE_NAMES: ['GK', 'DEF', 'MID', 'FWD'],
     DUTY_LABELS: { gk: 'GK', carrier: 'CAR', support: 'SUP', runner: 'RUN', presser: 'PRS', cover: 'COV', sweeper: 'SWP' },
     FORMATIONS: {
-        3: { red: [{ x: 0.06, y: 0.50 }, { x: 0.24, y: 0.33 }, { x: 0.44, y: 0.67 }], blue: [{ x: 0.94, y: 0.50 }, { x: 0.76, y: 0.67 }, { x: 0.56, y: 0.33 }] },
-        5: { red: [{ x: 0.06, y: 0.50 }, { x: 0.19, y: 0.23 }, { x: 0.19, y: 0.77 }, { x: 0.36, y: 0.50 }, { x: 0.48, y: 0.40 }], blue: [{ x: 0.94, y: 0.50 }, { x: 0.81, y: 0.77 }, { x: 0.81, y: 0.23 }, { x: 0.64, y: 0.50 }, { x: 0.52, y: 0.60 }] }
+        3: {
+            red:  [{ x: 0.06, y: 0.50 }, { x: 0.24, y: 0.33 }, { x: 0.44, y: 0.67 }],
+            blue: [{ x: 0.94, y: 0.50 }, { x: 0.76, y: 0.67 }, { x: 0.56, y: 0.33 }]
+        },
+        5: {
+            red:  [{ x: 0.06, y: 0.50 }, { x: 0.19, y: 0.23 }, { x: 0.19, y: 0.77 },
+                   { x: 0.36, y: 0.50 }, { x: 0.48, y: 0.40 }],
+            blue: [{ x: 0.94, y: 0.50 }, { x: 0.81, y: 0.77 }, { x: 0.81, y: 0.23 },
+                   { x: 0.64, y: 0.50 }, { x: 0.52, y: 0.60 }]
+        }
     }
 });
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 6: FOOTBALL COMPETENCE ENGINE
 // ═══════════════════════════════════════════════════════════════════
+
 const FootballEngine = (() => {
     function evaluatePassQuality(sender, receiver, allAllies, allOpponents, teamSide) {
-        const opGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
+        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
         const ownGoalX = teamSide === 'red' ? 0 : FieldConstants.WIDTH;
-        const passDist = MathUtils.distance(sender.x, sender.y, receiver.x, receiver.y);
-        if (passDist < 25 || passDist > 480) return -999;
+        const passDistance = MathUtils.distance(sender.x, sender.y, receiver.x, receiver.y);
+        if (passDistance < 40 || passDistance > 480) return -999;
         let score = 0;
-        const sGD = MathUtils.abs(sender.x - opGoalX), rGD = MathUtils.abs(receiver.x - opGoalX);
-        score += (sGD - rGD) / FieldConstants.WIDTH * 4;
-        for (const opp of allOpponents) {
-            const ld = MathUtils.pointToSegmentDistance(opp.x, opp.y, sender.x, sender.y, receiver.x, receiver.y);
-            const od = MathUtils.distance(opp.x, opp.y, sender.x, sender.y);
-            if (ld < 22 && od < passDist * 0.75) return -999;
+        const senderGoalDist = MathUtils.abs(sender.x - opponentGoalX);
+        const receiverGoalDist = MathUtils.abs(receiver.x - opponentGoalX);
+        score += (senderGoalDist - receiverGoalDist) / FieldConstants.WIDTH * 5;
+        for (const opponent of allOpponents) {
+            const laneDistance = MathUtils.pointToSegmentDistance(opponent.x, opponent.y, sender.x, sender.y, receiver.x, receiver.y);
+            const opponentDistFromSender = MathUtils.distance(opponent.x, opponent.y, sender.x, sender.y);
+            if (laneDistance < 28 && opponentDistFromSender < passDistance * 0.85) return -999;
         }
-        let nearOpp = Infinity;
-        for (const opp of allOpponents) nearOpp = MathUtils.min(nearOpp, MathUtils.distance(receiver.x, receiver.y, opp.x, opp.y));
-        score += MathUtils.clamp(nearOpp / 60, 0, 1) * 2.5;
-        if (MathUtils.abs(receiver.x - ownGoalX) < 80) score -= 1.5;
-        if (passDist > 60 && passDist < 300) score += 1.0;
+        let nearestOpponentToReceiver = Infinity;
+        for (const opponent of allOpponents) nearestOpponentToReceiver = MathUtils.min(nearestOpponentToReceiver, MathUtils.distance(receiver.x, receiver.y, opponent.x, opponent.y));
+        score += MathUtils.clamp(nearestOpponentToReceiver / 70, 0, 1) * 2.5;
+        if (MathUtils.abs(receiver.x - ownGoalX) < 90) score -= 4;
+        if (passDistance > 80 && passDistance < 300) score += 0.8;
         return score;
     }
+
     function canAttemptShot(player, opponents, teamSide) {
-        const opGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
-        const atkDir = teamSide === 'red' ? 1 : -1;
-        const dTG = MathUtils.distance(player.x, player.y, opGoalX, FieldConstants.HEIGHT / 2);
+        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
+        const attackDirection = teamSide === 'red' ? 1 : -1;
+        const distanceToGoal = MathUtils.distance(player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
         if (teamSide === 'red' && player.x < FieldConstants.WIDTH * 0.35) return false;
         if (teamSide === 'blue' && player.x > FieldConstants.WIDTH * 0.65) return false;
-        if (dTG > 350) return false;
-        if (atkDir * (opGoalX - player.x) < 0) return false;
-        let bc = 0;
-        for (const opp of opponents) {
-            const ld = MathUtils.pointToSegmentDistance(opp.x, opp.y, player.x, player.y, opGoalX, FieldConstants.HEIGHT / 2);
-            if (ld < 28 && MathUtils.distance(opp.x, opp.y, player.x, player.y) < dTG) bc++;
+        if (distanceToGoal > 350) return false;
+        if (attackDirection * (opponentGoalX - player.x) < 0) return false;
+        let blockerCount = 0;
+        for (const opponent of opponents) {
+            const laneDistance = MathUtils.pointToSegmentDistance(opponent.x, opponent.y, player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
+            if (laneDistance < 28 && MathUtils.distance(opponent.x, opponent.y, player.x, player.y) < distanceToGoal) blockerCount++;
         }
-        return bc < 2;
+        return blockerCount < 2;
     }
-    function isKickSafe(px, py, kvx, kvy, teamSide) {
+
+    function isKickSafe(playerX, playerY, kickVelocityX, kickVelocityY, teamSide) {
         const ownGoalX = teamSide === 'red' ? 0 : FieldConstants.WIDTH;
-        const atkDir = teamSide === 'red' ? 1 : -1;
-        if (atkDir * kvx < -1 && MathUtils.abs(px - ownGoalX) < FieldConstants.WIDTH * 0.45) return false;
-        let projX = px, projY = py;
-        for (let s = 0; s < 25; s++) { projX += kvx * Math.pow(FieldConstants.BALL_FRICTION, s); projY += kvy * Math.pow(FieldConstants.BALL_FRICTION, s); }
-        if (MathUtils.distance(projX, projY, ownGoalX, FieldConstants.HEIGHT / 2) < 130) return false;
+        const attackDirection = teamSide === 'red' ? 1 : -1;
+        if (attackDirection * kickVelocityX < -1 && MathUtils.abs(playerX - ownGoalX) < FieldConstants.WIDTH * 0.45) return false;
+        let projectedX = playerX, projectedY = playerY;
+        for (let step = 0; step < 25; step++) {
+            projectedX += kickVelocityX * Math.pow(FieldConstants.BALL_FRICTION, step);
+            projectedY += kickVelocityY * Math.pow(FieldConstants.BALL_FRICTION, step);
+        }
+        if (MathUtils.distance(projectedX, projectedY, ownGoalX, FieldConstants.HEIGHT / 2) < 130) return false;
         return true;
     }
+
     function computeSafeClearanceVector(player, teamSide) {
-        const atkDir = teamSide === 'red' ? 1 : -1;
-        const ca = atkDir > 0 ? (player.y < FieldConstants.HEIGHT / 2 ? -0.2 : 0.2) : (player.y < FieldConstants.HEIGHT / 2 ? MathUtils.PI + 0.2 : MathUtils.PI - 0.2);
-        return [MathUtils.cos(ca) * 9, MathUtils.sin(ca) * 4];
+        const attackDirection = teamSide === 'red' ? 1 : -1;
+        const clearanceAngle = attackDirection > 0 ?
+            (player.y < FieldConstants.HEIGHT / 2 ? -0.2 : 0.2) :
+            (player.y < FieldConstants.HEIGHT / 2 ? MathUtils.PI + 0.2 : MathUtils.PI - 0.2);
+        return [MathUtils.cos(clearanceAngle) * 9, MathUtils.sin(clearanceAngle) * 4];
     }
+
     function assignPlayerDuties(allies, opponents, teamSide, ball) {
         allies[0].duty = 'gk';
-        const outfield = allies.slice(1);
-        const ballController = outfield.find(p => ball.controlledBy === p);
-        const opGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
-        const teamHasBall = ball.controlledBy && ball.controlledBy.team === teamSide;
-        const oppHasBall = ball.controlledBy && ball.controlledBy.team !== teamSide;
-        if (ballController) {
-            ballController.duty = 'carrier';
-            const rest = outfield.filter(p => p !== ballController);
-            rest.sort((a, b) => MathUtils.abs(a.x - opGoalX) - MathUtils.abs(b.x - opGoalX));
-            if (rest.length >= 1) rest[0].duty = 'runner';
-            if (rest.length >= 2) rest[1].duty = 'support';
-            if (rest.length >= 3) rest[2].duty = 'support';
-            if (rest.length >= 4) rest[3].duty = 'sweeper';
-        } else if (oppHasBall) {
-            outfield.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
-            if (outfield.length >= 1) outfield[0].duty = 'presser';
-            if (outfield.length >= 2) outfield[1].duty = 'cover';
-            if (outfield.length >= 3) outfield[2].duty = 'sweeper';
-            if (outfield.length >= 4) outfield[3].duty = 'sweeper';
+        const outfieldPlayers = allies.slice(1);
+        const ballCarrier = outfieldPlayers.find(player => player.hasBall);
+        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
+        const teamHasBall = ball.owner && ball.owner.team === teamSide;
+        const opponentHasBall = ball.owner && ball.owner.team !== teamSide;
+
+        if (ballCarrier) {
+            ballCarrier.duty = 'carrier';
+            const remainingPlayers = outfieldPlayers.filter(p => p !== ballCarrier);
+            remainingPlayers.sort((a, b) => MathUtils.abs(a.x - opponentGoalX) - MathUtils.abs(b.x - opponentGoalX));
+            if (remainingPlayers.length >= 1) remainingPlayers[0].duty = 'runner';
+            if (remainingPlayers.length >= 2) remainingPlayers[1].duty = 'support';
+            if (remainingPlayers.length >= 3) remainingPlayers[2].duty = 'support';
+            if (remainingPlayers.length >= 4) remainingPlayers[3].duty = 'sweeper';
+        } else if (opponentHasBall) {
+            outfieldPlayers.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
+            if (outfieldPlayers.length >= 1) outfieldPlayers[0].duty = 'presser';
+            if (outfieldPlayers.length >= 2) outfieldPlayers[1].duty = 'cover';
+            if (outfieldPlayers.length >= 3) outfieldPlayers[2].duty = 'sweeper';
+            if (outfieldPlayers.length >= 4) outfieldPlayers[3].duty = 'sweeper';
         } else {
-            outfield.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
-            if (outfield.length >= 1) outfield[0].duty = 'presser';
-            if (outfield.length >= 2) outfield[1].duty = 'support';
-            if (outfield.length >= 3) outfield[2].duty = 'cover';
-            if (outfield.length >= 4) outfield[3].duty = 'sweeper';
+            outfieldPlayers.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
+            if (outfieldPlayers.length >= 1) outfieldPlayers[0].duty = 'presser';
+            if (outfieldPlayers.length >= 2) outfieldPlayers[1].duty = 'support';
+            if (outfieldPlayers.length >= 3) outfieldPlayers[2].duty = 'cover';
+            if (outfieldPlayers.length >= 4) outfieldPlayers[3].duty = 'sweeper';
         }
     }
-    return Object.freeze({ evaluatePassQuality, canAttemptShot, isKickSafe, computeSafeClearanceVector, assignPlayerDuties });
+
+    return Object.freeze({
+        evaluatePassQuality, canAttemptShot, isKickSafe,
+        computeSafeClearanceVector, assignPlayerDuties
+    });
 })();
 
+
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 7: TEAM CONTROLLER — REAL FOOTBALL DRIBBLE + PASSING
+//  MODULE 6.5: DRIBBLE & TACKLE SYSTEM (NEW)
 //
-//  KEY CHANGE: Ball is NEVER attached to player.
-//  Dribbling = periodic small kicks that keep ball at player's feet.
-//  Ball is always a free physics object.
+//  This replaces the "carry ball glued to player" mechanic with
+//  real football dribbling: periodic touch-kicks + independent ball
 // ═══════════════════════════════════════════════════════════════════
+
+const DribbleSystem = (() => {
+    /**
+     * Perform a dribble touch — small kick in movement direction.
+     * Called every DRIBBLE_TOUCH_INTERVAL frames while player hasBall.
+     */
+    function performDribbleTouch(player, ball, attackDirection) {
+        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
+        let dribbleAngle;
+
+        if (playerSpeed > 0.5) {
+            // Dribble in direction of movement
+            dribbleAngle = MathUtils.atan2(player.vy, player.vx);
+        } else {
+            // Standing still — nudge ball toward attack goal
+            dribbleAngle = attackDirection > 0 ? 0 : MathUtils.PI;
+        }
+
+        // Add slight wobble for realism
+        dribbleAngle += (MathUtils.randomFloat() - 0.5) * FieldConstants.DRIBBLE_WOBBLE * 2;
+
+        const touchPower = FieldConstants.DRIBBLE_TOUCH_POWER * (0.8 + playerSpeed * 0.15);
+        ball.vx = MathUtils.cos(dribbleAngle) * touchPower;
+        ball.vy = MathUtils.sin(dribbleAngle) * touchPower;
+        ball.lastToucher = player;
+    }
+
+    /**
+     * Check if a dribbler should lose the ball (ball drifted too far).
+     * Returns true if ball was lost.
+     */
+    function checkBallLost(player, ball) {
+        if (!player.hasBall) return false;
+        const dist = MathUtils.distance(player.x, player.y, ball.x, ball.y);
+        if (dist > FieldConstants.DRIBBLE_LOSE_DISTANCE) {
+            player.hasBall = false;
+            if (ball.owner === player) ball.owner = null;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Attempt a tackle: opponent tries to take the ball from dribbler.
+     * Uses probabilistic model based on angle of approach.
+     * Returns true if tackle succeeded.
+     */
+    function attemptTackle(attacker, dribbler, ball, matchStats) {
+        const dist = MathUtils.distance(attacker.x, attacker.y, dribbler.x, dribbler.y);
+        if (dist > FieldConstants.TACKLE_RANGE) return false;
+        if (attacker.kickCooldown > 0) return false;
+
+        // Calculate approach angle relative to dribbler's movement
+        const approachAngle = MathUtils.angleBetween(attacker.x, attacker.y, dribbler.x, dribbler.y);
+        const dribblerMoveAngle = MathUtils.atan2(dribbler.vy, dribbler.vx);
+        const angleDiff = MathUtils.angleDifference(approachAngle, dribblerMoveAngle);
+
+        // Tackling from behind is harder (closer to same direction = from behind)
+        const fromBehind = angleDiff < MathUtils.PI * 0.35;
+        let successRate = FieldConstants.TACKLE_SUCCESS_RATE;
+        if (fromBehind) successRate *= FieldConstants.TACKLE_FROM_BEHIND_FACTOR;
+
+        // Faster attacker = slightly better odds
+        const attackerSpeed = MathUtils.hypot(attacker.vx, attacker.vy);
+        successRate *= (1.0 + attackerSpeed * 0.1);
+
+        if (MathUtils.randomFloat() < successRate) {
+            // Tackle succeeded!
+            dribbler.hasBall = false;
+            ball.owner = null;
+
+            // Ball gets knocked in a semi-random direction
+            const knockAngle = approachAngle + (MathUtils.randomFloat() - 0.5) * 1.2;
+            ball.vx = MathUtils.cos(knockAngle) * (2.5 + MathUtils.randomFloat() * 2);
+            ball.vy = MathUtils.sin(knockAngle) * (1.5 + MathUtils.randomFloat() * 1.5);
+
+            // Attacker gets brief cooldown
+            attacker.kickCooldown = 4;
+            dribbler.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES;
+
+            // Reset dribble timer
+            dribbler.dribbleTimer = 0;
+
+            if (matchStats) matchStats.tacklesWon++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Handle ball-player collision for non-controlling players.
+     * Ball bounces off them realistically.
+     */
+    function handleBallPlayerCollision(player, ball) {
+        if (player.hasBall) return; // don't bounce off the dribbler
+        const dist = MathUtils.distance(player.x, player.y, ball.x, ball.y);
+        const minDist = player.radius + ball.radius;
+
+        if (dist < minDist && dist > 0) {
+            // Push ball out
+            const nx = (ball.x - player.x) / dist;
+            const ny = (ball.y - player.y) / dist;
+            ball.x = player.x + nx * (minDist + 0.5);
+            ball.y = player.y + ny * (minDist + 0.5);
+
+            // Reflect ball velocity
+            const dotN = ball.vx * nx + ball.vy * ny;
+            if (dotN < 0) { // only if moving toward player
+                ball.vx -= 1.6 * dotN * nx;
+                ball.vy -= 1.6 * dotN * ny;
+                ball.vx *= 0.7; // energy loss
+                ball.vy *= 0.7;
+            }
+            ball.lastToucher = player;
+        }
+    }
+
+    return Object.freeze({
+        performDribbleTouch, checkBallLost, attemptTackle, handleBallPlayerCollision
+    });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  MODULE 7: TEAM CONTROLLER
+//  CHANGED: Replaced "carry ball" with dribble-touch system
+// ═══════════════════════════════════════════════════════════════════
+
 function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) {
     const attackDirection = teamSide === 'red' ? 1 : -1;
     const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH - 15 : 15;
     const ownGoalX = teamSide === 'red' ? 15 : FieldConstants.WIDTH - 15;
-    const scoreDiff = teamSide === 'red' ? MatchState.scoreRed - MatchState.scoreBlue : MatchState.scoreBlue - MatchState.scoreRed;
+    const scoreDifference = teamSide === 'red' ?
+        MatchState.scoreRed - MatchState.scoreBlue :
+        MatchState.scoreBlue - MatchState.scoreRed;
 
-    const inputVector = brain.encodeGameState(allies, opponents, ball, scoreDiff, MatchState.time / MatchState.maxTime, attackDirection);
+    const inputVector = brain.encodeGameState(allies, opponents, ball, scoreDifference, MatchState.time / MatchState.maxTime, attackDirection);
     const neuralOutputs = brain.forward(inputVector);
 
     FootballEngine.assignPlayerDuties(allies, opponents, teamSide, ball);
 
-    // Team spacing fitness
-    let clusterC = 0, spaceC = 0;
-    for (let i = 0; i < allies.length; i++) for (let j = i + 1; j < allies.length; j++) {
-        const pd = MathUtils.distance(allies[i].x, allies[i].y, allies[j].x, allies[j].y);
-        if (pd < 40) clusterC++;
-        if (pd > 80 && pd < 250) spaceC++;
+    // Spacing tracking
+    let clusteringCount = 0, spacingCount = 0;
+    for (let i = 0; i < allies.length; i++) {
+        for (let j = i + 1; j < allies.length; j++) {
+            const pairDistance = MathUtils.distance(allies[i].x, allies[i].y, allies[j].x, allies[j].y);
+            if (pairDistance < 40) clusteringCount++;
+            if (pairDistance > 80 && pairDistance < 250) spacingCount++;
+        }
     }
-    matchStats.clusteringPenalty += clusterC;
-    matchStats.spacingReward += spaceC;
+    matchStats.clusteringPenalty += clusteringCount;
+    matchStats.spacingReward += spacingCount;
 
-    for (let pi = 0; pi < allies.length; pi++) {
-        const player = allies[pi];
+    for (let playerIndex = 0; playerIndex < allies.length; playerIndex++) {
+        const player = allies[playerIndex];
         if (player.kickCooldown > 0) player.kickCooldown--;
 
-        const isController = ball.controlledBy === player;
+        // ══ NEW: Check if dribbler lost the ball ══
+        DribbleSystem.checkBallLost(player, ball);
 
-        const nO = pi * brain.outputsPerPlayer;
-        const modPressIntensity  = MathUtils.clamp((neuralOutputs[nO + 0] + 1) / 2, 0, 1);
-        const modSupportOffsetX  = neuralOutputs[nO + 1] * 40;
-        const modSupportOffsetY  = neuralOutputs[nO + 2] * 40;
-        const modPassPreference  = MathUtils.clamp((neuralOutputs[nO + 3] + 1) / 2, 0, 1);
-        const modShootPreference = MathUtils.clamp((neuralOutputs[nO + 4] + 1) / 2, 0, 1);
-        const modRunDepth        = MathUtils.clamp((neuralOutputs[nO + 5] + 1) / 2, 0.3, 1) * 130;
-        const modDefensiveDepth  = MathUtils.clamp((neuralOutputs[nO + 6] + 1) / 2, 0, 1);
-        const modWidthOffset     = neuralOutputs[nO + 7] * 50;
+        // ══ NEW: Opponents try to tackle the dribbler ══
+        if (player.hasBall) {
+            for (const opponent of opponents) {
+                if (DribbleSystem.attemptTackle(opponent, player, ball, matchStats)) {
+                    break; // only one tackle per frame
+                }
+            }
+        }
 
-        let targetX = player.x, targetY = player.y;
+        const neuralOffset = playerIndex * brain.outputsPerPlayer;
+        const modPressIntensity    = MathUtils.clamp((neuralOutputs[neuralOffset + 0] + 1) / 2, 0, 1);
+        const modSupportOffsetX    = neuralOutputs[neuralOffset + 1] * 40;
+        const modSupportOffsetY    = neuralOutputs[neuralOffset + 2] * 40;
+        const modPassPreference    = MathUtils.clamp((neuralOutputs[neuralOffset + 3] + 1) / 2, 0, 1);
+        const modShootPreference   = MathUtils.clamp((neuralOutputs[neuralOffset + 4] + 1) / 2, 0, 1);
+        const modRunDepth          = MathUtils.clamp((neuralOutputs[neuralOffset + 5] + 1) / 2, 0.3, 1) * 130;
+        const modDefensiveDepth    = MathUtils.clamp((neuralOutputs[neuralOffset + 6] + 1) / 2, 0, 1);
+        const modWidthOffset       = neuralOutputs[neuralOffset + 7] * 50;
+
+        let targetX = player.x;
+        let targetY = player.y;
 
         // ═══ GOALKEEPER ═══
         if (player.duty === 'gk') {
@@ -666,68 +1332,76 @@ function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) 
             else targetX = MathUtils.clamp(targetX, FieldConstants.WIDTH - 145, FieldConstants.WIDTH - 22);
             targetY = MathUtils.clamp(targetY, FieldConstants.GOAL_TOP - 15, FieldConstants.GOAL_BOTTOM + 15);
 
-            if (MathUtils.distance(ball.x, ball.y, ownGoalX, FieldConstants.HEIGHT / 2) < 140 && !ball.controlledBy) {
+            if (MathUtils.distance(ball.x, ball.y, ownGoalX, FieldConstants.HEIGHT / 2) < 140 && !ball.owner) {
                 targetX = ball.x + ball.vx * 3;
                 targetY = ball.y + ball.vy * 3;
             }
 
-            if (isController && player.kickCooldown <= 0) {
-                let bestPT = null, bestPS = -999;
-                for (const a of allies) { if (a === player || a.duty === 'gk') continue;
-                    const s = FootballEngine.evaluatePassQuality(player, a, allies, opponents, teamSide);
-                    if (s > bestPS) { bestPS = s; bestPT = a; }
+            if (player.hasBall && player.kickCooldown <= 0) {
+                let bestPassTarget = null, bestPassScore = -999;
+                for (const ally of allies) {
+                    if (ally === player || ally.duty === 'gk') continue;
+                    const score = FootballEngine.evaluatePassQuality(player, ally, allies, opponents, teamSide);
+                    if (score > bestPassScore) { bestPassScore = score; bestPassTarget = ally; }
                 }
-                if (bestPT && bestPS > -0.5) _executePass(player, bestPT, ball, teamSide, matchStats);
+                if (bestPassTarget && bestPassScore > 0.3) _executePass(player, bestPassTarget, ball, teamSide, matchStats);
                 else _executeClearance(player, ball, teamSide, matchStats);
             }
         }
 
-        // ═══ CARRIER (outfield with ball) ═══
-        else if (player.duty === 'carrier' && isController) {
+        // ═══ CARRIER ═══
+        else if (player.duty === 'carrier' && player.hasBall) {
+            let didKick = false;
             if (player.kickCooldown <= 0) {
-                // Evaluate passes
-                let bestPT = null, bestPS = -999;
-                for (const a of allies) { if (a === player) continue;
-                    const s = FootballEngine.evaluatePassQuality(player, a, allies, opponents, teamSide);
-                    if (s > bestPS) { bestPS = s; bestPT = a; }
+                let bestPassTarget = null, bestPassScore = -999;
+                for (const ally of allies) {
+                    if (ally === player) continue;
+                    const score = FootballEngine.evaluatePassQuality(player, ally, allies, opponents, teamSide);
+                    if (score > bestPassScore) { bestPassScore = score; bestPassTarget = ally; }
                 }
 
-                // Evaluate shot
                 const canShoot = FootballEngine.canAttemptShot(player, opponents, teamSide);
-                const dTG = MathUtils.distance(player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
-                const shootScore = canShoot ? (3.5 - dTG / 100 + modShootPreference * 1.5) : -999;
+                const distToGoal = MathUtils.distance(player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
+                const shootScore = canShoot ? (3.5 - distToGoal / 100 + modShootPreference * 1.5) : -999;
 
-                // Pressure check
-                let nearOppDist = Infinity;
-                for (const opp of opponents) nearOppDist = MathUtils.min(nearOppDist, MathUtils.distance(opp.x, opp.y, player.x, player.y));
-                const pressure = MathUtils.clamp(1 - nearOppDist / 55, 0, 1);
+                let nearestOpponentDistance = Infinity;
+                for (const opponent of opponents) nearestOpponentDistance = MathUtils.min(nearestOpponentDistance, MathUtils.distance(opponent.x, opponent.y, player.x, player.y));
+                const pressureLevel = MathUtils.clamp(1 - nearestOpponentDistance / 65, 0, 1);
 
-                // In own third under pressure → clear/pass immediately
                 const inOwnThird = teamSide === 'red' ? player.x < FieldConstants.WIDTH * 0.33 : player.x > FieldConstants.WIDTH * 0.67;
-                if (inOwnThird && pressure > 0.25) {
-                    if (bestPT && bestPS > -1) _executePass(player, bestPT, ball, teamSide, matchStats);
-                    else _executeClearance(player, ball, teamSide, matchStats);
+                if (inOwnThird && pressureLevel > 0.4) {
+                    if (bestPassTarget && bestPassScore > 0) { _executePass(player, bestPassTarget, ball, teamSide, matchStats); didKick = true; }
+                    else { _executeClearance(player, ball, teamSide, matchStats); didKick = true; }
                 }
-                // SHOOT
-                else if (shootScore > (1.2 + modShootPreference) && canShoot) {
-                    _executeShot(player, ball, opponentGoalX, teamSide, matchStats);
+                else if (shootScore > (1.5 + modShootPreference) && canShoot) {
+                    _executeShot(player, ball, opponentGoalX, teamSide, matchStats); didKick = true;
                 }
-                // PASS — primary action! Much lower threshold than before
-                else if (bestPT && (bestPS > -0.3 + modPassPreference * 0.4 || pressure > 0.2)) {
-                    _executePass(player, bestPT, ball, teamSide, matchStats);
+                else if (bestPassTarget && (bestPassScore > 0.2 - modPassPreference * 0.3 || pressureLevel > 0.3 - modPassPreference * 0.2)) {
+                    _executePass(player, bestPassTarget, ball, teamSide, matchStats); didKick = true;
                 }
-                // DRIBBLE — continue moving with ball (handled by dribble touch system below)
-                else {
-                    // Steer toward goal while dribbling
-                    targetX = player.x + attackDirection * 5;
-                    targetY = player.y;
-                    for (const opp of opponents) {
-                        const d2o = MathUtils.distance(player.x, player.y, opp.x, opp.y);
-                        if (d2o < 55 && d2o > 1) {
-                            const [awX, awY] = MathUtils.normalize(player.x - opp.x, player.y - opp.y);
-                            targetX += awX * 3; targetY += awY * 3;
-                        }
+            }
+
+            // ══ CHANGED: If no pass/shot, DRIBBLE with touch-kicks instead of carrying ══
+            if (!didKick && player.hasBall) {
+                // Move toward goal, avoid opponents
+                targetX = player.x + attackDirection * 4;
+                targetY = player.y;
+                for (const opponent of opponents) {
+                    const distToOpp = MathUtils.distance(player.x, player.y, opponent.x, opponent.y);
+                    if (distToOpp < 55 && distToOpp > 1) {
+                        const [awayX, awayY] = MathUtils.normalize(player.x - opponent.x, player.y - opponent.y);
+                        targetX += awayX * 3;
+                        targetY += awayY * 3;
                     }
+                }
+
+                // ══ NEW: Periodic dribble touches instead of glued ball ══
+                if (!player.dribbleTimer) player.dribbleTimer = 0;
+                player.dribbleTimer++;
+                if (player.dribbleTimer >= FieldConstants.DRIBBLE_TOUCH_INTERVAL) {
+                    DribbleSystem.performDribbleTouch(player, ball, attackDirection);
+                    player.dribbleTimer = 0;
+                    matchStats.dribbleSuccesses = (matchStats.dribbleSuccesses || 0) + 1;
                 }
             }
             matchStats.ballProgression += MathUtils.max(0, player.vx * attackDirection * 0.01);
@@ -735,11 +1409,11 @@ function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) 
 
         // ═══ RUNNER ═══
         else if (player.duty === 'runner') {
-            const carrier = allies.find(a => ball.controlledBy === a);
+            const carrier = allies.find(a => a.hasBall);
             if (carrier) {
                 targetX = carrier.x + attackDirection * modRunDepth + modSupportOffsetX;
-                const yOff = player.baseY < FieldConstants.HEIGHT / 2 ? -55 : 55;
-                targetY = MathUtils.clamp(FieldConstants.HEIGHT / 2 + yOff + modSupportOffsetY + modWidthOffset, 55, FieldConstants.HEIGHT - 55);
+                const yOffset = player.baseY < FieldConstants.HEIGHT / 2 ? -55 : 55;
+                targetY = MathUtils.clamp(FieldConstants.HEIGHT / 2 + yOffset + modSupportOffsetY + modWidthOffset, 55, FieldConstants.HEIGHT - 55);
             } else {
                 targetX = ball.x + attackDirection * 100;
                 targetY = FieldConstants.HEIGHT / 2 + (player.baseY - FieldConstants.HEIGHT / 2) * 0.5;
@@ -753,13 +1427,13 @@ function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) 
 
         // ═══ SUPPORT ═══
         else if (player.duty === 'support') {
-            const carrier = allies.find(a => ball.controlledBy === a);
+            const carrier = allies.find(a => a.hasBall);
             if (carrier) {
-                const tGA = MathUtils.atan2(FieldConstants.HEIGHT / 2 - carrier.y, opponentGoalX - carrier.x);
-                const sA = tGA + (player.baseY < FieldConstants.HEIGHT / 2 ? -MathUtils.PI / 3 : MathUtils.PI / 3);
-                const sD = 95 + modWidthOffset;
-                targetX = carrier.x + MathUtils.cos(sA) * sD + modSupportOffsetX;
-                targetY = carrier.y + MathUtils.sin(sA) * sD + modSupportOffsetY;
+                const toGoalAngle = MathUtils.atan2(FieldConstants.HEIGHT / 2 - carrier.y, opponentGoalX - carrier.x);
+                const sideAngle = toGoalAngle + (player.baseY < FieldConstants.HEIGHT / 2 ? -MathUtils.PI / 3 : MathUtils.PI / 3);
+                const supportDistance = 95 + modWidthOffset;
+                targetX = carrier.x + MathUtils.cos(sideAngle) * supportDistance + modSupportOffsetX;
+                targetY = carrier.y + MathUtils.sin(sideAngle) * supportDistance + modSupportOffsetY;
             } else {
                 targetX = ball.x - attackDirection * 55 + modSupportOffsetX;
                 targetY = ball.y + (player.baseY < FieldConstants.HEIGHT / 2 ? -75 : 75) + modSupportOffsetY;
@@ -776,9 +1450,9 @@ function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) 
 
         // ═══ COVER ═══
         else if (player.duty === 'cover') {
-            const cD = 0.4 + modDefensiveDepth * 0.3;
-            targetX = MathUtils.lerp(player.baseX, (ball.x + ownGoalX) / 2, cD) + modSupportOffsetX * 0.5;
-            targetY = MathUtils.lerp(player.baseY, (ball.y + FieldConstants.HEIGHT / 2) / 2, cD) + modSupportOffsetY * 0.5;
+            const coverDepth = 0.4 + modDefensiveDepth * 0.3;
+            targetX = MathUtils.lerp(player.baseX, (ball.x + ownGoalX) / 2, coverDepth) + modSupportOffsetX * 0.5;
+            targetY = MathUtils.lerp(player.baseY, (ball.y + FieldConstants.HEIGHT / 2) / 2, coverDepth) + modSupportOffsetY * 0.5;
         }
 
         // ═══ SWEEPER ═══
@@ -790,225 +1464,222 @@ function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) 
         // ═══ MOVEMENT ═══
         targetX = MathUtils.clamp(targetX, FieldConstants.PLAYER_RADIUS, FieldConstants.WIDTH - FieldConstants.PLAYER_RADIUS);
         targetY = MathUtils.clamp(targetY, FieldConstants.PLAYER_RADIUS, FieldConstants.HEIGHT - FieldConstants.PLAYER_RADIUS);
+        const deltaX = targetX - player.x;
+        const deltaY = targetY - player.y;
+        const distanceToTarget = MathUtils.hypot(deltaX, deltaY);
+        let moveSpeed = FieldConstants.PLAYER_MAX_SPEED * player.energy;
+        if (player.duty === 'gk' && MathUtils.distance(player.x, player.y, ownGoalX, FieldConstants.HEIGHT / 2) < 150) moveSpeed *= 1.12;
+        if (player.duty === 'presser') moveSpeed *= 1.04;
 
-        const dX = targetX - player.x, dY = targetY - player.y;
-        const dTT = MathUtils.hypot(dX, dY);
-        let moveSpd = FieldConstants.PLAYER_MAX_SPEED * player.energy;
-        if (player.duty === 'gk' && MathUtils.distance(player.x, player.y, ownGoalX, FieldConstants.HEIGHT / 2) < 150) moveSpd *= 1.12;
-        if (player.duty === 'presser') moveSpd *= 1.04;
+        // ══ CHANGED: Dribbler moves slightly slower ══
+        if (player.hasBall) moveSpeed *= 0.88;
 
-        if (dTT > 3) {
-            player.vx += (dX / dTT) * moveSpd * FieldConstants.PLAYER_ACCELERATION;
-            player.vy += (dY / dTT) * moveSpd * FieldConstants.PLAYER_ACCELERATION;
+        if (distanceToTarget > 3) {
+            player.vx += (deltaX / distanceToTarget) * moveSpeed * FieldConstants.PLAYER_ACCELERATION;
+            player.vy += (deltaY / distanceToTarget) * moveSpeed * FieldConstants.PLAYER_ACCELERATION;
         }
+
         player.vx *= FieldConstants.PLAYER_FRICTION;
         player.vy *= FieldConstants.PLAYER_FRICTION;
-        const pSpd = MathUtils.hypot(player.vx, player.vy);
-        const mPS = FieldConstants.PLAYER_MAX_SPEED * 1.5;
-        if (pSpd > mPS) { player.vx = (player.vx / pSpd) * mPS; player.vy = (player.vy / pSpd) * mPS; }
-        player.x += player.vx; player.y += player.vy;
+        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
+        const maxPlayerSpeed = FieldConstants.PLAYER_MAX_SPEED * 1.5;
+        if (playerSpeed > maxPlayerSpeed) {
+            player.vx = (player.vx / playerSpeed) * maxPlayerSpeed;
+            player.vy = (player.vy / playerSpeed) * maxPlayerSpeed;
+        }
+
+        player.x += player.vx;
+        player.y += player.vy;
         player.x = MathUtils.clamp(player.x, player.radius, FieldConstants.WIDTH - player.radius);
         player.y = MathUtils.clamp(player.y, player.radius, FieldConstants.HEIGHT - player.radius);
         if (player.duty === 'gk') {
             if (teamSide === 'red') player.x = MathUtils.min(player.x, 155);
             else player.x = MathUtils.max(player.x, FieldConstants.WIDTH - 155);
         }
-        if (pSpd > FieldConstants.PLAYER_MAX_SPEED * 0.6) player.energy = MathUtils.max(0.4, player.energy - 0.0003);
+
+        if (playerSpeed > FieldConstants.PLAYER_MAX_SPEED * 0.6) player.energy = MathUtils.max(0.4, player.energy - 0.0003);
         else player.energy = MathUtils.min(1, player.energy + 0.0006);
 
-        // ═══════════════════════════════════════════════════════
-        //  BALL CONTROL ACQUISITION (tackle / pickup)
-        //  Ball is NEVER attached — always free physics.
-        // ═══════════════════════════════════════════════════════
-        if (!isController && player.kickCooldown <= 0) {
-            const bD = MathUtils.distance(player.x, player.y, ball.x, ball.y);
-            if (bD < FieldConstants.PICKUP_RANGE) {
-                const ballSpd = MathUtils.hypot(ball.vx, ball.vy);
-                const canPickup = ballSpd < 7 || bD < FieldConstants.PICKUP_RANGE * 0.6;
-                if (canPickup) {
-                    if (!ball.controlledBy || ball.controlledBy.team !== teamSide) {
-                        if (ball.controlledBy && ball.controlledBy.team !== teamSide) {
-                            // Tackle! Knock ball loose
-                            ball.controlledBy.kickCooldown = MathUtils.max(ball.controlledBy.kickCooldown, 10);
-                            matchStats.tacklesWon++;
-                            // Small random deflection on tackle
-                            ball.vx += (MathUtils.randomFloat() - 0.5) * 3;
-                            ball.vy += (MathUtils.randomFloat() - 0.5) * 3;
-                        }
-                        ball.controlledBy = player;
-                        ball.lastToucher = player;
-                        player.dribbleTouchTimer = 0; // Immediate first touch
-                        // First touch: slow the ball down
-                        ball.vx *= 0.3;
-                        ball.vy *= 0.3;
+        // ═══ BALL PICKUP ═══
+        // ══ CHANGED: Don't teleport ball — just claim ownership, ball stays where it is ══
+        if (!player.hasBall && player.kickCooldown <= 0) {
+            const ballDistance = MathUtils.distance(player.x, player.y, ball.x, ball.y);
+            if (ballDistance < FieldConstants.PICKUP_RANGE) {
+                if (!ball.owner || ball.owner.team !== teamSide) {
+                    if (ball.owner) {
+                        ball.owner.hasBall = false;
+                        ball.owner.dribbleTimer = 0;
+                        matchStats.tacklesWon++;
                     }
+                    ball.owner = player;
+                    player.hasBall = true;
+                    player.dribbleTimer = 0;
+                    ball.lastToucher = player;
+                    // ══ CHANGED: Don't zero ball velocity — let it continue naturally ══
+                    // Just slow it down a bit as player "traps" it
+                    ball.vx *= 0.3;
+                    ball.vy *= 0.3;
                 }
             }
         }
 
-        // ═══════════════════════════════════════════════════════
-        //  DRIBBLE TOUCH SYSTEM — the heart of real football feel
-        //  Player periodically kicks ball slightly forward.
-        //  Between touches, ball moves freely with high friction.
-        // ═══════════════════════════════════════════════════════
-        if (isController && ball.controlledBy === player) {
-            player.dribbleTouchTimer--;
-            const speed = MathUtils.hypot(player.vx, player.vy);
-            const moveAngle = speed > 0.3 ?
-                MathUtils.atan2(player.vy, player.vx) :
-                (attackDirection > 0 ? 0 : MathUtils.PI);
+        // ══ REMOVED: Old "carry ball" code that teleported ball to player ══
+        // The ball is now an independent physics object. When player hasBall,
+        // they do periodic dribble touches (small kicks) in their movement
+        // direction. The ball rolls freely between touches and can be
+        // intercepted by opponents.
 
-            // Ideal ball position: at player's feet, slightly ahead
-            const idealDist = speed < 0.5 ? 9 : 13 + speed * 2.5;
-            const idealX = player.x + MathUtils.cos(moveAngle) * idealDist;
-            const idealY = player.y + MathUtils.sin(moveAngle) * idealDist;
-
-            if (player.dribbleTouchTimer <= 0) {
-                const dx = idealX - ball.x;
-                const dy = idealY - ball.y;
-                const d = MathUtils.hypot(dx, dy);
-                if (d > 1.5) {
-                    // Touch power scales with how far ball is from ideal spot
-                    const power = speed < 0.5 ?
-                        MathUtils.clamp(d * 0.15, 0.3, 1.2) :
-                        MathUtils.clamp(d * 0.3, 0.8, 3.8);
-                    ball.vx = (dx / d) * power + (MathUtils.randomFloat() - 0.5) * 0.3;
-                    ball.vy = (dy / d) * power + (MathUtils.randomFloat() - 0.5) * 0.3;
-                }
-                // Touch interval depends on speed
-                player.dribbleTouchTimer = speed > 1.2 ?
-                    FieldConstants.DRIBBLE_TOUCH_INTERVAL_FAST + MathUtils.floor(MathUtils.randomFloat() * 3) :
-                    FieldConstants.DRIBBLE_TOUCH_INTERVAL_SLOW + MathUtils.floor(MathUtils.randomFloat() * 4);
-            }
-
-            // Lose control if ball gets too far from player
-            const ballDist = MathUtils.distance(player.x, player.y, ball.x, ball.y);
-            if (ballDist > FieldConstants.CONTROL_LOSE_RANGE) {
-                ball.controlledBy = null;
-            }
-
+        if (player.hasBall) {
             matchStats.possessionFrames++;
-            matchStats.ballProgression += MathUtils.max(0, player.vx * attackDirection * 0.005);
         }
     }
 }
 
-// ═══ Pass / Shot / Clearance helpers ═══
 function _executePass(sender, receiver, ball, teamSide, matchStats) {
-    const leadX = receiver.x + receiver.vx * 6;
-    const leadY = receiver.y + receiver.vy * 6;
-    const pA = MathUtils.atan2(leadY - sender.y, leadX - sender.x);
-    const pD = MathUtils.distance(sender.x, sender.y, leadX, leadY);
-    const pP = MathUtils.clamp(pD / 30, 3.5, 8);
-    const vx = MathUtils.cos(pA) * pP, vy = MathUtils.sin(pA) * pP;
-    if (FootballEngine.isKickSafe(sender.x, sender.y, vx, vy, teamSide)) {
-        ball.vx = vx; ball.vy = vy;
-        ball.controlledBy = null; // Ball is FREE during pass flight
+    const leadX = receiver.x + receiver.vx * 7;
+    const leadY = receiver.y + receiver.vy * 7;
+    const passAngle = MathUtils.atan2(leadY - sender.y, leadX - sender.x);
+    const passDistance = MathUtils.distance(sender.x, sender.y, leadX, leadY);
+    const passPower = MathUtils.clamp(passDistance / 33, 3, 7);
+    const velocityX = MathUtils.cos(passAngle) * passPower;
+    const velocityY = MathUtils.sin(passAngle) * passPower;
+
+    if (FootballEngine.isKickSafe(sender.x, sender.y, velocityX, velocityY, teamSide)) {
+        ball.vx = velocityX;
+        ball.vy = velocityY;
+        ball.owner = null;
+        sender.hasBall = false;
+        sender.dribbleTimer = 0;
         sender.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES;
         ball.lastToucher = sender;
         matchStats.passesCompleted++;
     }
 }
-function _executeShot(shooter, ball, opGoalX, teamSide, matchStats) {
-    const gCY = FieldConstants.HEIGHT / 2 + (MathUtils.randomFloat() - 0.5) * FieldConstants.GOAL_WIDTH * 0.5;
-    const sA = MathUtils.atan2(gCY - shooter.y, opGoalX - shooter.x);
-    const sP = 8 + MathUtils.randomFloat() * 3;
-    const vx = MathUtils.cos(sA) * sP, vy = MathUtils.sin(sA) * sP;
-    if (FootballEngine.isKickSafe(shooter.x, shooter.y, vx, vy, teamSide)) {
-        ball.vx = vx; ball.vy = vy;
-        ball.controlledBy = null;
+
+function _executeShot(shooter, ball, opponentGoalX, teamSide, matchStats) {
+    const goalCenterY = FieldConstants.HEIGHT / 2 + (MathUtils.randomFloat() - 0.5) * FieldConstants.GOAL_WIDTH * 0.5;
+    const shotAngle = MathUtils.atan2(goalCenterY - shooter.y, opponentGoalX - shooter.x);
+    const shotPower = 8 + MathUtils.randomFloat() * 3;
+    const velocityX = MathUtils.cos(shotAngle) * shotPower;
+    const velocityY = MathUtils.sin(shotAngle) * shotPower;
+
+    if (FootballEngine.isKickSafe(shooter.x, shooter.y, velocityX, velocityY, teamSide)) {
+        ball.vx = velocityX;
+        ball.vy = velocityY;
+        ball.owner = null;
+        shooter.hasBall = false;
+        shooter.dribbleTimer = 0;
         shooter.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES + 8;
         ball.lastToucher = shooter;
         matchStats.shotsOnTarget++;
         HudManager.show(`${teamSide === 'red' ? '🔴' : '🔵'} SHOT! ${FieldConstants.ROLE_NAMES[shooter.role]}`, 70);
     }
 }
+
 function _executeClearance(player, ball, teamSide, matchStats) {
-    const [cx, cy] = FootballEngine.computeSafeClearanceVector(player, teamSide);
-    if (FootballEngine.isKickSafe(player.x, player.y, cx, cy, teamSide)) {
-        ball.vx = cx; ball.vy = cy;
-        ball.controlledBy = null;
+    const [clearX, clearY] = FootballEngine.computeSafeClearanceVector(player, teamSide);
+    if (FootballEngine.isKickSafe(player.x, player.y, clearX, clearY, teamSide)) {
+        ball.vx = clearX;
+        ball.vy = clearY;
+        ball.owner = null;
+        player.hasBall = false;
+        player.dribbleTimer = 0;
         player.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES + 6;
         ball.lastToucher = player;
         matchStats.passesCompleted++;
     }
 }
-function _applyTeamSpacing(player, allies, tX, tY) {
-    for (const a of allies) { if (a === player) continue;
-        const d = MathUtils.distance(player.x, player.y, a.x, a.y);
-        if (d < 55 && d > 1) { const [px, py] = MathUtils.normalize(player.x - a.x, player.y - a.y); tX += px * 2.5; tY += py * 2.5; }
+
+function _applyTeamSpacing(player, allies, targetX, targetY) {
+    for (const ally of allies) {
+        if (ally === player) continue;
+        const allyDistance = MathUtils.distance(player.x, player.y, ally.x, ally.y);
+        if (allyDistance < 55 && allyDistance > 1) {
+            const [pushX, pushY] = MathUtils.normalize(player.x - ally.x, player.y - ally.y);
+            targetX += pushX * 2.5;
+            targetY += pushY * 2.5;
+        }
     }
 }
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 8: MATCH STATE & ENTITIES
 // ═══════════════════════════════════════════════════════════════════
+
 const MatchState = {
     mode: 3, phase: 'idle', previousPhase: 'idle', speed: 1, turboTraining: false,
     scoreRed: 0, scoreBlue: 0, time: 0, maxTime: FieldConstants.MATCH_DURATION_FRAMES,
     possessionRed: 0, possessionBlue: 0, possessionFrames: 0, tackleCount: 0,
     goalAnimation: 0, goalTeam: '', kickoffTeam: 'red', kickoffTimer: 0, hudTimer: 0, matchCount: 0
 };
+
 function createEmptyMatchStats() {
-    return { goalsScored: 0, goalsConceded: 0, ownGoals: 0, passesCompleted: 0, shotsOnTarget: 0,
-        possessionFrames: 0, territoryFrames: 0, ballProgression: 0, tacklesWon: 0,
-        spacingReward: 0, clusteringPenalty: 0 };
+    return {
+        goalsScored: 0, goalsConceded: 0, ownGoals: 0,
+        passesCompleted: 0, shotsOnTarget: 0,
+        possessionFrames: 0, territoryFrames: 0,
+        ballProgression: 0, tacklesWon: 0,
+        spacingReward: 0, clusteringPenalty: 0,
+        dribbleSuccesses: 0
+    };
 }
+
 let redPlayers = [], bluePlayers = [];
-let gameBall = { x: 0, y: 0, vx: 0, vy: 0, radius: FieldConstants.BALL_RADIUS, controlledBy: null, lastToucher: null };
+let gameBall = { x: 0, y: 0, vx: 0, vy: 0, radius: FieldConstants.BALL_RADIUS, owner: null, lastToucher: null };
 let redPool = null, bluePool = null;
 let redStats = createEmptyMatchStats(), blueStats = createEmptyMatchStats();
 
 function createPlayer(team, index, role, baseX, baseY) {
-    return { team, index, role, baseX, baseY, x: baseX, y: baseY, vx: 0, vy: 0,
-        radius: FieldConstants.PLAYER_RADIUS, kickCooldown: 0, energy: 1.0,
-        duty: 'sweeper', dribbleTouchTimer: 0 };
+    return {
+        team, index, role, baseX, baseY,
+        x: baseX, y: baseY, vx: 0, vy: 0,
+        radius: FieldConstants.PLAYER_RADIUS,
+        hasBall: false, kickCooldown: 0, energy: 1.0,
+        duty: 'sweeper',
+        dribbleTimer: 0  // ══ NEW: tracks frames since last dribble touch ══
+    };
 }
 
 function initializeGame() {
     redPlayers = []; bluePlayers = [];
-    const fm = FieldConstants.FORMATIONS[MatchState.mode];
+    const formation = FieldConstants.FORMATIONS[MatchState.mode];
     const roles = MatchState.mode === 3 ? FieldConstants.ROLES_3V3 : FieldConstants.ROLES_5V5;
-    fm.red.forEach((p, i) => redPlayers.push(createPlayer('red', i, roles[i], p.x * FieldConstants.WIDTH, p.y * FieldConstants.HEIGHT)));
-    fm.blue.forEach((p, i) => bluePlayers.push(createPlayer('blue', i, roles[i], p.x * FieldConstants.WIDTH, p.y * FieldConstants.HEIGHT)));
+    formation.red.forEach((pos, i) => redPlayers.push(createPlayer('red', i, roles[i], pos.x * FieldConstants.WIDTH, pos.y * FieldConstants.HEIGHT)));
+    formation.blue.forEach((pos, i) => bluePlayers.push(createPlayer('blue', i, roles[i], pos.x * FieldConstants.WIDTH, pos.y * FieldConstants.HEIGHT)));
     redPool = new EvolutionaryPool(MatchState.mode);
     bluePool = new EvolutionaryPool(MatchState.mode);
     document.getElementById('statNeurons').textContent = '~' + redPool.getActiveBrain().totalNeuronCount;
 }
 
 function resetAllPositions() {
-    const fm = FieldConstants.FORMATIONS[MatchState.mode];
-    redPlayers.forEach((p, i) => { p.x = fm.red[i].x * FieldConstants.WIDTH; p.y = fm.red[i].y * FieldConstants.HEIGHT; p.vx = 0; p.vy = 0; p.kickCooldown = 0; p.energy = 1; p.duty = 'sweeper'; p.dribbleTouchTimer = 0; });
-    bluePlayers.forEach((p, i) => { p.x = fm.blue[i].x * FieldConstants.WIDTH; p.y = fm.blue[i].y * FieldConstants.HEIGHT; p.vx = 0; p.vy = 0; p.kickCooldown = 0; p.energy = 1; p.duty = 'sweeper'; p.dribbleTouchTimer = 0; });
+    const formation = FieldConstants.FORMATIONS[MatchState.mode];
+    redPlayers.forEach((player, i) => {
+        player.x = formation.red[i].x * FieldConstants.WIDTH; player.y = formation.red[i].y * FieldConstants.HEIGHT;
+        player.vx = 0; player.vy = 0; player.hasBall = false; player.kickCooldown = 0; player.energy = 1; player.duty = 'sweeper'; player.dribbleTimer = 0;
+    });
+    bluePlayers.forEach((player, i) => {
+        player.x = formation.blue[i].x * FieldConstants.WIDTH; player.y = formation.blue[i].y * FieldConstants.HEIGHT;
+        player.vx = 0; player.vy = 0; player.hasBall = false; player.kickCooldown = 0; player.energy = 1; player.duty = 'sweeper'; player.dribbleTimer = 0;
+    });
     gameBall.x = FieldConstants.WIDTH / 2; gameBall.y = FieldConstants.HEIGHT / 2;
-    gameBall.vx = 0; gameBall.vy = 0; gameBall.controlledBy = null; gameBall.lastToucher = null;
+    gameBall.vx = 0; gameBall.vy = 0; gameBall.owner = null; gameBall.lastToucher = null;
 }
 
+
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 9: PHYSICS ENGINE — Ball is ALWAYS a free object
+//  MODULE 9: PHYSICS ENGINE
+//  CHANGED: Added ball-player bounce collisions
 // ═══════════════════════════════════════════════════════════════════
+
 function updateBallPhysics() {
-    // KEY CHANGE: No early return! Ball ALWAYS moves, even when controlled.
-    // During dribble: high friction keeps ball close to player's feet.
-    // During free flight (pass/shot): low friction lets ball travel.
-
-    const isControlled = gameBall.controlledBy !== null;
-
+    // ══ CHANGED: Ball ALWAYS moves independently — no more "if owner, skip" ══
     gameBall.x += gameBall.vx;
     gameBall.y += gameBall.vy;
-
-    if (isControlled) {
-        // High friction during dribble — ball stays near feet
-        gameBall.vx *= FieldConstants.BALL_DRIBBLE_FRICTION;
-        gameBall.vy *= FieldConstants.BALL_DRIBBLE_FRICTION;
-    } else {
-        // Normal friction — ball rolls freely
-        gameBall.vx *= FieldConstants.BALL_FRICTION;
-        gameBall.vy *= FieldConstants.BALL_FRICTION;
-    }
-
-    if (MathUtils.abs(gameBall.vx) < 0.02) gameBall.vx = 0;
-    if (MathUtils.abs(gameBall.vy) < 0.02) gameBall.vy = 0;
+    gameBall.vx *= FieldConstants.BALL_FRICTION;
+    gameBall.vy *= FieldConstants.BALL_FRICTION;
+    if (MathUtils.abs(gameBall.vx) < 0.03) gameBall.vx = 0;
+    if (MathUtils.abs(gameBall.vy) < 0.03) gameBall.vy = 0;
 
     const speed = MathUtils.hypot(gameBall.vx, gameBall.vy);
     if (speed > FieldConstants.MAX_BALL_SPEED) {
@@ -1016,53 +1687,88 @@ function updateBallPhysics() {
         gameBall.vy = (gameBall.vy / speed) * FieldConstants.MAX_BALL_SPEED;
     }
 
-    const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT, r = gameBall.radius;
-    const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, GD = FieldConstants.GOAL_DEPTH;
+    const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT;
+    const r = gameBall.radius;
+    const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM;
+    const GD = FieldConstants.GOAL_DEPTH;
 
     if (gameBall.y <= r) { gameBall.vy = MathUtils.abs(gameBall.vy) * 0.7; gameBall.y = r; }
     if (gameBall.y >= H - r) { gameBall.vy = -MathUtils.abs(gameBall.vy) * 0.7; gameBall.y = H - r; }
     if (gameBall.x <= r && (gameBall.y < GT || gameBall.y > GB)) { gameBall.vx = MathUtils.abs(gameBall.vx) * 0.7; gameBall.x = r; }
     if (gameBall.x >= W - r && (gameBall.y < GT || gameBall.y > GB)) { gameBall.vx = -MathUtils.abs(gameBall.vx) * 0.7; gameBall.x = W - r; }
 
-    for (const [px, py] of [[GD, GT], [GD, GB], [W - GD, GT], [W - GD, GB]]) {
-        if (MathUtils.distance(gameBall.x, gameBall.y, px, py) < r + 4) {
-            const [nx, ny] = MathUtils.normalize(gameBall.x - px, gameBall.y - py);
-            gameBall.vx = nx * speed * 0.5; gameBall.vy = ny * speed * 0.5;
+    for (const [postX, postY] of [[GD, GT], [GD, GB], [W - GD, GT], [W - GD, GB]]) {
+        if (MathUtils.distance(gameBall.x, gameBall.y, postX, postY) < r + 4) {
+            const [normalX, normalY] = MathUtils.normalize(gameBall.x - postX, gameBall.y - postY);
+            gameBall.vx = normalX * speed * 0.5;
+            gameBall.vy = normalY * speed * 0.5;
         }
     }
 
-    if (gameBall.x < -15) { gameBall.x = 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; gameBall.controlledBy = null; }
-    if (gameBall.x > W + 15) { gameBall.x = W - 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; gameBall.controlledBy = null; }
+    if (gameBall.x < -15) { gameBall.x = 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; }
+    if (gameBall.x > W + 15) { gameBall.x = W - 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; }
+}
+
+// ══ NEW: Ball bounces off all non-controlling players ══
+function updateBallPlayerCollisions() {
+    const allPlayers = [...redPlayers, ...bluePlayers];
+    for (const player of allPlayers) {
+        DribbleSystem.handleBallPlayerCollision(player, gameBall);
+    }
 }
 
 function resolvePlayerCollisions() {
-    const all = [...redPlayers, ...bluePlayers];
-    for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
-        const a = all[i], b = all[j];
-        const dx = b.x - a.x, dy = b.y - a.y, dist = MathUtils.hypot(dx, dy), md = a.radius + b.radius;
-        if (dist < md && dist > 0) {
-            const ol = (md - dist) / 2, nx = dx / dist, ny = dy / dist;
-            a.x -= nx * ol; a.y -= ny * ol; b.x += nx * ol; b.y += ny * ol;
-            const rv = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
-            a.vx -= rv * nx * 0.35; a.vy -= rv * ny * 0.35; b.vx += rv * nx * 0.35; b.vy += rv * ny * 0.35;
+    const allPlayers = [...redPlayers, ...bluePlayers];
+    for (let i = 0; i < allPlayers.length; i++) {
+        for (let j = i + 1; j < allPlayers.length; j++) {
+            const playerA = allPlayers[i], playerB = allPlayers[j];
+            const dx = playerB.x - playerA.x, dy = playerB.y - playerA.y;
+            const dist = MathUtils.hypot(dx, dy);
+            const minDist = playerA.radius + playerB.radius;
+            if (dist < minDist && dist > 0) {
+                const overlap = (minDist - dist) / 2;
+                const normalX = dx / dist, normalY = dy / dist;
+                playerA.x -= normalX * overlap; playerA.y -= normalY * overlap;
+                playerB.x += normalX * overlap; playerB.y += normalY * overlap;
+                const relVx = playerA.vx - playerB.vx, relVy = playerA.vy - playerB.vy;
+                const dotN = relVx * normalX + relVy * normalY;
+                playerA.vx -= dotN * normalX * 0.35; playerA.vy -= dotN * normalY * 0.35;
+                playerB.vx += dotN * normalX * 0.35; playerB.vy += dotN * normalY * 0.35;
+            }
         }
     }
 }
 
 function checkForGoal() {
     const GD = FieldConstants.GOAL_DEPTH, GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, W = FieldConstants.WIDTH;
-    if (gameBall.x <= GD && gameBall.y > GT && gameBall.y < GB) return { scored: true, scoringTeam: 'blue', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'red' };
-    if (gameBall.x >= W - GD && gameBall.y > GT && gameBall.y < GB) return { scored: true, scoringTeam: 'red', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'blue' };
+    if (gameBall.x <= GD && gameBall.y > GT && gameBall.y < GB) {
+        return { scored: true, scoringTeam: 'blue', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'red' };
+    }
+    if (gameBall.x >= W - GD && gameBall.y > GT && gameBall.y < GB) {
+        return { scored: true, scoringTeam: 'red', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'blue' };
+    }
     return { scored: false };
 }
 
+
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 10-11: HUD & MATCH MANAGER
+//  MODULE 10: HUD MANAGER
 // ═══════════════════════════════════════════════════════════════════
+
 const HudManager = {
-    show(text, dur = 100) { MatchState.hudTimer = dur; const e = document.getElementById('hudText'); e.textContent = text; e.style.opacity = '1'; },
+    show(text, durationFrames = 100) {
+        MatchState.hudTimer = durationFrames;
+        const element = document.getElementById('hudText');
+        element.textContent = text;
+        element.style.opacity = '1';
+    },
     hide() { document.getElementById('hudText').style.opacity = '0'; }
 };
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  MODULE 11: MATCH MANAGER
+// ═══════════════════════════════════════════════════════════════════
 
 function startNewMatch() {
     MatchState.scoreRed = 0; MatchState.scoreBlue = 0; MatchState.time = 0;
@@ -1090,8 +1796,9 @@ function handleGoalScored(result) {
     MatchState.goalAnimation = 100; MatchState.goalTeam = result.scoringTeam;
     MatchState.phase = 'goalPause'; MatchState.kickoffTeam = result.scoringTeam === 'red' ? 'blue' : 'red';
     MatchState.kickoffTimer = 100;
-    const emoji = result.scoringTeam === 'red' ? '🔴' : '🔵', name = result.scoringTeam === 'red' ? 'Red' : 'Blue';
-    HudManager.show(`⚽ GOAL!\n${emoji} ${name} scores!${result.isOwnGoal ? '\n(Own Goal)' : ''}`, 100);
+    const teamEmoji = result.scoringTeam === 'red' ? '🔴' : '🔵';
+    const teamName = result.scoringTeam === 'red' ? 'Red' : 'Blue';
+    HudManager.show(`⚽ GOAL!\n${teamEmoji} ${teamName} scores!${result.isOwnGoal ? '\n(Own Goal)' : ''}`, 100);
 }
 
 function endCurrentMatch() {
@@ -1106,59 +1813,90 @@ function endCurrentMatch() {
 
 function gameTick() {
     if (MatchState.phase === 'playing') {
-        const steps = MatchState.turboTraining ? MathUtils.max(MatchState.speed * 4, 12) : MatchState.speed;
-        for (let s = 0; s < steps; s++) {
+        const stepsPerFrame = MatchState.turboTraining ? MathUtils.max(MatchState.speed * 4, 12) : MatchState.speed;
+        for (let step = 0; step < stepsPerFrame; step++) {
             MatchState.time++;
             executeTeamFrame(redPool.getActiveBrain(), redPlayers, bluePlayers, gameBall, 'red', redStats);
             executeTeamFrame(bluePool.getActiveBrain(), bluePlayers, redPlayers, gameBall, 'blue', blueStats);
             updateBallPhysics();
+            updateBallPlayerCollisions(); // ══ NEW ══
             resolvePlayerCollisions();
-            const gr = checkForGoal(); if (gr.scored) { handleGoalScored(gr); break; }
-            if (gameBall.controlledBy) {
+
+            const goalResult = checkForGoal();
+            if (goalResult.scored) { handleGoalScored(goalResult); break; }
+
+            if (gameBall.owner) {
                 MatchState.possessionFrames++;
-                if (gameBall.controlledBy.team === 'red') MatchState.possessionRed++;
+                if (gameBall.owner.team === 'red') MatchState.possessionRed++;
                 else MatchState.possessionBlue++;
             }
             MatchState.tackleCount = redStats.tacklesWon + blueStats.tacklesWon;
+
             if (MatchState.time >= MatchState.maxTime) {
                 endCurrentMatch();
                 if (MatchState.turboTraining) startNewMatch();
-                else { MatchState.phase = 'fulltime'; HudManager.show(`Full Time!\nRed ${MatchState.scoreRed} – ${MatchState.scoreBlue} Blue\nGen ${redPool.generation}`, 150); setTimeout(() => { if (MatchState.phase === 'fulltime') startNewMatch(); }, 3000); }
+                else {
+                    MatchState.phase = 'fulltime';
+                    HudManager.show(`Full Time!\nRed ${MatchState.scoreRed} – ${MatchState.scoreBlue} Blue\nGen ${redPool.generation}`, 150);
+                    setTimeout(() => { if (MatchState.phase === 'fulltime') startNewMatch(); }, 3000);
+                }
                 break;
             }
         }
     }
-    if (MatchState.phase === 'goalPause') { MatchState.kickoffTimer--; if (MatchState.kickoffTimer <= 0) { resetAllPositions(); MatchState.phase = 'kickoff'; MatchState.kickoffTimer = 45; } }
+
+    if (MatchState.phase === 'goalPause') {
+        MatchState.kickoffTimer--;
+        if (MatchState.kickoffTimer <= 0) { resetAllPositions(); MatchState.phase = 'kickoff'; MatchState.kickoffTimer = 45; }
+    }
+
     if (MatchState.phase === 'kickoff') {
         MatchState.kickoffTimer--;
         if (MatchState.kickoffTimer <= 0) {
-            const kP = MatchState.kickoffTeam === 'red' ? redPlayers : bluePlayers;
-            const fwd = kP.find(p => p.role === 3) || kP[kP.length - 1];
-            gameBall.x = FieldConstants.WIDTH / 2; gameBall.y = FieldConstants.HEIGHT / 2;
-            gameBall.controlledBy = fwd; gameBall.lastToucher = fwd;
-            fwd.dribbleTouchTimer = 0;
-            MatchState.phase = 'playing'; HudManager.hide();
+            const kickoffPlayers = MatchState.kickoffTeam === 'red' ? redPlayers : bluePlayers;
+            const forward = kickoffPlayers.find(p => p.role === 3) || kickoffPlayers[kickoffPlayers.length - 1];
+            gameBall.x = FieldConstants.WIDTH / 2;
+            gameBall.y = FieldConstants.HEIGHT / 2;
+            // ══ CHANGED: Don't teleport ball to player. Place ball at center, give ownership ══
+            gameBall.owner = forward;
+            forward.hasBall = true;
+            forward.dribbleTimer = 0;
+            gameBall.lastToucher = forward;
+            // Give a small initial kick so ball moves naturally from center
+            const kickDir = MatchState.kickoffTeam === 'red' ? 1 : -1;
+            gameBall.vx = kickDir * FieldConstants.DRIBBLE_TOUCH_POWER;
+            gameBall.vy = (MathUtils.randomFloat() - 0.5) * 0.8;
+            MatchState.phase = 'playing';
+            HudManager.hide();
         }
     }
+
     if (MatchState.hudTimer > 0) { MatchState.hudTimer--; if (MatchState.hudTimer <= 0) HudManager.hide(); }
 }
 
+
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 12: RENDERER
+//  CHANGED: Updated ball/player visuals for dribbling
 // ═══════════════════════════════════════════════════════════════════
+
 const Renderer = (() => {
     const canvas = document.getElementById('pitchCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = FieldConstants.WIDTH; canvas.height = FieldConstants.HEIGHT;
+    canvas.width = FieldConstants.WIDTH;
+    canvas.height = FieldConstants.HEIGHT;
 
     function drawField() {
         const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT;
-        const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, GD = FieldConstants.GOAL_DEPTH, GW = FieldConstants.GOAL_WIDTH;
-        const gg = ctx.createLinearGradient(0, 0, 0, H);
-        gg.addColorStop(0, '#2a7e45'); gg.addColorStop(0.5, '#33924e'); gg.addColorStop(1, '#2a7e45');
-        ctx.fillStyle = gg; ctx.fillRect(0, 0, W, H);
+        const GD = FieldConstants.GOAL_DEPTH, GW = FieldConstants.GOAL_WIDTH;
+        const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM;
+
+        const grassGradient = ctx.createLinearGradient(0, 0, 0, H);
+        grassGradient.addColorStop(0, '#2a7e45'); grassGradient.addColorStop(0.5, '#33924e'); grassGradient.addColorStop(1, '#2a7e45');
+        ctx.fillStyle = grassGradient; ctx.fillRect(0, 0, W, H);
         ctx.fillStyle = 'rgba(255,255,255,0.018)';
-        for (let i = 0; i < W; i += 50) { if (Math.floor(i / 50) % 2 === 0) ctx.fillRect(i, 0, 50, H); }
+        for (let i = 0; i < W; i += 50) if (Math.floor(i / 50) % 2 === 0) ctx.fillRect(i, 0, 50, H);
+
         ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 2;
         ctx.strokeRect(15, 15, W - 30, H - 30);
         ctx.beginPath(); ctx.moveTo(W / 2, 15); ctx.lineTo(W / 2, H - 15); ctx.stroke();
@@ -1168,61 +1906,96 @@ const Renderer = (() => {
         ctx.strokeRect(15, H / 2 - 50, 40, 100); ctx.strokeRect(W - 55, H / 2 - 50, 40, 100);
         ctx.beginPath(); ctx.arc(100, H / 2, 36, -0.9, 0.9); ctx.stroke();
         ctx.beginPath(); ctx.arc(W - 100, H / 2, 36, MathUtils.PI - 0.9, MathUtils.PI + 0.9); ctx.stroke();
-        for (const [cx2, cy2, sA, eA] of [[15, 15, 0, MathUtils.HALF_PI], [W - 15, 15, MathUtils.HALF_PI, MathUtils.PI], [W - 15, H - 15, MathUtils.PI, MathUtils.PI * 1.5], [15, H - 15, MathUtils.PI * 1.5, MathUtils.TAU]])
-            { ctx.beginPath(); ctx.arc(cx2, cy2, 12, sA, eA); ctx.stroke(); }
+
+        for (const [cx2, cy2, startAngle, endAngle] of [
+            [15, 15, 0, MathUtils.HALF_PI], [W - 15, 15, MathUtils.HALF_PI, MathUtils.PI],
+            [W - 15, H - 15, MathUtils.PI, MathUtils.PI * 1.5], [15, H - 15, MathUtils.PI * 1.5, MathUtils.TAU]
+        ]) { ctx.beginPath(); ctx.arc(cx2, cy2, 12, startAngle, endAngle); ctx.stroke(); }
+
         drawGoalNet(true); drawGoalNet(false);
     }
-    function drawGoalNet(isLeft) {
-        const W = FieldConstants.WIDTH, GD = FieldConstants.GOAL_DEPTH, GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, GW = FieldConstants.GOAL_WIDTH;
-        const nX = isLeft ? 15 - GD : W - 15;
-        ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(isLeft ? 15 - GD : W - 15, GT, GD, GW);
+
+    function drawGoalNet(isLeftSide) {
+        const W = FieldConstants.WIDTH, GD = FieldConstants.GOAL_DEPTH;
+        const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, GW = FieldConstants.GOAL_WIDTH;
+        const netX = isLeftSide ? 15 - GD : W - 15;
+        ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(isLeftSide ? 15 - GD : W - 15, GT, GD, GW);
         ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5;
-        for (let y = GT; y <= GB; y += 7) { ctx.beginPath(); ctx.moveTo(nX, y); ctx.lineTo(nX + GD, y); ctx.stroke(); }
-        for (let x = 0; x <= GD; x += 7) { ctx.beginPath(); ctx.moveTo(nX + x, GT); ctx.lineTo(nX + x, GB); ctx.stroke(); }
+        for (let y = GT; y <= GB; y += 7) { ctx.beginPath(); ctx.moveTo(netX, y); ctx.lineTo(netX + GD, y); ctx.stroke(); }
+        for (let x = 0; x <= GD; x += 7) { ctx.beginPath(); ctx.moveTo(netX + x, GT); ctx.lineTo(netX + x, GB); ctx.stroke(); }
         ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath();
-        if (isLeft) { ctx.moveTo(15, GT); ctx.lineTo(15 - GD, GT); ctx.lineTo(15 - GD, GB); ctx.lineTo(15, GB); }
+        if (isLeftSide) { ctx.moveTo(15, GT); ctx.lineTo(15 - GD, GT); ctx.lineTo(15 - GD, GB); ctx.lineTo(15, GB); }
         else { ctx.moveTo(W - 15, GT); ctx.lineTo(W - 15 + GD, GT); ctx.lineTo(W - 15 + GD, GB); ctx.lineTo(W - 15, GB); }
         ctx.stroke();
     }
+
     function drawPassingLinks(players, color) {
-        const carrier = players.find(p => gameBall.controlledBy === p);
+        const carrier = players.find(p => p.hasBall);
         if (!carrier) return;
         ctx.setLineDash([3, 5]); ctx.lineWidth = 1;
-        for (const p of players) { if (p === carrier) continue;
-            const d = MathUtils.distance(p.x, p.y, carrier.x, carrier.y);
-            if (d < 340) { ctx.strokeStyle = color; ctx.globalAlpha = MathUtils.clamp((300 - d) / 300 * 0.2, 0.02, 0.2); ctx.beginPath(); ctx.moveTo(carrier.x, carrier.y); ctx.lineTo(p.x, p.y); ctx.stroke(); }
+        for (const player of players) {
+            if (player === carrier) continue;
+            const dist = MathUtils.distance(player.x, player.y, carrier.x, carrier.y);
+            if (dist < 340) {
+                ctx.strokeStyle = color;
+                ctx.globalAlpha = MathUtils.clamp((300 - dist) / 300 * 0.2, 0.02, 0.2);
+                ctx.beginPath(); ctx.moveTo(carrier.x, carrier.y); ctx.lineTo(player.x, player.y); ctx.stroke();
+            }
         }
         ctx.setLineDash([]); ctx.globalAlpha = 1;
     }
-    function drawPlayer(player) {
-        const isRed = player.team === 'red', PR = FieldConstants.PLAYER_RADIUS;
-        const isController = gameBall.controlledBy === player;
 
+    function drawPlayer(player) {
+        const isRed = player.team === 'red';
+        const PR = FieldConstants.PLAYER_RADIUS;
+
+        // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.15)';
         ctx.beginPath(); ctx.ellipse(player.x + 2, player.y + 4, PR, PR * 0.38, 0, 0, MathUtils.TAU); ctx.fill();
-        const bg = ctx.createRadialGradient(player.x - 3, player.y - 3, 2, player.x, player.y, PR);
-        if (isRed) { bg.addColorStop(0, '#ff9999'); bg.addColorStop(1, '#c0392b'); }
-        else { bg.addColorStop(0, '#99ccff'); bg.addColorStop(1, '#2471a3'); }
-        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(player.x, player.y, PR, 0, MathUtils.TAU); ctx.fill();
+
+        // Body
+        const bodyGradient = ctx.createRadialGradient(player.x - 3, player.y - 3, 2, player.x, player.y, PR);
+        if (isRed) { bodyGradient.addColorStop(0, '#ff9999'); bodyGradient.addColorStop(1, '#c0392b'); }
+        else { bodyGradient.addColorStop(0, '#99ccff'); bodyGradient.addColorStop(1, '#2471a3'); }
+        ctx.fillStyle = bodyGradient;
+        ctx.beginPath(); ctx.arc(player.x, player.y, PR, 0, MathUtils.TAU); ctx.fill();
         ctx.strokeStyle = isRed ? '#922' : '#156'; ctx.lineWidth = 1.5; ctx.stroke();
 
-        const pSpd = MathUtils.hypot(player.vx, player.vy);
-        if (pSpd > 0.4) {
-            const dA = MathUtils.atan2(player.vy, player.vx);
+        // Direction arrow
+        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
+        if (playerSpeed > 0.4) {
+            const directionAngle = MathUtils.atan2(player.vy, player.vx);
             ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(player.x, player.y);
-            ctx.lineTo(player.x + MathUtils.cos(dA) * (PR + 5), player.y + MathUtils.sin(dA) * (PR + 5)); ctx.stroke();
+            ctx.lineTo(player.x + MathUtils.cos(directionAngle) * (PR + 5), player.y + MathUtils.sin(directionAngle) * (PR + 5));
+            ctx.stroke();
         }
 
+        // Labels
         ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(FieldConstants.ROLE_NAMES[player.role], player.x, player.y - 1);
         ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = 'bold 5.5px Arial';
         ctx.fillText(FieldConstants.DUTY_LABELS[player.duty] || '', player.x, player.y + 7);
 
-        // Controller indicator: subtle glow under feet instead of handball ring
-        if (isController) {
-            ctx.fillStyle = isRed ? 'rgba(255,100,100,0.3)' : 'rgba(100,160,255,0.3)';
-            ctx.beginPath(); ctx.ellipse(player.x, player.y + PR + 2, PR * 0.9, 4, 0, 0, MathUtils.TAU); ctx.fill();
+        // ══ CHANGED: Dribble indicator — pulsing circle instead of static "has ball" ring ══
+        if (player.hasBall) {
+            const pulsePhase = (MatchState.time * 0.12) % (MathUtils.TAU);
+            const pulseSize = 3 + MathUtils.sin(pulsePhase) * 1.5;
+            ctx.strokeStyle = '#ffd93d'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(player.x, player.y, PR + pulseSize, 0, MathUtils.TAU); ctx.stroke();
+
+            // ══ NEW: Draw a subtle line from player to ball showing "control link" ══
+            const ballDist = MathUtils.distance(player.x, player.y, gameBall.x, gameBall.y);
+            if (ballDist > 5 && ballDist < FieldConstants.DRIBBLE_LOSE_DISTANCE) {
+                ctx.strokeStyle = 'rgba(255,217,61,0.25)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 3]);
+                ctx.beginPath();
+                ctx.moveTo(player.x, player.y);
+                ctx.lineTo(gameBall.x, gameBall.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
         }
 
         // Energy bar
@@ -1230,115 +2003,187 @@ const Renderer = (() => {
         ctx.fillStyle = player.energy > 0.6 ? '#2ecc71' : player.energy > 0.4 ? '#f39c12' : '#e74c3c';
         ctx.fillRect(player.x - 10, player.y - PR - 7, 20 * player.energy, 3);
     }
+
     function drawBall() {
         const BR = gameBall.radius;
+
         // Shadow
         ctx.fillStyle = 'rgba(0,0,0,0.18)';
         ctx.beginPath(); ctx.ellipse(gameBall.x + 1, gameBall.y + 2, BR, BR * 0.38, 0, 0, MathUtils.TAU); ctx.fill();
-        // Ball
-        const bg = ctx.createRadialGradient(gameBall.x - 1.5, gameBall.y - 1.5, 1, gameBall.x, gameBall.y, BR);
-        bg.addColorStop(0, '#fff'); bg.addColorStop(1, '#ccc');
-        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(gameBall.x, gameBall.y, BR, 0, MathUtils.TAU); ctx.fill();
+
+        // Ball body
+        const ballGradient = ctx.createRadialGradient(gameBall.x - 1.5, gameBall.y - 1.5, 1, gameBall.x, gameBall.y, BR);
+        ballGradient.addColorStop(0, '#fff'); ballGradient.addColorStop(1, '#ccc');
+        ctx.fillStyle = ballGradient;
+        ctx.beginPath(); ctx.arc(gameBall.x, gameBall.y, BR, 0, MathUtils.TAU); ctx.fill();
         ctx.strokeStyle = '#888'; ctx.lineWidth = 0.7; ctx.stroke();
+
+        // ══ NEW: Pentagon pattern that rotates with ball movement ══
+        const ballSpeed = MathUtils.hypot(gameBall.vx, gameBall.vy);
+        const rotAngle = MatchState.time * 0.05 * ballSpeed;
+        ctx.fillStyle = 'rgba(0,0,0,0.12)';
+        for (let i = 0; i < 5; i++) {
+            const pAngle = MathUtils.TAU / 5 * i + rotAngle;
+            const px = gameBall.x + MathUtils.cos(pAngle) * BR * 0.42;
+            const py = gameBall.y + MathUtils.sin(pAngle) * BR * 0.42;
+            ctx.beginPath(); ctx.arc(px, py, 1.3, 0, MathUtils.TAU); ctx.fill();
+        }
+
         // Speed trail
-        const bSpd = MathUtils.hypot(gameBall.vx, gameBall.vy);
-        if (bSpd > 2.5) {
-            ctx.strokeStyle = `rgba(255,255,255,${MathUtils.min(0.4, bSpd / 14)})`;
-            ctx.lineWidth = 2; ctx.beginPath();
+        if (ballSpeed > 2) {
+            ctx.strokeStyle = `rgba(255,255,255,${MathUtils.min(0.3, ballSpeed / 18)})`;
+            ctx.lineWidth = 1.5; ctx.beginPath();
             ctx.moveTo(gameBall.x, gameBall.y);
             ctx.lineTo(gameBall.x - gameBall.vx * 3, gameBall.y - gameBall.vy * 3);
             ctx.stroke();
         }
     }
+
     function drawGoalAnimation() {
         if (MatchState.goalAnimation <= 0) return;
-        const a = MatchState.goalAnimation / 100;
-        ctx.fillStyle = `rgba(255,215,0,${a * 0.18})`; ctx.fillRect(0, 0, FieldConstants.WIDTH, FieldConstants.HEIGHT);
+        const alpha = MatchState.goalAnimation / 100;
+        ctx.fillStyle = `rgba(255,215,0,${alpha * 0.18})`; ctx.fillRect(0, 0, FieldConstants.WIDTH, FieldConstants.HEIGHT);
         ctx.save(); ctx.translate(FieldConstants.WIDTH / 2, FieldConstants.HEIGHT / 2);
-        const sc = 1.4 - a * 0.4; ctx.scale(sc, sc);
-        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        const scale = 1.4 - alpha * 0.4; ctx.scale(scale, scale);
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
         ctx.font = 'bold 50px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('⚽ GOAL!', 0, 0); ctx.restore();
+        ctx.fillText('⚽ GOAL!', 0, 0);
+        ctx.restore();
         MatchState.goalAnimation--;
     }
-    function drawBrainViz(brain, cId) {
-        const bc = document.getElementById(cId); if (!bc || !brain) return;
-        const bCtx = bc.getContext('2d'), w = bc.width, h = bc.height;
-        bCtx.fillStyle = '#050508'; bCtx.fillRect(0, 0, w, h);
-        const D = brain.modelDimension, bw = w / D, isR = cId === 'brainCanvasRed';
-        for (let i = 0; i < D; i++) {
-            const v = MathUtils.min(1, brain.activationSnapshot[i] * 2.5);
-            const r = isR ? v * 220 : v * 50, g = v * 40, b = isR ? v * 50 : v * 220;
-            bCtx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
-            bCtx.fillRect(i * bw, h - v * h * 0.9, bw - 0.5, v * h * 0.9);
+
+    function drawBrainVisualization(brain, canvasId) {
+        const brainCanvas = document.getElementById(canvasId);
+        if (!brainCanvas || !brain) return;
+        const brainCtx = brainCanvas.getContext('2d');
+        const width = brainCanvas.width, height = brainCanvas.height;
+        brainCtx.fillStyle = '#050508'; brainCtx.fillRect(0, 0, width, height);
+        const dimension = brain.modelDimension;
+        const barWidth = width / dimension;
+        const isRedTeam = canvasId === 'brainCanvasRed';
+        for (let i = 0; i < dimension; i++) {
+            const activationValue = MathUtils.min(1, brain.activationSnapshot[i] * 2.5);
+            const r = isRedTeam ? activationValue * 220 : activationValue * 50;
+            const g = activationValue * 40;
+            const b = isRedTeam ? activationValue * 50 : activationValue * 220;
+            brainCtx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
+            brainCtx.fillRect(i * barWidth, height - activationValue * height * 0.9, barWidth - 0.5, activationValue * height * 0.9);
         }
     }
-    function updateStats() {
-        const m = MathUtils.floor(MatchState.time / 60), s = MatchState.time % 60;
-        document.getElementById('clock').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+    function updateStatsDisplay() {
+        const minutes = MathUtils.floor(MatchState.time / 60);
+        const seconds = MatchState.time % 60;
+        document.getElementById('clock').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         document.getElementById('statPassesRed').textContent = redStats.passesCompleted;
         document.getElementById('statPassesBlue').textContent = blueStats.passesCompleted;
         document.getElementById('statShotsRed').textContent = redStats.shotsOnTarget;
         document.getElementById('statShotsBlue').textContent = blueStats.shotsOnTarget;
         document.getElementById('statTackles').textContent = MatchState.tackleCount;
         if (MatchState.possessionFrames > 0) {
-            const rp = MathUtils.round(MatchState.possessionRed / MatchState.possessionFrames * 100);
-            document.getElementById('statPossRed').textContent = rp + '%';
-            document.getElementById('statPossBlue').textContent = (100 - rp) + '%';
+            const redPossPercent = MathUtils.round(MatchState.possessionRed / MatchState.possessionFrames * 100);
+            document.getElementById('statPossRed').textContent = redPossPercent + '%';
+            document.getElementById('statPossBlue').textContent = (100 - redPossPercent) + '%';
         }
-        const labels = { idle: 'READY', kickoff: 'KICK OFF', playing: 'PLAYING', goalPause: 'GOAL!', paused: 'PAUSED', fulltime: 'FULL TIME' };
-        document.getElementById('matchPhase').textContent = (MatchState.turboTraining ? '⚡ TURBO — ' : '') + (labels[MatchState.phase] || '');
+        const phaseLabels = { idle: 'READY', kickoff: 'KICK OFF', playing: 'PLAYING', goalPause: 'GOAL!', paused: 'PAUSED', fulltime: 'FULL TIME' };
+        document.getElementById('matchPhase').textContent = (MatchState.turboTraining ? '⚡ TURBO — ' : '') + (phaseLabels[MatchState.phase] || '');
     }
+
     function renderFrame() {
         drawField();
         drawPassingLinks(redPlayers, 'rgba(255,100,100,0.5)');
         drawPassingLinks(bluePlayers, 'rgba(100,150,255,0.5)');
-        for (const p of redPlayers) drawPlayer(p);
-        for (const p of bluePlayers) drawPlayer(p);
+        for (const player of redPlayers) drawPlayer(player);
+        for (const player of bluePlayers) drawPlayer(player);
         drawBall();
         drawGoalAnimation();
-        updateStats();
+        updateStatsDisplay();
         if (MatchState.time % 4 === 0 && redPool && bluePool) {
-            drawBrainViz(redPool.getActiveBrain(), 'brainCanvasRed');
-            drawBrainViz(bluePool.getActiveBrain(), 'brainCanvasBlue');
+            drawBrainVisualization(redPool.getActiveBrain(), 'brainCanvasRed');
+            drawBrainVisualization(bluePool.getActiveBrain(), 'brainCanvasBlue');
         }
     }
+
     return { renderFrame };
 })();
 
+
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 13: USER INTERFACE
+//  MODULE 13: USER INTERFACE CONTROLLER
 // ═══════════════════════════════════════════════════════════════════
+
 const UserInterface = {
     start() {
-        if (MatchState.phase === 'idle' || MatchState.phase === 'fulltime') { startNewMatch(); document.getElementById('buttonStart').textContent = '● Live'; }
-        else if (MatchState.phase === 'paused') { MatchState.phase = MatchState.previousPhase === 'paused' ? 'playing' : MatchState.previousPhase; HudManager.hide(); document.getElementById('buttonPause').textContent = '⏸ Pause'; }
+        if (MatchState.phase === 'idle' || MatchState.phase === 'fulltime') {
+            startNewMatch();
+            document.getElementById('buttonStart').textContent = '● Live';
+        } else if (MatchState.phase === 'paused') {
+            MatchState.phase = MatchState.previousPhase === 'paused' ? 'playing' : MatchState.previousPhase;
+            HudManager.hide();
+            document.getElementById('buttonPause').textContent = '⏸ Pause';
+        }
     },
     pause() {
-        if (MatchState.phase === 'playing' || MatchState.phase === 'kickoff') { MatchState.previousPhase = MatchState.phase; MatchState.phase = 'paused'; HudManager.show('⏸ PAUSED', 99999); document.getElementById('buttonPause').textContent = '▶ Resume'; }
-        else if (MatchState.phase === 'paused') { MatchState.phase = MatchState.previousPhase; HudManager.hide(); document.getElementById('buttonPause').textContent = '⏸ Pause'; }
+        if (MatchState.phase === 'playing' || MatchState.phase === 'kickoff') {
+            MatchState.previousPhase = MatchState.phase;
+            MatchState.phase = 'paused';
+            HudManager.show('⏸ PAUSED', 99999);
+            document.getElementById('buttonPause').textContent = '▶ Resume';
+        } else if (MatchState.phase === 'paused') {
+            MatchState.phase = MatchState.previousPhase;
+            HudManager.hide();
+            document.getElementById('buttonPause').textContent = '⏸ Pause';
+        }
     },
     reset() {
-        MatchState.phase = 'idle'; MatchState.matchCount = 0; MatchState.scoreRed = 0; MatchState.scoreBlue = 0;
-        MatchState.time = 0; MatchState.possessionRed = 0; MatchState.possessionBlue = 0;
-        MatchState.possessionFrames = 0; MatchState.tackleCount = 0; MatchState.goalAnimation = 0;
+        MatchState.phase = 'idle'; MatchState.matchCount = 0;
+        MatchState.scoreRed = 0; MatchState.scoreBlue = 0; MatchState.time = 0;
+        MatchState.possessionRed = 0; MatchState.possessionBlue = 0; MatchState.possessionFrames = 0;
+        MatchState.tackleCount = 0; MatchState.goalAnimation = 0;
         redStats = createEmptyMatchStats(); blueStats = createEmptyMatchStats();
-        document.getElementById('scoreRed').textContent = '0'; document.getElementById('scoreBlue').textContent = '0';
-        document.getElementById('buttonStart').textContent = '▶ Start'; document.getElementById('buttonPause').textContent = '⏸ Pause';
-        document.getElementById('evoGeneration').textContent = '0'; document.getElementById('evoFitnessRed').textContent = '0';
-        document.getElementById('evoFitnessBlue').textContent = '0'; document.getElementById('evoMatches').textContent = '0';
+        document.getElementById('scoreRed').textContent = '0';
+        document.getElementById('scoreBlue').textContent = '0';
+        document.getElementById('buttonStart').textContent = '▶ Start';
+        document.getElementById('buttonPause').textContent = '⏸ Pause';
+        document.getElementById('evoGeneration').textContent = '0';
+        document.getElementById('evoFitnessRed').textContent = '0';
+        document.getElementById('evoFitnessBlue').textContent = '0';
+        document.getElementById('evoMatches').textContent = '0';
         initializeGame(); resetAllPositions(); HudManager.hide();
     },
-    setMode(mode) { MatchState.mode = mode; document.getElementById('buttonMode3').classList.toggle('toolbar__button--active', mode === 3); document.getElementById('buttonMode5').classList.toggle('toolbar__button--active', mode === 5); this.reset(); },
-    cycleSpeed() { const sp = [1, 2, 4, 8, 16]; const ci = sp.indexOf(MatchState.speed); MatchState.speed = sp[(ci + 1) % sp.length]; document.getElementById('buttonSpeed').textContent = MatchState.speed + '×'; },
-    toggleTurbo() { MatchState.turboTraining = !MatchState.turboTraining; document.getElementById('buttonTurbo').textContent = 'Turbo: ' + (MatchState.turboTraining ? 'ON' : 'OFF'); if (MatchState.turboTraining && MatchState.phase === 'idle') this.start(); }
+    setMode(mode) {
+        MatchState.mode = mode;
+        document.getElementById('buttonMode3').classList.toggle('toolbar__button--active', mode === 3);
+        document.getElementById('buttonMode5').classList.toggle('toolbar__button--active', mode === 5);
+        this.reset();
+    },
+    cycleSpeed() {
+        const speeds = [1, 2, 4, 8, 16];
+        const currentIndex = speeds.indexOf(MatchState.speed);
+        MatchState.speed = speeds[(currentIndex + 1) % speeds.length];
+        document.getElementById('buttonSpeed').textContent = MatchState.speed + '×';
+    },
+    toggleTurbo() {
+        MatchState.turboTraining = !MatchState.turboTraining;
+        document.getElementById('buttonTurbo').textContent = 'Turbo: ' + (MatchState.turboTraining ? 'ON' : 'OFF');
+        if (MatchState.turboTraining && MatchState.phase === 'idle') this.start();
+    }
 };
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODULE 14: MAIN LOOP
 // ═══════════════════════════════════════════════════════════════════
-function mainLoop() { gameTick(); Renderer.renderFrame(); requestAnimationFrame(mainLoop); }
-initializeGame(); resetAllPositions(); mainLoop();
+
+function mainLoop() {
+    gameTick();
+    Renderer.renderFrame();
+    requestAnimationFrame(mainLoop);
+}
+
+initializeGame();
+resetAllPositions();
+mainLoop();
 </script>
 </body>
-</html>
+    </html>
