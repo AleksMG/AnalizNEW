@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neural Football — Collective Transformer AGI</title>
 <style>
-/* ═══════════════════════════════════════════════════════
-   DESIGN SYSTEM
-   ═══════════════════════════════════════════════════════ */
 :root {
     --color-bg-primary: #0b0e14;
     --color-bg-surface: #151922;
@@ -15,403 +12,134 @@
     --color-bg-elevated: #222d3d;
     --color-border: #1e2530;
     --color-border-light: #2d3748;
-
     --color-red: #e84545;
     --color-red-light: #ff6b6b;
     --color-red-dark: #c0392b;
     --color-red-glow: rgba(232, 69, 69, 0.25);
-
     --color-blue: #4a9eff;
     --color-blue-light: #74b9ff;
     --color-blue-dark: #2471a3;
     --color-blue-glow: rgba(74, 158, 255, 0.25);
-
     --color-gold: #ffc857;
     --color-gold-dim: rgba(255, 200, 87, 0.15);
     --color-green: #2ecc71;
     --color-orange: #f39c12;
     --color-danger: #e74c3c;
-
     --color-text: #c9d1d9;
     --color-text-dim: #484f58;
     --color-text-muted: #30363d;
-
     --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-mono: 'Consolas', 'SF Mono', 'Courier New', monospace;
-
     --radius-small: 6px;
     --radius-medium: 10px;
     --radius-large: 14px;
     --radius-round: 50%;
-
-    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.3);
     --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.5);
-
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
 }
-
-/* ═══════════════════════════════════════════════════════
-   RESET & BASE
-   ═══════════════════════════════════════════════════════ */
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    background: var(--color-bg-primary);
-    font-family: var(--font-main);
-    color: var(--color-text);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden;
+    background: var(--color-bg-primary); font-family: var(--font-main);
+    color: var(--color-text); display: flex; flex-direction: column;
+    align-items: center; min-height: 100vh; overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
-
-/* ═══════════════════════════════════════════════════════
-   SCOREBOARD HEADER
-   ═══════════════════════════════════════════════════════ */
 .scoreboard {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 36px;
-    padding: 18px 32px;
-    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    gap: 36px; padding: 18px 32px; width: 100%;
     background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-primary) 100%);
-    border-bottom: 1px solid var(--color-border);
-    position: relative;
-    z-index: 10;
+    border-bottom: 1px solid var(--color-border); position: relative; z-index: 10;
 }
-
-.scoreboard__team {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
+.scoreboard__team { display: flex; align-items: center; gap: 16px; }
 .scoreboard__badge {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-round);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font: 900 18px/1 var(--font-main);
-    color: #fff;
-    position: relative;
-    flex-shrink: 0;
+    width: 48px; height: 48px; border-radius: var(--radius-round);
+    display: flex; align-items: center; justify-content: center;
+    font: 900 18px/1 var(--font-main); color: #fff; position: relative; flex-shrink: 0;
 }
-
 .scoreboard__badge::after {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: var(--radius-round);
-    border: 2px solid currentColor;
-    opacity: 0.25;
+    content: ''; position: absolute; inset: -3px; border-radius: var(--radius-round);
+    border: 2px solid currentColor; opacity: 0.25;
 }
-
 .scoreboard__badge--red {
     background: linear-gradient(135deg, var(--color-red-dark), var(--color-red));
-    box-shadow: 0 0 20px var(--color-red-glow);
-    color: var(--color-red-light);
+    box-shadow: 0 0 20px var(--color-red-glow); color: var(--color-red-light);
 }
-
 .scoreboard__badge--blue {
     background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue));
-    box-shadow: 0 0 20px var(--color-blue-glow);
-    color: var(--color-blue-light);
+    box-shadow: 0 0 20px var(--color-blue-glow); color: var(--color-blue-light);
 }
-
-.scoreboard__team-info {
-    text-align: center;
-}
-
-.scoreboard__team-name {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--color-text-dim);
-    margin-bottom: 2px;
-}
-
-.scoreboard__score {
-    font-size: 52px;
-    font-weight: 900;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-}
-
+.scoreboard__team-info { text-align: center; }
+.scoreboard__team-name { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--color-text-dim); margin-bottom: 2px; }
+.scoreboard__score { font-size: 52px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
 .scoreboard__score--red { color: var(--color-red-light); }
 .scoreboard__score--blue { color: var(--color-blue-light); }
-
-.scoreboard__center {
-    text-align: center;
-    min-width: 105px;
-}
-
+.scoreboard__center { text-align: center; min-width: 105px; }
 .scoreboard__clock {
-    font: 700 26px/1 var(--font-mono);
-    color: var(--color-gold);
-    background: rgba(0, 0, 0, 0.4);
-    padding: 8px 20px;
-    border-radius: var(--radius-large);
-    border: 1px solid var(--color-gold-dim);
-    letter-spacing: 1px;
-    display: inline-block;
+    font: 700 26px/1 var(--font-mono); color: var(--color-gold);
+    background: rgba(0,0,0,0.4); padding: 8px 20px; border-radius: var(--radius-large);
+    border: 1px solid var(--color-gold-dim); letter-spacing: 1px; display: inline-block;
 }
-
-.scoreboard__phase {
-    font-size: 9px;
-    color: var(--color-text-dim);
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    margin-top: 5px;
-}
-
-/* ═══════════════════════════════════════════════════════
-   TOOLBAR
-   ═══════════════════════════════════════════════════════ */
+.scoreboard__phase { font-size: 9px; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 2.5px; margin-top: 5px; }
 .toolbar {
-    display: flex;
-    gap: 8px;
-    padding: 10px 16px;
-    flex-wrap: wrap;
-    justify-content: center;
-    background: var(--color-bg-surface);
-    width: 100%;
-    border-bottom: 1px solid var(--color-border);
+    display: flex; gap: 8px; padding: 10px 16px; flex-wrap: wrap; justify-content: center;
+    background: var(--color-bg-surface); width: 100%; border-bottom: 1px solid var(--color-border);
 }
-
 .toolbar__button {
-    padding: 10px 24px;
-    border: none;
-    border-radius: var(--radius-small);
-    cursor: pointer;
-    font: 700 11px/1 var(--font-main);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: #fff;
-    transition: all var(--transition-fast);
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
+    padding: 10px 24px; border: none; border-radius: var(--radius-small); cursor: pointer;
+    font: 700 11px/1 var(--font-main); text-transform: uppercase; letter-spacing: 0.8px;
+    color: #fff; transition: all var(--transition-fast); white-space: nowrap;
 }
-
-.toolbar__button:hover {
-    filter: brightness(1.15);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.toolbar__button:active {
-    transform: translateY(0);
-}
-
-.toolbar__button--start   { background: linear-gradient(135deg, #1e8449, #27ae60); }
-.toolbar__button--pause   { background: linear-gradient(135deg, #9e6a03, #d4a017); }
-.toolbar__button--reset   { background: linear-gradient(135deg, #b71c1c, #e53935); }
-.toolbar__button--mode    { background: linear-gradient(135deg, #6a1b9a, #8e24aa); }
-.toolbar__button--speed   { background: linear-gradient(135deg, #0d47a1, #1565c0); }
-.toolbar__button--turbo   { background: linear-gradient(135deg, #00695c, #00897b); }
-
-.toolbar__button--active {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 2px;
-    box-shadow: 0 0 12px var(--color-gold-dim);
-}
-
-/* ═══════════════════════════════════════════════════════
-   PITCH CONTAINER
-   ═══════════════════════════════════════════════════════ */
-.pitch-container {
-    position: relative;
-    margin: 10px 0;
-    border-radius: var(--radius-medium);
-    overflow: hidden;
-    box-shadow: var(--shadow-elevated);
-}
-
-.pitch-container canvas {
-    display: block;
-}
-
-.pitch-container__hud {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+.toolbar__button:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.toolbar__button:active { transform: translateY(0); }
+.toolbar__button--start { background: linear-gradient(135deg, #1e8449, #27ae60); }
+.toolbar__button--pause { background: linear-gradient(135deg, #9e6a03, #d4a017); }
+.toolbar__button--reset { background: linear-gradient(135deg, #b71c1c, #e53935); }
+.toolbar__button--mode  { background: linear-gradient(135deg, #6a1b9a, #8e24aa); }
+.toolbar__button--speed { background: linear-gradient(135deg, #0d47a1, #1565c0); }
+.toolbar__button--turbo { background: linear-gradient(135deg, #00695c, #00897b); }
+.toolbar__button--active { outline: 2px solid var(--color-gold); outline-offset: 2px; box-shadow: 0 0 12px var(--color-gold-dim); }
+.pitch-container { position: relative; margin: 10px 0; border-radius: var(--radius-medium); overflow: hidden; box-shadow: var(--shadow-elevated); }
+.pitch-container canvas { display: block; }
+.pitch-container__hud { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
 .pitch-container__hud-text {
-    font: 900 32px/1.3 var(--font-main);
-    color: var(--color-gold);
-    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.8), 0 0 60px rgba(255, 200, 87, 0.15);
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-    text-align: center;
-    white-space: pre-line;
+    font: 900 32px/1.3 var(--font-main); color: var(--color-gold);
+    text-shadow: 0 3px 16px rgba(0,0,0,0.8), 0 0 60px rgba(255,200,87,0.15);
+    opacity: 0; transition: opacity var(--transition-normal); text-align: center; white-space: pre-line;
 }
-
-/* ═══════════════════════════════════════════════════════
-   STATS BAR
-   ═══════════════════════════════════════════════════════ */
 .stats-bar {
-    display: flex;
-    gap: 2px;
-    padding: 3px;
-    background: var(--color-bg-surface);
-    border-radius: var(--radius-medium);
-    margin: 6px 8px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex; gap: 2px; padding: 3px; background: var(--color-bg-surface);
+    border-radius: var(--radius-medium); margin: 6px 8px; flex-wrap: wrap; justify-content: center;
 }
-
-.stats-bar__card {
-    text-align: center;
-    min-width: 76px;
-    padding: 8px 12px;
-    background: var(--color-bg-surface-2);
-    border-radius: var(--radius-small);
-}
-
-.stats-bar__label {
-    font-size: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--color-text-dim);
-    margin-bottom: 3px;
-}
-
-.stats-bar__value {
-    font: 700 18px/1.2 var(--font-main);
-    color: var(--color-text);
-}
-
-/* ═══════════════════════════════════════════════════════
-   BRAIN VISUALIZATION
-   ═══════════════════════════════════════════════════════ */
-.brain-panel {
-    display: flex;
-    gap: 16px;
-    padding: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.brain-panel__card {
-    background: var(--color-bg-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-medium);
-    padding: 10px 14px;
-    text-align: center;
-}
-
-.brain-panel__title {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--color-text-dim);
-    margin-bottom: 6px;
-}
-
-.brain-panel__canvas {
-    border-radius: var(--radius-small);
-    background: #050508;
-    display: block;
-    margin: 0 auto;
-}
-
-/* ═══════════════════════════════════════════════════════
-   EVOLUTION PANEL
-   ═══════════════════════════════════════════════════════ */
-.evolution-panel {
-    display: flex;
-    gap: 18px;
-    padding: 8px 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-    font-size: 11px;
-}
-
-.evolution-panel__stat {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--color-text-dim);
-}
-
-.evolution-panel__stat strong {
-    color: var(--color-text);
-    font-weight: 700;
-}
-
-.evolution-panel__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-round);
-    display: inline-block;
-    flex-shrink: 0;
-}
-
+.stats-bar__card { text-align: center; min-width: 76px; padding: 8px 12px; background: var(--color-bg-surface-2); border-radius: var(--radius-small); }
+.stats-bar__label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-dim); margin-bottom: 3px; }
+.stats-bar__value { font: 700 18px/1.2 var(--font-main); color: var(--color-text); }
+.brain-panel { display: flex; gap: 16px; padding: 8px; justify-content: center; flex-wrap: wrap; }
+.brain-panel__card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-medium); padding: 10px 14px; text-align: center; }
+.brain-panel__title { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-dim); margin-bottom: 6px; }
+.brain-panel__canvas { border-radius: var(--radius-small); background: #050508; display: block; margin: 0 auto; }
+.evolution-panel { display: flex; gap: 18px; padding: 8px 16px; justify-content: center; flex-wrap: wrap; font-size: 11px; }
+.evolution-panel__stat { display: flex; align-items: center; gap: 6px; color: var(--color-text-dim); }
+.evolution-panel__stat strong { color: var(--color-text); font-weight: 700; }
+.evolution-panel__dot { width: 8px; height: 8px; border-radius: var(--radius-round); display: inline-block; flex-shrink: 0; }
 .evolution-panel__dot--red { background: var(--color-red); }
 .evolution-panel__dot--blue { background: var(--color-blue); }
 .evolution-panel__dot--green { background: var(--color-green); }
-
-/* ═══════════════════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════════════════ */
 .footer {
-    font-size: 10px;
-    color: var(--color-text-muted);
-    padding: 12px 20px;
-    text-align: center;
-    max-width: 920px;
-    line-height: 1.7;
-    border-top: 1px solid var(--color-border);
-    margin-top: 8px;
-    width: 100%;
+    font-size: 10px; color: var(--color-text-muted); padding: 12px 20px; text-align: center;
+    max-width: 920px; line-height: 1.7; border-top: 1px solid var(--color-border); margin-top: 8px; width: 100%;
 }
-
-.footer strong {
-    color: var(--color-text-dim);
-}
-
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════════════ */
+.footer strong { color: var(--color-text-dim); }
 @media (max-width: 940px) {
-    .pitch-container canvas {
-        width: 100vw;
-        height: auto;
-    }
-    .scoreboard {
-        gap: 16px;
-        padding: 10px 16px;
-    }
-    .scoreboard__score {
-        font-size: 38px;
-    }
-    .scoreboard__clock {
-        font-size: 20px;
-        padding: 6px 14px;
-    }
+    .pitch-container canvas { width: 100vw; height: auto; }
+    .scoreboard { gap: 16px; padding: 10px 16px; }
+    .scoreboard__score { font-size: 38px; }
+    .scoreboard__clock { font-size: 20px; padding: 6px 14px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
-     SCOREBOARD
-     ═══════════════════════════════════════════════════════ -->
 <header class="scoreboard">
     <div class="scoreboard__team">
         <div class="scoreboard__badge scoreboard__badge--red">R</div>
@@ -433,22 +161,16 @@ body {
     </div>
 </header>
 
-<!-- ═══════════════════════════════════════════════════════
-     TOOLBAR
-     ═══════════════════════════════════════════════════════ -->
 <nav class="toolbar">
-    <button class="toolbar__button toolbar__button--start" id="buttonStart" onclick="UserInterface.start()">▶ Start</button>
-    <button class="toolbar__button toolbar__button--pause" id="buttonPause" onclick="UserInterface.pause()">⏸ Pause</button>
-    <button class="toolbar__button toolbar__button--reset" onclick="UserInterface.reset()">↺ Reset</button>
-    <button class="toolbar__button toolbar__button--mode toolbar__button--active" id="buttonMode3" onclick="UserInterface.setMode(3)">3 v 3</button>
-    <button class="toolbar__button toolbar__button--mode" id="buttonMode5" onclick="UserInterface.setMode(5)">5 v 5</button>
-    <button class="toolbar__button toolbar__button--speed" id="buttonSpeed" onclick="UserInterface.cycleSpeed()">1×</button>
-    <button class="toolbar__button toolbar__button--turbo" id="buttonTurbo" onclick="UserInterface.toggleTurbo()">Turbo: OFF</button>
+    <button class="toolbar__button toolbar__button--start" id="buttonStart" onclick="UI.start()">▶ Start</button>
+    <button class="toolbar__button toolbar__button--pause" id="buttonPause" onclick="UI.pause()">⏸ Pause</button>
+    <button class="toolbar__button toolbar__button--reset" onclick="UI.reset()">↺ Reset</button>
+    <button class="toolbar__button toolbar__button--mode toolbar__button--active" id="buttonMode3" onclick="UI.setMode(3)">3 v 3</button>
+    <button class="toolbar__button toolbar__button--mode" id="buttonMode5" onclick="UI.setMode(5)">5 v 5</button>
+    <button class="toolbar__button toolbar__button--speed" id="buttonSpeed" onclick="UI.cycleSpeed()">1×</button>
+    <button class="toolbar__button toolbar__button--turbo" id="buttonTurbo" onclick="UI.toggleTurbo()">Turbo: OFF</button>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════════
-     PITCH
-     ═══════════════════════════════════════════════════════ -->
 <div class="pitch-container">
     <canvas id="pitchCanvas"></canvas>
     <div class="pitch-container__hud">
@@ -456,9 +178,6 @@ body {
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     STATS
-     ═══════════════════════════════════════════════════════ -->
 <div class="stats-bar">
     <div class="stats-bar__card"><div class="stats-bar__label">Passes Red</div><div class="stats-bar__value" id="statPassesRed">0</div></div>
     <div class="stats-bar__card"><div class="stats-bar__label">Passes Blue</div><div class="stats-bar__value" id="statPassesBlue">0</div></div>
@@ -470,1720 +189,837 @@ body {
     <div class="stats-bar__card"><div class="stats-bar__label">Neurons</div><div class="stats-bar__value" id="statNeurons">0</div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     BRAIN VISUALIZATION
-     ═══════════════════════════════════════════════════════ -->
 <div class="brain-panel">
     <div class="brain-panel__card">
-        <div class="brain-panel__title">🔴 Red Transformer Activations</div>
+        <div class="brain-panel__title">🔴 Red Transformer</div>
         <canvas class="brain-panel__canvas" id="brainCanvasRed" width="230" height="52"></canvas>
     </div>
     <div class="brain-panel__card">
-        <div class="brain-panel__title">🔵 Blue Transformer Activations</div>
+        <div class="brain-panel__title">🔵 Blue Transformer</div>
         <canvas class="brain-panel__canvas" id="brainCanvasBlue" width="230" height="52"></canvas>
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     EVOLUTION INFO
-     ═══════════════════════════════════════════════════════ -->
 <div class="evolution-panel">
-    <div class="evolution-panel__stat">
-        <span class="evolution-panel__dot evolution-panel__dot--green"></span>
-        Generation: <strong id="evoGeneration">0</strong>
-    </div>
-    <div class="evolution-panel__stat">
-        <span class="evolution-panel__dot evolution-panel__dot--red"></span>
-        Red Fitness: <strong id="evoFitnessRed">0</strong>
-    </div>
-    <div class="evolution-panel__stat">
-        <span class="evolution-panel__dot evolution-panel__dot--blue"></span>
-        Blue Fitness: <strong id="evoFitnessBlue">0</strong>
-    </div>
-    <div class="evolution-panel__stat">
-        Matches: <strong id="evoMatches">0</strong>
-    </div>
+    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--green"></span>Gen: <strong id="evoGen">0</strong></div>
+    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--red"></span>Red Fit: <strong id="evoFitR">0</strong></div>
+    <div class="evolution-panel__stat"><span class="evolution-panel__dot evolution-panel__dot--blue"></span>Blue Fit: <strong id="evoFitB">0</strong></div>
+    <div class="evolution-panel__stat">Matches: <strong id="evoMatches">0</strong></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     FOOTER
-     ═══════════════════════════════════════════════════════ -->
 <div class="footer">
-    <strong>Hybrid Architecture:</strong> Players possess built-in football competence — they know how to hold formation, pass to open teammates, shoot at the correct goal, make support runs, press the ball, and clear from danger. The collective Transformer AGI (~400 neurons per team, 4-head cross-attention across all player tokens) sits on top as a <strong>tactical modulator</strong> — adjusting pressing intensity, support positioning, pass/shoot/dribble balance, forward run depth, and defensive line height. The network <strong>improves</strong> tactics through evolutionary self-play; the football engine ensures the game always looks like real football from the very first frame.
+    <strong>Aggressive Football AI:</strong> Players actively attack the penalty area, make overlapping runs, 
+    pass-and-move, cross from wings, shoot on sight in the box. Defenders press high, midfielders recycle possession,
+    forwards make diagonal runs behind the line. The Transformer modulates tactical intensity while hardcoded football
+    IQ ensures constant attacking intent from frame one.
 </div>
 
 <script>
 "use strict";
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 1: MATHEMATICS LIBRARY
+//  MATH
 // ═══════════════════════════════════════════════════════════════════
-
-const MathUtils = (() => {
-    const PI = Math.PI;
-    const TAU = PI * 2;
-    const HALF_PI = PI / 2;
-
-    function randomFloat() { return Math.random(); }
-
-    function randomGaussian() {
-        let u = 0, v = 0;
-        while (u === 0) u = Math.random();
-        while (v === 0) v = Math.random();
-        return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
-    }
-
-    function clamp(value, minimum, maximum) {
-        if (value < minimum) return minimum;
-        if (value > maximum) return maximum;
-        return value;
-    }
-
-    function lerp(start, end, factor) { return start + (end - start) * factor; }
-    function distance(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); }
-    function distanceSquared(x1, y1, x2, y2) { const dx = x2 - x1; const dy = y2 - y1; return dx * dx + dy * dy; }
-    function normalize(x, y) { const length = Math.hypot(x, y) || 1; return [x / length, y / length]; }
-    function dotProduct(ax, ay, bx, by) { return ax * bx + ay * by; }
-    function angleBetween(x1, y1, x2, y2) { return Math.atan2(y2 - y1, x2 - x1); }
-
-    function angleDifference(angle1, angle2) {
-        let diff = angle1 - angle2;
-        while (diff > PI) diff -= TAU;
-        while (diff < -PI) diff += TAU;
-        return Math.abs(diff);
-    }
-
-    function pointToSegmentDistance(pointX, pointY, segStartX, segStartY, segEndX, segEndY) {
-        const dx = segEndX - segStartX;
-        const dy = segEndY - segStartY;
-        const lengthSquared = dx * dx + dy * dy;
-        if (lengthSquared === 0) return distance(pointX, pointY, segStartX, segStartY);
-        let t = ((pointX - segStartX) * dx + (pointY - segStartY) * dy) / lengthSquared;
-        t = clamp(t, 0, 1);
-        return distance(pointX, pointY, segStartX + t * dx, segStartY + t * dy);
-    }
-
-    function geluActivation(x) {
-        return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / PI) * (x + 0.044715 * x * x * x)));
-    }
-
-    return Object.freeze({
-        PI, TAU, HALF_PI,
-        abs: Math.abs, sqrt: Math.sqrt, min: Math.min, max: Math.max,
-        floor: Math.floor, round: Math.round, sign: Math.sign,
-        cos: Math.cos, sin: Math.sin, atan2: Math.atan2, tanh: Math.tanh,
-        hypot: Math.hypot, exp: Math.exp, log: Math.log, pow: Math.pow,
-        randomFloat, randomGaussian, clamp, lerp,
-        distance, distanceSquared, normalize, dotProduct,
-        angleBetween, angleDifference, pointToSegmentDistance,
-        geluActivation
-    });
-})();
-
-
-// ═══════════════════════════════════════════════════════════════════
-//  MODULE 2: TENSOR OPERATIONS
-// ═══════════════════════════════════════════════════════════════════
-
-const TensorOps = (() => {
-    function createZeros(size) { return new Float32Array(size); }
-    function createOnes(size) { const buffer = new Float32Array(size); buffer.fill(1); return buffer; }
-
-    function createXavierWeights(inputSize, outputSize) {
-        const scale = MathUtils.sqrt(2.0 / (inputSize + outputSize));
-        const buffer = new Float32Array(inputSize * outputSize);
-        for (let i = 0; i < buffer.length; i++) buffer[i] = MathUtils.randomGaussian() * scale;
-        return buffer;
-    }
-
-    function matrixMultiply(matrixA, numRows, innerDim, matrixB, numCols, result) {
-        for (let row = 0; row < numRows; row++) {
-            const rowOffset = row * innerDim;
-            const resultOffset = row * numCols;
-            for (let col = 0; col < numCols; col++) {
-                let sum = 0;
-                for (let k = 0; k < innerDim; k++) sum += matrixA[rowOffset + k] * matrixB[k * numCols + col];
-                result[resultOffset + col] = sum;
-            }
-        }
-    }
-
-    function addBiasToRows(matrix, biasVector, numRows, numCols) {
-        for (let row = 0; row < numRows; row++) {
-            const offset = row * numCols;
-            for (let col = 0; col < numCols; col++) matrix[offset + col] += biasVector[col];
-        }
-    }
-
-    function layerNormalize(data, startOffset, size, gammaWeights, betaWeights) {
-        let mean = 0;
-        for (let i = 0; i < size; i++) mean += data[startOffset + i];
-        mean /= size;
-        let variance = 0;
-        for (let i = 0; i < size; i++) { const diff = data[startOffset + i] - mean; variance += diff * diff; }
-        variance /= size;
-        const invStd = 1.0 / MathUtils.sqrt(variance + 1e-5);
-        for (let i = 0; i < size; i++) data[startOffset + i] = gammaWeights[i] * ((data[startOffset + i] - mean) * invStd) + betaWeights[i];
-    }
-
-    function softmax(data, startOffset, length) {
-        let maxValue = -Infinity;
-        for (let i = 0; i < length; i++) if (data[startOffset + i] > maxValue) maxValue = data[startOffset + i];
-        let sumExp = 0;
-        for (let i = 0; i < length; i++) { data[startOffset + i] = MathUtils.exp(data[startOffset + i] - maxValue); sumExp += data[startOffset + i]; }
-        const invSum = 1.0 / sumExp;
-        for (let i = 0; i < length; i++) data[startOffset + i] *= invSum;
-    }
-
-    function copyRegion(source, sourceOffset, destination, destOffset, length) {
-        for (let i = 0; i < length; i++) destination[destOffset + i] = source[sourceOffset + i];
-    }
-
-    function addElementwise(bufferA, bufferB, output, length) {
-        for (let i = 0; i < length; i++) output[i] = bufferA[i] + bufferB[i];
-    }
-
-    function applyActivation(data, startOffset, length, activationFunction) {
-        for (let i = 0; i < length; i++) data[startOffset + i] = activationFunction(data[startOffset + i]);
-    }
-
-    return Object.freeze({
-        createZeros, createOnes, createXavierWeights,
-        matrixMultiply, addBiasToRows, layerNormalize, softmax,
-        copyRegion, addElementwise, applyActivation
-    });
-})();
-
-
-// ═══════════════════════════════════════════════════════════════════
-//  MODULE 3: COLLECTIVE TRANSFORMER BRAIN
-// ═══════════════════════════════════════════════════════════════════
-
-class CollectiveTransformerBrain {
-    constructor(numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-        this.modelDimension = 48;
-        this.numberOfHeads = 4;
-        this.headDimension = this.modelDimension / this.numberOfHeads;
-        this.feedForwardDimension = 96;
-
-        this.allyFeaturesPerPlayer = 8;
-        this.opponentFeaturesPerPlayer = 5;
-        this.globalFeatures = 5;
-        this.totalInputDimension =
-            this.allyFeaturesPerPlayer * numberOfPlayers +
-            this.opponentFeaturesPerPlayer * numberOfPlayers +
-            this.globalFeatures;
-
-        this.outputsPerPlayer = 10;
-
-        const D = this.modelDimension;
-        const FF = this.feedForwardDimension;
-        const N = numberOfPlayers;
-
-        this.inputWeight = TensorOps.createXavierWeights(this.totalInputDimension, D);
-        this.inputBias = TensorOps.createZeros(D);
-
-        this.tokenWeights = [];
-        this.tokenBiases = [];
-        for (let i = 0; i < N; i++) {
-            this.tokenWeights.push(TensorOps.createXavierWeights(D, D));
-            this.tokenBiases.push(TensorOps.createZeros(D));
-        }
-
-        // Block 1
-        this.block1QueryWeight = TensorOps.createXavierWeights(D, D);
-        this.block1QueryBias = TensorOps.createZeros(D);
-        this.block1KeyWeight = TensorOps.createXavierWeights(D, D);
-        this.block1KeyBias = TensorOps.createZeros(D);
-        this.block1ValueWeight = TensorOps.createXavierWeights(D, D);
-        this.block1ValueBias = TensorOps.createZeros(D);
-        this.block1OutputWeight = TensorOps.createXavierWeights(D, D);
-        this.block1OutputBias = TensorOps.createZeros(D);
-        this.block1AttnNormGamma = TensorOps.createOnes(D);
-        this.block1AttnNormBeta = TensorOps.createZeros(D);
-        this.block1FFWeight1 = TensorOps.createXavierWeights(D, FF);
-        this.block1FFBias1 = TensorOps.createZeros(FF);
-        this.block1FFWeight2 = TensorOps.createXavierWeights(FF, D);
-        this.block1FFBias2 = TensorOps.createZeros(D);
-        this.block1FFNormGamma = TensorOps.createOnes(D);
-        this.block1FFNormBeta = TensorOps.createZeros(D);
-
-        // Block 2
-        this.block2QueryWeight = TensorOps.createXavierWeights(D, D);
-        this.block2QueryBias = TensorOps.createZeros(D);
-        this.block2KeyWeight = TensorOps.createXavierWeights(D, D);
-        this.block2KeyBias = TensorOps.createZeros(D);
-        this.block2ValueWeight = TensorOps.createXavierWeights(D, D);
-        this.block2ValueBias = TensorOps.createZeros(D);
-        this.block2OutputWeight = TensorOps.createXavierWeights(D, D);
-        this.block2OutputBias = TensorOps.createZeros(D);
-        this.block2AttnNormGamma = TensorOps.createOnes(D);
-        this.block2AttnNormBeta = TensorOps.createZeros(D);
-        this.block2FFWeight1 = TensorOps.createXavierWeights(D, FF);
-        this.block2FFBias1 = TensorOps.createZeros(FF);
-        this.block2FFWeight2 = TensorOps.createXavierWeights(FF, D);
-        this.block2FFBias2 = TensorOps.createZeros(D);
-        this.block2FFNormGamma = TensorOps.createOnes(D);
-        this.block2FFNormBeta = TensorOps.createZeros(D);
-
-        this.outputWeight = TensorOps.createXavierWeights(D, this.outputsPerPlayer);
-        this.outputBias = TensorOps.createZeros(this.outputsPerPlayer);
-
-        // Buffers
-        this.embeddingBuffer = TensorOps.createZeros(D);
-        this.tokenBuffer = TensorOps.createZeros(N * D);
-        this.tokenTempBuffer = TensorOps.createZeros(D);
-        this.queryBuffer = TensorOps.createZeros(N * D);
-        this.keyBuffer = TensorOps.createZeros(N * D);
-        this.valueBuffer = TensorOps.createZeros(N * D);
-        this.attentionScores = TensorOps.createZeros(N * N);
-        this.attentionOutput = TensorOps.createZeros(N * D);
-        this.projectionBuffer = TensorOps.createZeros(N * D);
-        this.residualBuffer = TensorOps.createZeros(N * D);
-        this.ffHiddenBuffer = TensorOps.createZeros(N * FF);
-        this.ffOutputBuffer = TensorOps.createZeros(N * D);
-        this.outputBuffer = TensorOps.createZeros(N * this.outputsPerPlayer);
-        this.activationSnapshot = TensorOps.createZeros(D);
-        this.totalNeuronCount = D + N * D + 2 * (4 * D + FF + D + 2 * D) + N * this.outputsPerPlayer;
-    }
-
-    getAllParameterArrays() {
-        const params = [this.inputWeight, this.inputBias];
-        for (let i = 0; i < this.numberOfPlayers; i++) params.push(this.tokenWeights[i], this.tokenBiases[i]);
-        params.push(
-            this.block1QueryWeight, this.block1QueryBias, this.block1KeyWeight, this.block1KeyBias,
-            this.block1ValueWeight, this.block1ValueBias, this.block1OutputWeight, this.block1OutputBias,
-            this.block1AttnNormGamma, this.block1AttnNormBeta, this.block1FFWeight1, this.block1FFBias1,
-            this.block1FFWeight2, this.block1FFBias2, this.block1FFNormGamma, this.block1FFNormBeta,
-            this.block2QueryWeight, this.block2QueryBias, this.block2KeyWeight, this.block2KeyBias,
-            this.block2ValueWeight, this.block2ValueBias, this.block2OutputWeight, this.block2OutputBias,
-            this.block2AttnNormGamma, this.block2AttnNormBeta, this.block2FFWeight1, this.block2FFBias1,
-            this.block2FFWeight2, this.block2FFBias2, this.block2FFNormGamma, this.block2FFNormBeta,
-            this.outputWeight, this.outputBias
-        );
-        return params;
-    }
-
-    clone() {
-        const cloned = new CollectiveTransformerBrain(this.numberOfPlayers);
-        const sourceParams = this.getAllParameterArrays();
-        const destParams = cloned.getAllParameterArrays();
-        for (let i = 0; i < sourceParams.length; i++) destParams[i].set(sourceParams[i]);
-        return cloned;
-    }
-
-    mutate(mutationRate, mutationStrength) {
-        for (const paramArray of this.getAllParameterArrays())
-            for (let i = 0; i < paramArray.length; i++)
-                if (MathUtils.randomFloat() < mutationRate) paramArray[i] += MathUtils.randomGaussian() * mutationStrength;
-    }
-
-    static crossover(parentA, parentB) {
-        const child = parentA.clone();
-        const childParams = child.getAllParameterArrays();
-        const parentBParams = parentB.getAllParameterArrays();
-        for (let i = 0; i < childParams.length; i++)
-            for (let j = 0; j < childParams[i].length; j++)
-                if (MathUtils.randomFloat() < 0.5) childParams[i][j] = parentBParams[i][j];
-        return child;
-    }
-
-    _computeCrossAttention(tokens, queryW, queryB, keyW, keyB, valueW, valueB, outputW, outputB) {
-        const N = this.numberOfPlayers, D = this.modelDimension, H = this.numberOfHeads, headDim = this.headDimension;
-        TensorOps.matrixMultiply(tokens, N, D, queryW, D, this.queryBuffer);
-        TensorOps.addBiasToRows(this.queryBuffer, queryB, N, D);
-        TensorOps.matrixMultiply(tokens, N, D, keyW, D, this.keyBuffer);
-        TensorOps.addBiasToRows(this.keyBuffer, keyB, N, D);
-        TensorOps.matrixMultiply(tokens, N, D, valueW, D, this.valueBuffer);
-        TensorOps.addBiasToRows(this.valueBuffer, valueB, N, D);
-
-        const scale = 1.0 / MathUtils.sqrt(headDim);
-        for (let head = 0; head < H; head++) {
-            const headOffset = head * headDim;
-            for (let queryIdx = 0; queryIdx < N; queryIdx++) {
-                for (let keyIdx = 0; keyIdx < N; keyIdx++) {
-                    let score = 0;
-                    for (let d = 0; d < headDim; d++)
-                        score += this.queryBuffer[queryIdx * D + headOffset + d] * this.keyBuffer[keyIdx * D + headOffset + d];
-                    this.attentionScores[queryIdx * N + keyIdx] = score * scale;
-                }
-                TensorOps.softmax(this.attentionScores, queryIdx * N, N);
-            }
-            for (let queryIdx = 0; queryIdx < N; queryIdx++)
-                for (let d = 0; d < headDim; d++) {
-                    let weightedSum = 0;
-                    for (let keyIdx = 0; keyIdx < N; keyIdx++)
-                        weightedSum += this.attentionScores[queryIdx * N + keyIdx] * this.valueBuffer[keyIdx * D + headOffset + d];
-                    this.attentionOutput[queryIdx * D + headOffset + d] = weightedSum;
-                }
-        }
-        TensorOps.matrixMultiply(this.attentionOutput, N, D, outputW, D, this.projectionBuffer);
-        TensorOps.addBiasToRows(this.projectionBuffer, outputB, N, D);
-    }
-
-    _computeFeedForward(tokens, weight1, bias1, weight2, bias2) {
-        const N = this.numberOfPlayers, D = this.modelDimension, FF = this.feedForwardDimension;
-        TensorOps.matrixMultiply(tokens, N, D, weight1, FF, this.ffHiddenBuffer);
-        TensorOps.addBiasToRows(this.ffHiddenBuffer, bias1, N, FF);
-        for (let i = 0; i < N * FF; i++) this.ffHiddenBuffer[i] = MathUtils.geluActivation(this.ffHiddenBuffer[i]);
-        TensorOps.matrixMultiply(this.ffHiddenBuffer, N, FF, weight2, D, this.ffOutputBuffer);
-        TensorOps.addBiasToRows(this.ffOutputBuffer, bias2, N, D);
-    }
-
-    encodeGameState(allies, opponents, ball, scoreDifference, timeNormalized, attackDirection) {
-        const input = new Float32Array(this.totalInputDimension);
-        let index = 0;
-        const fieldWidth = FieldConstants.WIDTH, fieldHeight = FieldConstants.HEIGHT;
-        for (const player of allies) {
-            input[index++] = (player.x / fieldWidth - 0.5) * 2;
-            input[index++] = (player.y / fieldHeight - 0.5) * 2;
-            input[index++] = player.vx / 5;
-            input[index++] = player.vy / 5;
-            input[index++] = player.role / 3;
-            input[index++] = player.hasBall ? 1 : -1;
-            input[index++] = player.energy * 2 - 1;
-            input[index++] = player.kickCooldown > 0 ? 1 : -1;
-        }
-        for (const player of opponents) {
-            input[index++] = (player.x / fieldWidth - 0.5) * 2;
-            input[index++] = (player.y / fieldHeight - 0.5) * 2;
-            input[index++] = player.vx / 5;
-            input[index++] = player.vy / 5;
-            input[index++] = player.hasBall ? 1 : -1;
-        }
-        input[index++] = (ball.x / fieldWidth - 0.5) * 2;
-        input[index++] = (ball.y / fieldHeight - 0.5) * 2;
-        input[index++] = ball.vx / 12;
-        input[index++] = ball.vy / 12;
-        input[index++] = MathUtils.tanh(scoreDifference / 3);
-        return input;
-    }
-
-    forward(inputVector) {
-        const N = this.numberOfPlayers, D = this.modelDimension, totalTokenSize = N * D;
-
-        TensorOps.matrixMultiply(inputVector, 1, this.totalInputDimension, this.inputWeight, D, this.embeddingBuffer);
-        TensorOps.addBiasToRows(this.embeddingBuffer, this.inputBias, 1, D);
-        TensorOps.applyActivation(this.embeddingBuffer, 0, D, MathUtils.geluActivation);
-
-        for (let playerIdx = 0; playerIdx < N; playerIdx++) {
-            TensorOps.matrixMultiply(this.embeddingBuffer, 1, D, this.tokenWeights[playerIdx], D, this.tokenTempBuffer);
-            TensorOps.addBiasToRows(this.tokenTempBuffer, this.tokenBiases[playerIdx], 1, D);
-            for (let d = 0; d < D; d++) this.tokenBuffer[playerIdx * D + d] = MathUtils.geluActivation(this.tokenTempBuffer[d]);
-        }
-
-        // Block 1
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
-        this._computeCrossAttention(this.tokenBuffer, this.block1QueryWeight, this.block1QueryBias, this.block1KeyWeight, this.block1KeyBias, this.block1ValueWeight, this.block1ValueBias, this.block1OutputWeight, this.block1OutputBias);
-        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, totalTokenSize);
-        for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block1AttnNormGamma, this.block1AttnNormBeta);
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
-        this._computeFeedForward(this.tokenBuffer, this.block1FFWeight1, this.block1FFBias1, this.block1FFWeight2, this.block1FFBias2);
-        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, totalTokenSize);
-        for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block1FFNormGamma, this.block1FFNormBeta);
-
-        // Block 2
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
-        this._computeCrossAttention(this.tokenBuffer, this.block2QueryWeight, this.block2QueryBias, this.block2KeyWeight, this.block2KeyBias, this.block2ValueWeight, this.block2ValueBias, this.block2OutputWeight, this.block2OutputBias);
-        TensorOps.addElementwise(this.residualBuffer, this.projectionBuffer, this.tokenBuffer, totalTokenSize);
-        for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block2AttnNormGamma, this.block2AttnNormBeta);
-        TensorOps.copyRegion(this.tokenBuffer, 0, this.residualBuffer, 0, totalTokenSize);
-        this._computeFeedForward(this.tokenBuffer, this.block2FFWeight1, this.block2FFBias1, this.block2FFWeight2, this.block2FFBias2);
-        TensorOps.addElementwise(this.residualBuffer, this.ffOutputBuffer, this.tokenBuffer, totalTokenSize);
-        for (let p = 0; p < N; p++) TensorOps.layerNormalize(this.tokenBuffer, p * D, D, this.block2FFNormGamma, this.block2FFNormBeta);
-
-        TensorOps.matrixMultiply(this.tokenBuffer, N, D, this.outputWeight, this.outputsPerPlayer, this.outputBuffer);
-        TensorOps.addBiasToRows(this.outputBuffer, this.outputBias, N, this.outputsPerPlayer);
-        const totalOutputs = N * this.outputsPerPlayer;
-        for (let i = 0; i < totalOutputs; i++) this.outputBuffer[i] = MathUtils.tanh(this.outputBuffer[i]);
-
-        for (let d = 0; d < D; d++) {
-            let average = 0;
-            for (let p = 0; p < N; p++) average += MathUtils.abs(this.tokenBuffer[p * D + d]);
-            this.activationSnapshot[d] = average / N;
-        }
-        return this.outputBuffer;
-    }
-}
-
-
-// ═══════════════════════════════════════════════════════════════════
-//  MODULE 4: EVOLUTIONARY TRAINING SYSTEM
-// ═══════════════════════════════════════════════════════════════════
-
-const POPULATION_SIZE = 8;
-
-class EvolutionaryPool {
-    constructor(numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-        this.population = [];
-        this.fitnessScores = [];
-        this.generation = 0;
-        this.bestFitnessEver = 0;
-        this.activeIndex = 0;
-        for (let i = 0; i < POPULATION_SIZE; i++) {
-            this.population.push(new CollectiveTransformerBrain(numberOfPlayers));
-            this.fitnessScores.push(0);
-        }
-    }
-
-    getActiveBrain() { return this.population[this.activeIndex]; }
-
-    recordFitness(matchStatistics) {
-        let fitness = 0;
-        fitness += matchStatistics.goalsScored * 150;
-        fitness -= matchStatistics.ownGoals * 300;
-        fitness += matchStatistics.passesCompleted * 8;
-        fitness += matchStatistics.shotsOnTarget * 12;
-        fitness += matchStatistics.possessionFrames * 0.15;
-        fitness += matchStatistics.territoryFrames * 0.1;
-        fitness += matchStatistics.ballProgression * 0.2;
-        fitness += matchStatistics.tacklesWon * 6;
-        fitness -= matchStatistics.goalsConceded * 80;
-        fitness += matchStatistics.spacingReward * 0.05;
-        fitness -= matchStatistics.clusteringPenalty * 0.03;
-        fitness += matchStatistics.dribbleSuccesses * 5;
-        this.fitnessScores[this.activeIndex] = fitness;
-    }
-
-    advanceToNextCandidate() { this.activeIndex = (this.activeIndex + 1) % POPULATION_SIZE; }
-
-    evolve() {
-        this.generation++;
-        const sortedIndices = Array.from({ length: POPULATION_SIZE }, (_, i) => i)
-            .sort((a, b) => this.fitnessScores[b] - this.fitnessScores[a]);
-        const bestFitness = this.fitnessScores[sortedIndices[0]];
-        if (bestFitness > this.bestFitnessEver) this.bestFitnessEver = bestFitness;
-
-        const newPopulation = [
-            this.population[sortedIndices[0]].clone(),
-            this.population[sortedIndices[1]].clone()
-        ];
-        for (let i = 2; i < POPULATION_SIZE; i++) {
-            const parentAIndex = this._tournamentSelect(sortedIndices);
-            const parentBIndex = this._tournamentSelect(sortedIndices);
-            let child;
-            if (MathUtils.randomFloat() < 0.65) child = CollectiveTransformerBrain.crossover(this.population[parentAIndex], this.population[parentBIndex]);
-            else child = this.population[parentAIndex].clone();
-            const adaptiveFactor = bestFitness < 100 ? 2.0 : bestFitness < 300 ? 1.5 : 1.0;
-            child.mutate(MathUtils.clamp(0.07 * adaptiveFactor, 0.03, 0.20), MathUtils.clamp(0.13 * adaptiveFactor, 0.05, 0.30));
-            newPopulation.push(child);
-        }
-        this.population = newPopulation;
-        this.fitnessScores.fill(0);
-        this.activeIndex = 0;
-    }
-
-    _tournamentSelect(sortedIndices) {
-        let bestIndex = sortedIndices[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)];
-        for (let i = 1; i < 3; i++) {
-            const candidate = sortedIndices[MathUtils.floor(MathUtils.randomFloat() * POPULATION_SIZE)];
-            if (this.fitnessScores[candidate] > this.fitnessScores[bestIndex]) bestIndex = candidate;
-        }
-        return bestIndex;
-    }
-
-    getBestCurrentFitness() { return MathUtils.round(MathUtils.max(...this.fitnessScores)); }
-}
-
-
-// ═══════════════════════════════════════════════════════════════════
-//  MODULE 5: FIELD CONSTANTS
-// ═══════════════════════════════════════════════════════════════════
-
-const FieldConstants = Object.freeze({
-    WIDTH: 900, HEIGHT: 560,
-    GOAL_WIDTH: 110, GOAL_DEPTH: 30,
-    get GOAL_TOP() { return (this.HEIGHT - this.GOAL_WIDTH) / 2; },
-    get GOAL_BOTTOM() { return this.GOAL_TOP + this.GOAL_WIDTH; },
-    PLAYER_RADIUS: 12, BALL_RADIUS: 6,
-    PLAYER_MAX_SPEED: 2.8, PLAYER_ACCELERATION: 0.38, PLAYER_FRICTION: 0.88,
-    BALL_FRICTION: 0.982, MAX_BALL_SPEED: 14,
-    KICK_COOLDOWN_FRAMES: 12,
-    PICKUP_RANGE: 18,
-    MATCH_DURATION_FRAMES: 5400,
-
-    // ══ NEW: Dribbling constants ══
-    DRIBBLE_BALL_OFFSET: 16,       // ball distance ahead of dribbler's feet
-    DRIBBLE_TOUCH_INTERVAL: 7,     // frames between dribble touch-kicks
-    DRIBBLE_TOUCH_POWER: 2.5,      // power of each dribble touch
-    DRIBBLE_WOBBLE: 0.12,          // random angle wobble per touch
-    DRIBBLE_LOSE_DISTANCE: 40,     // if ball gets this far, lose control
-    TACKLE_RANGE: 24,              // how close opponent must be to tackle
-    TACKLE_SUCCESS_RATE: 0.04,     // probability per frame when in range
-    TACKLE_FROM_BEHIND_FACTOR: 0.3,// reduced chance from behind
-    BALL_PLAYER_BOUNCE: true,      // ball bounces off non-controlling players
-
-    ROLES_3V3: [0, 1, 3],
-    ROLES_5V5: [0, 1, 1, 2, 3],
-    ROLE_NAMES: ['GK', 'DEF', 'MID', 'FWD'],
-    DUTY_LABELS: { gk: 'GK', carrier: 'CAR', support: 'SUP', runner: 'RUN', presser: 'PRS', cover: 'COV', sweeper: 'SWP' },
-    FORMATIONS: {
-        3: {
-            red:  [{ x: 0.06, y: 0.50 }, { x: 0.24, y: 0.33 }, { x: 0.44, y: 0.67 }],
-            blue: [{ x: 0.94, y: 0.50 }, { x: 0.76, y: 0.67 }, { x: 0.56, y: 0.33 }]
-        },
-        5: {
-            red:  [{ x: 0.06, y: 0.50 }, { x: 0.19, y: 0.23 }, { x: 0.19, y: 0.77 },
-                   { x: 0.36, y: 0.50 }, { x: 0.48, y: 0.40 }],
-            blue: [{ x: 0.94, y: 0.50 }, { x: 0.81, y: 0.77 }, { x: 0.81, y: 0.23 },
-                   { x: 0.64, y: 0.50 }, { x: 0.52, y: 0.60 }]
-        }
-    }
+const M = Object.freeze({
+    PI: Math.PI, TAU: Math.PI*2, HALF_PI: Math.PI/2,
+    abs: Math.abs, sqrt: Math.sqrt, min: Math.min, max: Math.max,
+    floor: Math.floor, round: Math.round, sign: Math.sign,
+    cos: Math.cos, sin: Math.sin, atan2: Math.atan2, tanh: Math.tanh,
+    hypot: Math.hypot, exp: Math.exp, log: Math.log, pow: Math.pow,
+    rnd() { return Math.random(); },
+    rndG() { let u=0,v=0; while(!u) u=Math.random(); while(!v) v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v); },
+    clamp(v,lo,hi) { return v<lo?lo:v>hi?hi:v; },
+    lerp(a,b,t) { return a+(b-a)*t; },
+    dist(x1,y1,x2,y2) { return Math.hypot(x2-x1,y2-y1); },
+    norm(x,y) { const l=Math.hypot(x,y)||1; return [x/l,y/l]; },
+    angle(x1,y1,x2,y2) { return Math.atan2(y2-y1,x2-x1); },
+    angleDiff(a,b) { let d=a-b; while(d>Math.PI) d-=Math.PI*2; while(d<-Math.PI) d+=Math.PI*2; return Math.abs(d); },
+    ptSeg(px,py,sx,sy,ex,ey) {
+        const dx=ex-sx,dy=ey-sy,l2=dx*dx+dy*dy;
+        if(!l2) return Math.hypot(px-sx,py-sy);
+        const t=M.clamp(((px-sx)*dx+(py-sy)*dy)/l2,0,1);
+        return Math.hypot(px-(sx+t*dx),py-(sy+t*dy));
+    },
+    gelu(x) { return 0.5*x*(1+Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x*x*x))); }
 });
 
+// ═══════════════════════════════════════════════════════════════════
+//  TENSOR
+// ═══════════════════════════════════════════════════════════════════
+const T = Object.freeze({
+    zeros(n){return new Float32Array(n)},
+    ones(n){const b=new Float32Array(n);b.fill(1);return b},
+    xavier(ni,no){const s=M.sqrt(2/(ni+no)),b=new Float32Array(ni*no);for(let i=0;i<b.length;i++)b[i]=M.rndG()*s;return b},
+    mm(A,r,k,B,c,O){for(let i=0;i<r;i++){const ro=i*k,oo=i*c;for(let j=0;j<c;j++){let s=0;for(let m=0;m<k;m++)s+=A[ro+m]*B[m*c+j];O[oo+j]=s}}},
+    addB(m,b,r,c){for(let i=0;i<r;i++){const o=i*c;for(let j=0;j<c;j++)m[o+j]+=b[j]}},
+    ln(d,o,s,g,b){let mu=0;for(let i=0;i<s;i++)mu+=d[o+i];mu/=s;let v=0;for(let i=0;i<s;i++){const df=d[o+i]-mu;v+=df*df}v/=s;const inv=1/M.sqrt(v+1e-5);for(let i=0;i<s;i++)d[o+i]=g[i]*((d[o+i]-mu)*inv)+b[i]},
+    sm(d,o,l){let mx=-1e9;for(let i=0;i<l;i++)if(d[o+i]>mx)mx=d[o+i];let s=0;for(let i=0;i<l;i++){d[o+i]=M.exp(d[o+i]-mx);s+=d[o+i]}const inv=1/s;for(let i=0;i<l;i++)d[o+i]*=inv},
+    cp(s,so,d,do_,l){for(let i=0;i<l;i++)d[do_+i]=s[so+i]},
+    add(a,b,o,l){for(let i=0;i<l;i++)o[i]=a[i]+b[i]}
+});
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 6: FOOTBALL COMPETENCE ENGINE
+//  FIELD
 // ═══════════════════════════════════════════════════════════════════
-
-const FootballEngine = (() => {
-    function evaluatePassQuality(sender, receiver, allAllies, allOpponents, teamSide) {
-        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
-        const ownGoalX = teamSide === 'red' ? 0 : FieldConstants.WIDTH;
-        const passDistance = MathUtils.distance(sender.x, sender.y, receiver.x, receiver.y);
-        if (passDistance < 40 || passDistance > 480) return -999;
-        let score = 0;
-        const senderGoalDist = MathUtils.abs(sender.x - opponentGoalX);
-        const receiverGoalDist = MathUtils.abs(receiver.x - opponentGoalX);
-        score += (senderGoalDist - receiverGoalDist) / FieldConstants.WIDTH * 5;
-        for (const opponent of allOpponents) {
-            const laneDistance = MathUtils.pointToSegmentDistance(opponent.x, opponent.y, sender.x, sender.y, receiver.x, receiver.y);
-            const opponentDistFromSender = MathUtils.distance(opponent.x, opponent.y, sender.x, sender.y);
-            if (laneDistance < 28 && opponentDistFromSender < passDistance * 0.85) return -999;
-        }
-        let nearestOpponentToReceiver = Infinity;
-        for (const opponent of allOpponents) nearestOpponentToReceiver = MathUtils.min(nearestOpponentToReceiver, MathUtils.distance(receiver.x, receiver.y, opponent.x, opponent.y));
-        score += MathUtils.clamp(nearestOpponentToReceiver / 70, 0, 1) * 2.5;
-        if (MathUtils.abs(receiver.x - ownGoalX) < 90) score -= 4;
-        if (passDistance > 80 && passDistance < 300) score += 0.8;
-        return score;
+const F = {
+    W:900, H:560, GW:110, GD:30,
+    get GT(){return(this.H-this.GW)/2}, get GB(){return this.GT+this.GW},
+    PR:12, BR:6, PMAX:3.0, PACC:0.42, PFRIC:0.87,
+    BFRIC:0.983, BMAX:15, KCD:10, PICKUP:20,
+    DRIB_INT:6, DRIB_POW:2.8, DRIB_LOSE:42,
+    TACKLE_R:26, TACKLE_P:0.045,
+    MATCH:5400,
+    R3:[0,1,3], R5:[0,1,1,2,3],
+    RNAME:['GK','DEF','MID','FWD'],
+    DNAME:{gk:'GK',carrier:'CAR',support:'SUP',runner:'RUN',winger:'WNG',presser:'PRS',cover:'COV',sweeper:'SWP',crasher:'CRS'},
+    FORM:{
+        3:{red:[{x:.07,y:.5},{x:.25,y:.35},{x:.45,y:.65}],blue:[{x:.93,y:.5},{x:.75,y:.65},{x:.55,y:.35}]},
+        5:{red:[{x:.07,y:.5},{x:.20,y:.22},{x:.20,y:.78},{x:.38,y:.5},{x:.50,y:.38}],
+           blue:[{x:.93,y:.5},{x:.80,y:.78},{x:.80,y:.22},{x:.62,y:.5},{x:.50,y:.62}]}
     }
-
-    function canAttemptShot(player, opponents, teamSide) {
-        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
-        const attackDirection = teamSide === 'red' ? 1 : -1;
-        const distanceToGoal = MathUtils.distance(player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
-        if (teamSide === 'red' && player.x < FieldConstants.WIDTH * 0.35) return false;
-        if (teamSide === 'blue' && player.x > FieldConstants.WIDTH * 0.65) return false;
-        if (distanceToGoal > 350) return false;
-        if (attackDirection * (opponentGoalX - player.x) < 0) return false;
-        let blockerCount = 0;
-        for (const opponent of opponents) {
-            const laneDistance = MathUtils.pointToSegmentDistance(opponent.x, opponent.y, player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
-            if (laneDistance < 28 && MathUtils.distance(opponent.x, opponent.y, player.x, player.y) < distanceToGoal) blockerCount++;
-        }
-        return blockerCount < 2;
-    }
-
-    function isKickSafe(playerX, playerY, kickVelocityX, kickVelocityY, teamSide) {
-        const ownGoalX = teamSide === 'red' ? 0 : FieldConstants.WIDTH;
-        const attackDirection = teamSide === 'red' ? 1 : -1;
-        if (attackDirection * kickVelocityX < -1 && MathUtils.abs(playerX - ownGoalX) < FieldConstants.WIDTH * 0.45) return false;
-        let projectedX = playerX, projectedY = playerY;
-        for (let step = 0; step < 25; step++) {
-            projectedX += kickVelocityX * Math.pow(FieldConstants.BALL_FRICTION, step);
-            projectedY += kickVelocityY * Math.pow(FieldConstants.BALL_FRICTION, step);
-        }
-        if (MathUtils.distance(projectedX, projectedY, ownGoalX, FieldConstants.HEIGHT / 2) < 130) return false;
-        return true;
-    }
-
-    function computeSafeClearanceVector(player, teamSide) {
-        const attackDirection = teamSide === 'red' ? 1 : -1;
-        const clearanceAngle = attackDirection > 0 ?
-            (player.y < FieldConstants.HEIGHT / 2 ? -0.2 : 0.2) :
-            (player.y < FieldConstants.HEIGHT / 2 ? MathUtils.PI + 0.2 : MathUtils.PI - 0.2);
-        return [MathUtils.cos(clearanceAngle) * 9, MathUtils.sin(clearanceAngle) * 4];
-    }
-
-    function assignPlayerDuties(allies, opponents, teamSide, ball) {
-        allies[0].duty = 'gk';
-        const outfieldPlayers = allies.slice(1);
-        const ballCarrier = outfieldPlayers.find(player => player.hasBall);
-        const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH : 0;
-        const teamHasBall = ball.owner && ball.owner.team === teamSide;
-        const opponentHasBall = ball.owner && ball.owner.team !== teamSide;
-
-        if (ballCarrier) {
-            ballCarrier.duty = 'carrier';
-            const remainingPlayers = outfieldPlayers.filter(p => p !== ballCarrier);
-            remainingPlayers.sort((a, b) => MathUtils.abs(a.x - opponentGoalX) - MathUtils.abs(b.x - opponentGoalX));
-            if (remainingPlayers.length >= 1) remainingPlayers[0].duty = 'runner';
-            if (remainingPlayers.length >= 2) remainingPlayers[1].duty = 'support';
-            if (remainingPlayers.length >= 3) remainingPlayers[2].duty = 'support';
-            if (remainingPlayers.length >= 4) remainingPlayers[3].duty = 'sweeper';
-        } else if (opponentHasBall) {
-            outfieldPlayers.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
-            if (outfieldPlayers.length >= 1) outfieldPlayers[0].duty = 'presser';
-            if (outfieldPlayers.length >= 2) outfieldPlayers[1].duty = 'cover';
-            if (outfieldPlayers.length >= 3) outfieldPlayers[2].duty = 'sweeper';
-            if (outfieldPlayers.length >= 4) outfieldPlayers[3].duty = 'sweeper';
-        } else {
-            outfieldPlayers.sort((a, b) => MathUtils.distance(a.x, a.y, ball.x, ball.y) - MathUtils.distance(b.x, b.y, ball.x, ball.y));
-            if (outfieldPlayers.length >= 1) outfieldPlayers[0].duty = 'presser';
-            if (outfieldPlayers.length >= 2) outfieldPlayers[1].duty = 'support';
-            if (outfieldPlayers.length >= 3) outfieldPlayers[2].duty = 'cover';
-            if (outfieldPlayers.length >= 4) outfieldPlayers[3].duty = 'sweeper';
-        }
-    }
-
-    return Object.freeze({
-        evaluatePassQuality, canAttemptShot, isKickSafe,
-        computeSafeClearanceVector, assignPlayerDuties
-    });
-})();
-
+};
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 6.5: DRIBBLE & TACKLE SYSTEM (NEW)
-//
-//  This replaces the "carry ball glued to player" mechanic with
-//  real football dribbling: periodic touch-kicks + independent ball
+//  TRANSFORMER BRAIN (full architecture preserved)
 // ═══════════════════════════════════════════════════════════════════
-
-const DribbleSystem = (() => {
-    /**
-     * Perform a dribble touch — small kick in movement direction.
-     * Called every DRIBBLE_TOUCH_INTERVAL frames while player hasBall.
-     */
-    function performDribbleTouch(player, ball, attackDirection) {
-        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
-        let dribbleAngle;
-
-        if (playerSpeed > 0.5) {
-            // Dribble in direction of movement
-            dribbleAngle = MathUtils.atan2(player.vy, player.vx);
-        } else {
-            // Standing still — nudge ball toward attack goal
-            dribbleAngle = attackDirection > 0 ? 0 : MathUtils.PI;
-        }
-
-        // Add slight wobble for realism
-        dribbleAngle += (MathUtils.randomFloat() - 0.5) * FieldConstants.DRIBBLE_WOBBLE * 2;
-
-        const touchPower = FieldConstants.DRIBBLE_TOUCH_POWER * (0.8 + playerSpeed * 0.15);
-        ball.vx = MathUtils.cos(dribbleAngle) * touchPower;
-        ball.vy = MathUtils.sin(dribbleAngle) * touchPower;
-        ball.lastToucher = player;
+class Brain {
+    constructor(N){
+        this.N=N; this.D=48; this.H=4; this.HD=12; this.FF=96;
+        this.aF=8; this.oF=5; this.gF=5;
+        this.inD=this.aF*N+this.oF*N+this.gF;
+        this.outP=10;
+        const D=this.D,FF=this.FF;
+        this.iW=T.xavier(this.inD,D);this.iB=T.zeros(D);
+        this.tW=[];this.tB=[];for(let i=0;i<N;i++){this.tW.push(T.xavier(D,D));this.tB.push(T.zeros(D))}
+        this.b1qW=T.xavier(D,D);this.b1qB=T.zeros(D);this.b1kW=T.xavier(D,D);this.b1kB=T.zeros(D);
+        this.b1vW=T.xavier(D,D);this.b1vB=T.zeros(D);this.b1oW=T.xavier(D,D);this.b1oB=T.zeros(D);
+        this.b1aG=T.ones(D);this.b1aB=T.zeros(D);
+        this.b1f1W=T.xavier(D,FF);this.b1f1B=T.zeros(FF);this.b1f2W=T.xavier(FF,D);this.b1f2B=T.zeros(D);
+        this.b1fG=T.ones(D);this.b1fB=T.zeros(D);
+        this.b2qW=T.xavier(D,D);this.b2qB=T.zeros(D);this.b2kW=T.xavier(D,D);this.b2kB=T.zeros(D);
+        this.b2vW=T.xavier(D,D);this.b2vB=T.zeros(D);this.b2oW=T.xavier(D,D);this.b2oB=T.zeros(D);
+        this.b2aG=T.ones(D);this.b2aB=T.zeros(D);
+        this.b2f1W=T.xavier(D,FF);this.b2f1B=T.zeros(FF);this.b2f2W=T.xavier(FF,D);this.b2f2B=T.zeros(D);
+        this.b2fG=T.ones(D);this.b2fB=T.zeros(D);
+        this.oW=T.xavier(D,this.outP);this.oB=T.zeros(this.outP);
+        this._e=T.zeros(D);this._t=T.zeros(N*D);this._tt=T.zeros(D);
+        this._q=T.zeros(N*D);this._k=T.zeros(N*D);this._v=T.zeros(N*D);
+        this._as=T.zeros(N*N);this._ao=T.zeros(N*D);this._pr=T.zeros(N*D);
+        this._r=T.zeros(N*D);this._fh=T.zeros(N*FF);this._fo=T.zeros(N*D);
+        this._o=T.zeros(N*this.outP);this.snap=T.zeros(D);
+        this.nc=D+N*D+2*(4*D+FF+D+2*D)+N*this.outP;
     }
-
-    /**
-     * Check if a dribbler should lose the ball (ball drifted too far).
-     * Returns true if ball was lost.
-     */
-    function checkBallLost(player, ball) {
-        if (!player.hasBall) return false;
-        const dist = MathUtils.distance(player.x, player.y, ball.x, ball.y);
-        if (dist > FieldConstants.DRIBBLE_LOSE_DISTANCE) {
-            player.hasBall = false;
-            if (ball.owner === player) ball.owner = null;
-            return true;
-        }
-        return false;
+    params(){
+        const p=[this.iW,this.iB];
+        for(let i=0;i<this.N;i++)p.push(this.tW[i],this.tB[i]);
+        p.push(this.b1qW,this.b1qB,this.b1kW,this.b1kB,this.b1vW,this.b1vB,this.b1oW,this.b1oB,this.b1aG,this.b1aB,
+            this.b1f1W,this.b1f1B,this.b1f2W,this.b1f2B,this.b1fG,this.b1fB,
+            this.b2qW,this.b2qB,this.b2kW,this.b2kB,this.b2vW,this.b2vB,this.b2oW,this.b2oB,this.b2aG,this.b2aB,
+            this.b2f1W,this.b2f1B,this.b2f2W,this.b2f2B,this.b2fG,this.b2fB,this.oW,this.oB);
+        return p;
     }
-
-    /**
-     * Attempt a tackle: opponent tries to take the ball from dribbler.
-     * Uses probabilistic model based on angle of approach.
-     * Returns true if tackle succeeded.
-     */
-    function attemptTackle(attacker, dribbler, ball, matchStats) {
-        const dist = MathUtils.distance(attacker.x, attacker.y, dribbler.x, dribbler.y);
-        if (dist > FieldConstants.TACKLE_RANGE) return false;
-        if (attacker.kickCooldown > 0) return false;
-
-        // Calculate approach angle relative to dribbler's movement
-        const approachAngle = MathUtils.angleBetween(attacker.x, attacker.y, dribbler.x, dribbler.y);
-        const dribblerMoveAngle = MathUtils.atan2(dribbler.vy, dribbler.vx);
-        const angleDiff = MathUtils.angleDifference(approachAngle, dribblerMoveAngle);
-
-        // Tackling from behind is harder (closer to same direction = from behind)
-        const fromBehind = angleDiff < MathUtils.PI * 0.35;
-        let successRate = FieldConstants.TACKLE_SUCCESS_RATE;
-        if (fromBehind) successRate *= FieldConstants.TACKLE_FROM_BEHIND_FACTOR;
-
-        // Faster attacker = slightly better odds
-        const attackerSpeed = MathUtils.hypot(attacker.vx, attacker.vy);
-        successRate *= (1.0 + attackerSpeed * 0.1);
-
-        if (MathUtils.randomFloat() < successRate) {
-            // Tackle succeeded!
-            dribbler.hasBall = false;
-            ball.owner = null;
-
-            // Ball gets knocked in a semi-random direction
-            const knockAngle = approachAngle + (MathUtils.randomFloat() - 0.5) * 1.2;
-            ball.vx = MathUtils.cos(knockAngle) * (2.5 + MathUtils.randomFloat() * 2);
-            ball.vy = MathUtils.sin(knockAngle) * (1.5 + MathUtils.randomFloat() * 1.5);
-
-            // Attacker gets brief cooldown
-            attacker.kickCooldown = 4;
-            dribbler.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES;
-
-            // Reset dribble timer
-            dribbler.dribbleTimer = 0;
-
-            if (matchStats) matchStats.tacklesWon++;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Handle ball-player collision for non-controlling players.
-     * Ball bounces off them realistically.
-     */
-    function handleBallPlayerCollision(player, ball) {
-        if (player.hasBall) return; // don't bounce off the dribbler
-        const dist = MathUtils.distance(player.x, player.y, ball.x, ball.y);
-        const minDist = player.radius + ball.radius;
-
-        if (dist < minDist && dist > 0) {
-            // Push ball out
-            const nx = (ball.x - player.x) / dist;
-            const ny = (ball.y - player.y) / dist;
-            ball.x = player.x + nx * (minDist + 0.5);
-            ball.y = player.y + ny * (minDist + 0.5);
-
-            // Reflect ball velocity
-            const dotN = ball.vx * nx + ball.vy * ny;
-            if (dotN < 0) { // only if moving toward player
-                ball.vx -= 1.6 * dotN * nx;
-                ball.vy -= 1.6 * dotN * ny;
-                ball.vx *= 0.7; // energy loss
-                ball.vy *= 0.7;
+    clone(){const c=new Brain(this.N);const sp=this.params(),dp=c.params();for(let i=0;i<sp.length;i++)dp[i].set(sp[i]);return c}
+    mutate(r,s){for(const a of this.params())for(let i=0;i<a.length;i++)if(M.rnd()<r)a[i]+=M.rndG()*s}
+    static cross(a,b){const c=a.clone();const cp=c.params(),bp=b.params();for(let i=0;i<cp.length;i++)for(let j=0;j<cp[i].length;j++)if(M.rnd()<.5)cp[i][j]=bp[i][j];return c}
+    _attn(tok,qW,qB,kW,kB,vW,vB,oW,oB){
+        const N=this.N,D=this.D,H=this.H,HD=this.HD;
+        T.mm(tok,N,D,qW,D,this._q);T.addB(this._q,qB,N,D);
+        T.mm(tok,N,D,kW,D,this._k);T.addB(this._k,kB,N,D);
+        T.mm(tok,N,D,vW,D,this._v);T.addB(this._v,vB,N,D);
+        const sc=1/M.sqrt(HD);
+        for(let h=0;h<H;h++){const ho=h*HD;
+            for(let qi=0;qi<N;qi++){
+                for(let ki=0;ki<N;ki++){let s=0;for(let d=0;d<HD;d++)s+=this._q[qi*D+ho+d]*this._k[ki*D+ho+d];this._as[qi*N+ki]=s*sc}
+                T.sm(this._as,qi*N,N);
             }
-            ball.lastToucher = player;
+            for(let qi=0;qi<N;qi++)for(let d=0;d<HD;d++){let ws=0;for(let ki=0;ki<N;ki++)ws+=this._as[qi*N+ki]*this._v[ki*D+ho+d];this._ao[qi*D+ho+d]=ws}
         }
+        T.mm(this._ao,N,D,oW,D,this._pr);T.addB(this._pr,oB,N,D);
     }
-
-    return Object.freeze({
-        performDribbleTouch, checkBallLost, attemptTackle, handleBallPlayerCollision
-    });
-})();
-
+    _ff(tok,w1,b1,w2,b2){
+        const N=this.N,D=this.D,FF=this.FF;
+        T.mm(tok,N,D,w1,FF,this._fh);T.addB(this._fh,b1,N,FF);
+        for(let i=0;i<N*FF;i++)this._fh[i]=M.gelu(this._fh[i]);
+        T.mm(this._fh,N,FF,w2,D,this._fo);T.addB(this._fo,b2,N,D);
+    }
+    encode(allies,opps,ball,sd){
+        const inp=new Float32Array(this.inD);let idx=0;
+        for(const p of allies){inp[idx++]=(p.x/F.W-.5)*2;inp[idx++]=(p.y/F.H-.5)*2;inp[idx++]=p.vx/5;inp[idx++]=p.vy/5;inp[idx++]=p.role/3;inp[idx++]=p.hasBall?1:-1;inp[idx++]=p.energy*2-1;inp[idx++]=p.kickCD>0?1:-1}
+        for(const p of opps){inp[idx++]=(p.x/F.W-.5)*2;inp[idx++]=(p.y/F.H-.5)*2;inp[idx++]=p.vx/5;inp[idx++]=p.vy/5;inp[idx++]=p.hasBall?1:-1}
+        inp[idx++]=(ball.x/F.W-.5)*2;inp[idx++]=(ball.y/F.H-.5)*2;inp[idx++]=ball.vx/12;inp[idx++]=ball.vy/12;inp[idx++]=M.tanh(sd/3);
+        return inp;
+    }
+    forward(inp){
+        const N=this.N,D=this.D,ND=N*D;
+        T.mm(inp,1,this.inD,this.iW,D,this._e);T.addB(this._e,this.iB,1,D);
+        for(let i=0;i<D;i++)this._e[i]=M.gelu(this._e[i]);
+        for(let p=0;p<N;p++){T.mm(this._e,1,D,this.tW[p],D,this._tt);T.addB(this._tt,this.tB[p],1,D);for(let d=0;d<D;d++)this._t[p*D+d]=M.gelu(this._tt[d])}
+        // Block 1
+        T.cp(this._t,0,this._r,0,ND);this._attn(this._t,this.b1qW,this.b1qB,this.b1kW,this.b1kB,this.b1vW,this.b1vB,this.b1oW,this.b1oB);
+        T.add(this._r,this._pr,this._t,ND);for(let p=0;p<N;p++)T.ln(this._t,p*D,D,this.b1aG,this.b1aB);
+        T.cp(this._t,0,this._r,0,ND);this._ff(this._t,this.b1f1W,this.b1f1B,this.b1f2W,this.b1f2B);
+        T.add(this._r,this._fo,this._t,ND);for(let p=0;p<N;p++)T.ln(this._t,p*D,D,this.b1fG,this.b1fB);
+        // Block 2
+        T.cp(this._t,0,this._r,0,ND);this._attn(this._t,this.b2qW,this.b2qB,this.b2kW,this.b2kB,this.b2vW,this.b2vB,this.b2oW,this.b2oB);
+        T.add(this._r,this._pr,this._t,ND);for(let p=0;p<N;p++)T.ln(this._t,p*D,D,this.b2aG,this.b2aB);
+        T.cp(this._t,0,this._r,0,ND);this._ff(this._t,this.b2f1W,this.b2f1B,this.b2f2W,this.b2f2B);
+        T.add(this._r,this._fo,this._t,ND);for(let p=0;p<N;p++)T.ln(this._t,p*D,D,this.b2fG,this.b2fB);
+        T.mm(this._t,N,D,this.oW,this.outP,this._o);T.addB(this._o,this.oB,N,this.outP);
+        const tot=N*this.outP;for(let i=0;i<tot;i++)this._o[i]=M.tanh(this._o[i]);
+        for(let d=0;d<D;d++){let avg=0;for(let p=0;p<N;p++)avg+=M.abs(this._t[p*D+d]);this.snap[d]=avg/N}
+        return this._o;
+    }
+}
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 7: TEAM CONTROLLER
-//  CHANGED: Replaced "carry ball" with dribble-touch system
+//  EVOLUTION
+// ═══════════════════════════════════════════════════════════════════
+const POP=8;
+class Evo {
+    constructor(N){this.N=N;this.pop=[];this.fit=[];this.gen=0;this.best=0;this.idx=0;
+        for(let i=0;i<POP;i++){this.pop.push(new Brain(N));this.fit.push(0)}}
+    brain(){return this.pop[this.idx]}
+    record(s){let f=s.goals*200-s.conc*100+s.passes*10+s.shots*15+s.poss*.15+s.terr*.12+s.prog*.25+s.tackles*8-s.og*300+s.space*.05-s.cluster*.03+s.crosses*12+s.boxEntry*8;this.fit[this.idx]=f}
+    next(){this.idx=(this.idx+1)%POP}
+    evolve(){this.gen++;const si=Array.from({length:POP},(_,i)=>i).sort((a,b)=>this.fit[b]-this.fit[a]);
+        const bf=this.fit[si[0]];if(bf>this.best)this.best=bf;
+        const np=[this.pop[si[0]].clone(),this.pop[si[1]].clone()];
+        for(let i=2;i<POP;i++){const pa=this._ts(si),pb=this._ts(si);
+            let ch=M.rnd()<.65?Brain.cross(this.pop[pa],this.pop[pb]):this.pop[pa].clone();
+            const af=bf<100?2:bf<300?1.5:1;ch.mutate(M.clamp(.07*af,.03,.2),M.clamp(.13*af,.05,.3));np.push(ch)}
+        this.pop=np;this.fit.fill(0);this.idx=0}
+    _ts(si){let b=si[M.floor(M.rnd()*POP)];for(let i=1;i<3;i++){const c=si[M.floor(M.rnd()*POP)];if(this.fit[c]>this.fit[b])b=c}return b}
+    bestF(){return M.round(M.max(...this.fit))}
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════════════
+const GS={mode:3,phase:'idle',prev:'idle',speed:1,turbo:false,sR:0,sB:0,time:0,maxT:F.MATCH,
+    possR:0,possB:0,possF:0,tackles:0,goalAnim:0,goalTeam:'',koTeam:'red',koT:0,hudT:0,mc:0};
+function emSt(){return{goals:0,conc:0,og:0,passes:0,shots:0,poss:0,terr:0,prog:0,tackles:0,space:0,cluster:0,crosses:0,boxEntry:0}}
+
+let rP=[],bP=[],ball={x:0,y:0,vx:0,vy:0,r:F.BR,owner:null,last:null};
+let rPool=null,bPool=null,rSt=emSt(),bSt=emSt();
+
+function mkP(team,idx,role,bx,by){return{team,index:idx,role,baseX:bx,baseY:by,x:bx,y:by,vx:0,vy:0,
+    radius:F.PR,hasBall:false,kickCD:0,energy:1,duty:'sweeper',dribT:0}}
+function init(){rP=[];bP=[];const f=F.FORM[GS.mode],ro=GS.mode===3?F.R3:F.R5;
+    f.red.forEach((p,i)=>rP.push(mkP('red',i,ro[i],p.x*F.W,p.y*F.H)));
+    f.blue.forEach((p,i)=>bP.push(mkP('blue',i,ro[i],p.x*F.W,p.y*F.H)));
+    rPool=new Evo(GS.mode);bPool=new Evo(GS.mode);
+    document.getElementById('statNeurons').textContent='~'+rPool.brain().nc}
+function resetPos(){const f=F.FORM[GS.mode];
+    rP.forEach((p,i)=>{p.x=f.red[i].x*F.W;p.y=f.red[i].y*F.H;p.vx=0;p.vy=0;p.hasBall=false;p.kickCD=0;p.energy=1;p.duty='sweeper';p.dribT=0});
+    bP.forEach((p,i)=>{p.x=f.blue[i].x*F.W;p.y=f.blue[i].y*F.H;p.vx=0;p.vy=0;p.hasBall=false;p.kickCD=0;p.energy=1;p.duty='sweeper';p.dribT=0});
+    ball.x=F.W/2;ball.y=F.H/2;ball.vx=0;ball.vy=0;ball.owner=null;ball.last=null}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FOOTBALL ENGINE — AGGRESSIVE, SMART
 // ═══════════════════════════════════════════════════════════════════
 
-function executeTeamFrame(brain, allies, opponents, ball, teamSide, matchStats) {
-    const attackDirection = teamSide === 'red' ? 1 : -1;
-    const opponentGoalX = teamSide === 'red' ? FieldConstants.WIDTH - 15 : 15;
-    const ownGoalX = teamSide === 'red' ? 15 : FieldConstants.WIDTH - 15;
-    const scoreDifference = teamSide === 'red' ?
-        MatchState.scoreRed - MatchState.scoreBlue :
-        MatchState.scoreBlue - MatchState.scoreRed;
-
-    const inputVector = brain.encodeGameState(allies, opponents, ball, scoreDifference, MatchState.time / MatchState.maxTime, attackDirection);
-    const neuralOutputs = brain.forward(inputVector);
-
-    FootballEngine.assignPlayerDuties(allies, opponents, teamSide, ball);
-
-    // Spacing tracking
-    let clusteringCount = 0, spacingCount = 0;
-    for (let i = 0; i < allies.length; i++) {
-        for (let j = i + 1; j < allies.length; j++) {
-            const pairDistance = MathUtils.distance(allies[i].x, allies[i].y, allies[j].x, allies[j].y);
-            if (pairDistance < 40) clusteringCount++;
-            if (pairDistance > 80 && pairDistance < 250) spacingCount++;
-        }
+function evalPass(s,r,allies,opps,side){
+    const gx=side==='red'?F.W:0, ox=side==='red'?0:F.W;
+    const pd=M.dist(s.x,s.y,r.x,r.y);
+    if(pd<35||pd>500)return-999;
+    let sc=0;
+    // Forward progression bonus (big)
+    sc+=(M.abs(s.x-gx)-M.abs(r.x-gx))/F.W*6;
+    // Lane safety
+    for(const o of opps){
+        const ld=M.ptSeg(o.x,o.y,s.x,s.y,r.x,r.y);
+        if(ld<25&&M.dist(o.x,o.y,s.x,s.y)<pd*.85)return-999;
     }
-    matchStats.clusteringPenalty += clusteringCount;
-    matchStats.spacingReward += spacingCount;
+    // Receiver space
+    let nearO=Infinity;for(const o of opps)nearO=M.min(nearO,M.dist(r.x,r.y,o.x,o.y));
+    sc+=M.clamp(nearO/60,0,1)*3;
+    // Receiver in box = massive bonus
+    const inBox=side==='red'?(r.x>F.W-120&&r.y>F.GT-30&&r.y<F.GB+30):(r.x<120&&r.y>F.GT-30&&r.y<F.GB+30);
+    if(inBox)sc+=4;
+    // Don't pass into own danger
+    if(M.abs(r.x-ox)<80)sc-=5;
+    // Sweet spot distance
+    if(pd>60&&pd<350)sc+=1;
+    return sc;
+}
 
-    for (let playerIndex = 0; playerIndex < allies.length; playerIndex++) {
-        const player = allies[playerIndex];
-        if (player.kickCooldown > 0) player.kickCooldown--;
+function canShoot(p,opps,side){
+    const gx=side==='red'?F.W:0,dir=side==='red'?1:-1;
+    const dg=M.dist(p.x,p.y,gx,F.H/2);
+    // More aggressive shooting zone
+    if(side==='red'&&p.x<F.W*.3)return false;
+    if(side==='blue'&&p.x>F.W*.7)return false;
+    if(dg>380)return false;
+    if(dir*(gx-p.x)<0)return false;
+    let bl=0;
+    for(const o of opps){const ld=M.ptSeg(o.x,o.y,p.x,p.y,gx,F.H/2);if(ld<25&&M.dist(o.x,o.y,p.x,p.y)<dg)bl++}
+    return bl<2;
+}
 
-        // ══ NEW: Check if dribbler lost the ball ══
-        DribbleSystem.checkBallLost(player, ball);
+function kickSafe(px,py,kvx,kvy,side){
+    const ox=side==='red'?0:F.W,dir=side==='red'?1:-1;
+    if(dir*kvx<-1&&M.abs(px-ox)<F.W*.4)return false;
+    let projX=px,projY=py;
+    for(let s=0;s<20;s++){projX+=kvx*M.pow(F.BFRIC,s);projY+=kvy*M.pow(F.BFRIC,s)}
+    if(M.dist(projX,projY,ox,F.H/2)<120)return false;
+    return true;
+}
 
-        // ══ NEW: Opponents try to tackle the dribbler ══
-        if (player.hasBall) {
-            for (const opponent of opponents) {
-                if (DribbleSystem.attemptTackle(opponent, player, ball, matchStats)) {
-                    break; // only one tackle per frame
-                }
-            }
+function clearVec(p,side){
+    const dir=side==='red'?1:-1;
+    const a=dir>0?(p.y<F.H/2?-.3:.3):(p.y<F.H/2?M.PI+.3:M.PI-.3);
+    return[M.cos(a)*10,M.sin(a)*5];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DUTY ASSIGNMENT — AGGRESSIVE ROLES
+// ═══════════════════════════════════════════════════════════════════
+function assignDuties(allies,opps,side,ball){
+    allies[0].duty='gk';
+    const out=allies.slice(1);
+    const gx=side==='red'?F.W:0;
+    const carrier=out.find(p=>p.hasBall);
+    const teamHas=ball.owner&&ball.owner.team===side;
+    const oppHas=ball.owner&&ball.owner.team!==side;
+
+    if(carrier){
+        carrier.duty='carrier';
+        const rest=out.filter(p=>p!==carrier);
+        // Sort by distance to goal — most advanced gets runner/crasher
+        rest.sort((a,b)=>M.abs(a.x-gx)-M.abs(b.x-gx));
+        if(rest.length>=1)rest[0].duty='crasher';    // Crash into box
+        if(rest.length>=2)rest[1].duty='winger';      // Wide support / crossing
+        if(rest.length>=3)rest[2].duty='support';
+        if(rest.length>=4)rest[3].duty='cover';
+    } else if(oppHas){
+        out.sort((a,b)=>M.dist(a.x,a.y,ball.x,ball.y)-M.dist(b.x,b.y,ball.x,ball.y));
+        if(out.length>=1)out[0].duty='presser';
+        if(out.length>=2)out[1].duty='presser';  // TWO pressers = aggressive defense
+        if(out.length>=3)out[2].duty='cover';
+        if(out.length>=4)out[3].duty='sweeper';
+    } else {
+        out.sort((a,b)=>M.dist(a.x,a.y,ball.x,ball.y)-M.dist(b.x,b.y,ball.x,ball.y));
+        if(out.length>=1)out[0].duty='presser';
+        if(out.length>=2)out[1].duty='runner';
+        if(out.length>=3)out[2].duty='support';
+        if(out.length>=4)out[3].duty='cover';
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TEAM EXECUTION — AGGRESSIVE FOOTBALL
+// ═══════════════════════════════════════════════════════════════════
+function execTeam(brain,allies,opps,ball,side,st){
+    const dir=side==='red'?1:-1;
+    const gx=side==='red'?F.W-15:15;
+    const ox=side==='red'?15:F.W-15;
+    const sd=side==='red'?GS.sR-GS.sB:GS.sB-GS.sR;
+    const nn=brain.forward(brain.encode(allies,opps,ball,sd));
+    assignDuties(allies,opps,side,ball);
+
+    // Spacing
+    let cl=0,sp=0;
+    for(let i=0;i<allies.length;i++)for(let j=i+1;j<allies.length;j++){
+        const d=M.dist(allies[i].x,allies[i].y,allies[j].x,allies[j].y);
+        if(d<40)cl++;if(d>80&&d<250)sp++;}
+    st.cluster+=cl;st.space+=sp;
+
+    for(let pi=0;pi<allies.length;pi++){
+        const p=allies[pi];
+        if(p.kickCD>0)p.kickCD--;
+
+        // Ball lost check
+        if(p.hasBall&&M.dist(p.x,p.y,ball.x,ball.y)>F.DRIB_LOSE){p.hasBall=false;if(ball.owner===p)ball.owner=null}
+
+        // Tackle attempts on dribbler
+        if(p.hasBall){for(const o of opps){
+            if(o.kickCD>0)continue;
+            const d=M.dist(o.x,o.y,p.x,p.y);
+            if(d<F.TACKLE_R&&M.rnd()<F.TACKLE_P){
+                p.hasBall=false;ball.owner=null;
+                const ka=M.angle(p.x,p.y,o.x,o.y)+(M.rnd()-.5);
+                ball.vx=M.cos(ka)*3;ball.vy=M.sin(ka)*2;
+                o.kickCD=4;p.kickCD=F.KCD;p.dribT=0;st.tackles++;break}}}
+
+        const no=pi*brain.outP;
+        const modPress=M.clamp((nn[no]+1)/2,0,1);
+        const modSX=nn[no+1]*50;
+        const modSY=nn[no+2]*50;
+        const modPass=M.clamp((nn[no+3]+1)/2,0,1);
+        const modShoot=M.clamp((nn[no+4]+1)/2,0,1);
+        const modRunD=M.clamp((nn[no+5]+1)/2,.3,1)*150;
+        const modDefD=M.clamp((nn[no+6]+1)/2,0,1);
+        const modW=nn[no+7]*60;
+
+        let tx=p.x,ty=p.y;
+
+        // ═══ GK ═══
+        if(p.duty==='gk'){
+            tx=ox+(ball.x-ox)*.12;ty=F.H/2+(ball.y-F.H/2)*.45;
+            if(side==='red')tx=M.clamp(tx,20,150);else tx=M.clamp(tx,F.W-150,F.W-20);
+            ty=M.clamp(ty,F.GT-20,F.GB+20);
+            if(M.dist(ball.x,ball.y,ox,F.H/2)<150&&!ball.owner){tx=ball.x+ball.vx*4;ty=ball.y+ball.vy*4}
+            if(p.hasBall&&p.kickCD<=0){
+                let bt=null,bs=-999;
+                for(const a of allies){if(a===p||a.duty==='gk')continue;const s=evalPass(p,a,allies,opps,side);if(s>bs){bs=s;bt=a}}
+                if(bt&&bs>-.5)doPass(p,bt,ball,side,st);else doClear(p,ball,side,st)}
         }
 
-        const neuralOffset = playerIndex * brain.outputsPerPlayer;
-        const modPressIntensity    = MathUtils.clamp((neuralOutputs[neuralOffset + 0] + 1) / 2, 0, 1);
-        const modSupportOffsetX    = neuralOutputs[neuralOffset + 1] * 40;
-        const modSupportOffsetY    = neuralOutputs[neuralOffset + 2] * 40;
-        const modPassPreference    = MathUtils.clamp((neuralOutputs[neuralOffset + 3] + 1) / 2, 0, 1);
-        const modShootPreference   = MathUtils.clamp((neuralOutputs[neuralOffset + 4] + 1) / 2, 0, 1);
-        const modRunDepth          = MathUtils.clamp((neuralOutputs[neuralOffset + 5] + 1) / 2, 0.3, 1) * 130;
-        const modDefensiveDepth    = MathUtils.clamp((neuralOutputs[neuralOffset + 6] + 1) / 2, 0, 1);
-        const modWidthOffset       = neuralOutputs[neuralOffset + 7] * 50;
+        // ═══ CARRIER — PASS-FIRST, SHOOT IN BOX, DRIBBLE ONLY IF OPEN ═══
+        else if(p.duty==='carrier'&&p.hasBall){
+            let acted=false;
+            if(p.kickCD<=0){
+                // Find best pass
+                let bt=null,bs=-999;
+                for(const a of allies){if(a===p)continue;const s=evalPass(p,a,allies,opps,side);if(s>bs){bs=s;bt=a}}
 
-        let targetX = player.x;
-        let targetY = player.y;
+                // Check shot
+                const cs=canShoot(p,opps,side);
+                const dg=M.dist(p.x,p.y,gx,F.H/2);
+                // In the box or very close = ALWAYS try to shoot
+                const inBox=side==='red'?(p.x>F.W-140):(p.x<140);
+                const shootSc=cs?(inBox?10:(4-dg/80+modShoot*2)):-999;
 
-        // ═══ GOALKEEPER ═══
-        if (player.duty === 'gk') {
-            targetX = ownGoalX + (ball.x - ownGoalX) * 0.1;
-            targetY = FieldConstants.HEIGHT / 2 + (ball.y - FieldConstants.HEIGHT / 2) * 0.42;
-            if (teamSide === 'red') targetX = MathUtils.clamp(targetX, 22, 145);
-            else targetX = MathUtils.clamp(targetX, FieldConstants.WIDTH - 145, FieldConstants.WIDTH - 22);
-            targetY = MathUtils.clamp(targetY, FieldConstants.GOAL_TOP - 15, FieldConstants.GOAL_BOTTOM + 15);
+                // Pressure
+                let nearO=Infinity;for(const o of opps)nearO=M.min(nearO,M.dist(o.x,o.y,p.x,p.y));
+                const press=M.clamp(1-nearO/55,0,1);
 
-            if (MathUtils.distance(ball.x, ball.y, ownGoalX, FieldConstants.HEIGHT / 2) < 140 && !ball.owner) {
-                targetX = ball.x + ball.vx * 3;
-                targetY = ball.y + ball.vy * 3;
+                // Own third danger
+                const ownThird=side==='red'?p.x<F.W*.3:p.x>F.W*.7;
+
+                // DECISION PRIORITY:
+                // 1. In box with shot → SHOOT
+                if(shootSc>3&&cs){doShot(p,ball,gx,side,st);acted=true}
+                // 2. Under heavy pressure or own third → PASS immediately
+                else if(!acted&&(press>.35||ownThird)&&bt&&bs>-2){doPass(p,bt,ball,side,st);acted=true}
+                // 3. Good pass available → PASS (pass-first football!)
+                else if(!acted&&bt&&bs>0.5-modPass*0.5){doPass(p,bt,ball,side,st);acted=true}
+                // 4. Moderate pass + some pressure → PASS
+                else if(!acted&&bt&&bs>-1&&press>.15){doPass(p,bt,ball,side,st);acted=true}
+                // 5. Shootable → SHOOT
+                else if(!acted&&shootSc>1&&cs){doShot(p,ball,gx,side,st);acted=true}
+                // 6. Any pass at all → PASS (avoid hogging)
+                else if(!acted&&bt&&bs>-2&&M.rnd()<0.3+modPass*0.3){doPass(p,bt,ball,side,st);acted=true}
+                // 7. Clear from danger
+                else if(!acted&&ownThird){doClear(p,ball,side,st);acted=true}
             }
 
-            if (player.hasBall && player.kickCooldown <= 0) {
-                let bestPassTarget = null, bestPassScore = -999;
-                for (const ally of allies) {
-                    if (ally === player || ally.duty === 'gk') continue;
-                    const score = FootballEngine.evaluatePassQuality(player, ally, allies, opponents, teamSide);
-                    if (score > bestPassScore) { bestPassScore = score; bestPassTarget = ally; }
-                }
-                if (bestPassTarget && bestPassScore > 0.3) _executePass(player, bestPassTarget, ball, teamSide, matchStats);
-                else _executeClearance(player, ball, teamSide, matchStats);
+            // Dribble (only if nothing else happened)
+            if(!acted&&p.hasBall){
+                tx=p.x+dir*5;ty=p.y;
+                // Avoid opponents aggressively
+                for(const o of opps){const d=M.dist(p.x,p.y,o.x,o.y);
+                    if(d<50&&d>1){const[ax,ay]=M.norm(p.x-o.x,p.y-o.y);tx+=ax*4;ty+=ay*4}}
+                // Dribble touches
+                p.dribT++;
+                if(p.dribT>=F.DRIB_INT){
+                    const ps=M.hypot(p.vx,p.vy);
+                    const da=ps>.5?M.atan2(p.vy,p.vx):(dir>0?0:M.PI);
+                    ball.vx=M.cos(da+(M.rnd()-.5)*.15)*F.DRIB_POW;
+                    ball.vy=M.sin(da+(M.rnd()-.5)*.15)*F.DRIB_POW;
+                    ball.last=p;p.dribT=0}
             }
+            st.prog+=M.max(0,p.vx*dir*.01);st.poss++;
         }
 
-        // ═══ CARRIER ═══
-        else if (player.duty === 'carrier' && player.hasBall) {
-            let didKick = false;
-            if (player.kickCooldown <= 0) {
-                let bestPassTarget = null, bestPassScore = -999;
-                for (const ally of allies) {
-                    if (ally === player) continue;
-                    const score = FootballEngine.evaluatePassQuality(player, ally, allies, opponents, teamSide);
-                    if (score > bestPassScore) { bestPassScore = score; bestPassTarget = ally; }
-                }
-
-                const canShoot = FootballEngine.canAttemptShot(player, opponents, teamSide);
-                const distToGoal = MathUtils.distance(player.x, player.y, opponentGoalX, FieldConstants.HEIGHT / 2);
-                const shootScore = canShoot ? (3.5 - distToGoal / 100 + modShootPreference * 1.5) : -999;
-
-                let nearestOpponentDistance = Infinity;
-                for (const opponent of opponents) nearestOpponentDistance = MathUtils.min(nearestOpponentDistance, MathUtils.distance(opponent.x, opponent.y, player.x, player.y));
-                const pressureLevel = MathUtils.clamp(1 - nearestOpponentDistance / 65, 0, 1);
-
-                const inOwnThird = teamSide === 'red' ? player.x < FieldConstants.WIDTH * 0.33 : player.x > FieldConstants.WIDTH * 0.67;
-                if (inOwnThird && pressureLevel > 0.4) {
-                    if (bestPassTarget && bestPassScore > 0) { _executePass(player, bestPassTarget, ball, teamSide, matchStats); didKick = true; }
-                    else { _executeClearance(player, ball, teamSide, matchStats); didKick = true; }
-                }
-                else if (shootScore > (1.5 + modShootPreference) && canShoot) {
-                    _executeShot(player, ball, opponentGoalX, teamSide, matchStats); didKick = true;
-                }
-                else if (bestPassTarget && (bestPassScore > 0.2 - modPassPreference * 0.3 || pressureLevel > 0.3 - modPassPreference * 0.2)) {
-                    _executePass(player, bestPassTarget, ball, teamSide, matchStats); didKick = true;
-                }
-            }
-
-            // ══ CHANGED: If no pass/shot, DRIBBLE with touch-kicks instead of carrying ══
-            if (!didKick && player.hasBall) {
-                // Move toward goal, avoid opponents
-                targetX = player.x + attackDirection * 4;
-                targetY = player.y;
-                for (const opponent of opponents) {
-                    const distToOpp = MathUtils.distance(player.x, player.y, opponent.x, opponent.y);
-                    if (distToOpp < 55 && distToOpp > 1) {
-                        const [awayX, awayY] = MathUtils.normalize(player.x - opponent.x, player.y - opponent.y);
-                        targetX += awayX * 3;
-                        targetY += awayY * 3;
-                    }
-                }
-
-                // ══ NEW: Periodic dribble touches instead of glued ball ══
-                if (!player.dribbleTimer) player.dribbleTimer = 0;
-                player.dribbleTimer++;
-                if (player.dribbleTimer >= FieldConstants.DRIBBLE_TOUCH_INTERVAL) {
-                    DribbleSystem.performDribbleTouch(player, ball, attackDirection);
-                    player.dribbleTimer = 0;
-                    matchStats.dribbleSuccesses = (matchStats.dribbleSuccesses || 0) + 1;
-                }
-            }
-            matchStats.ballProgression += MathUtils.max(0, player.vx * attackDirection * 0.01);
+        // ═══ CRASHER — run INTO the penalty box ═══
+        else if(p.duty==='crasher'){
+            const boxX=side==='red'?F.W-100:100;
+            const boxY=F.H/2+(p.baseY<F.H/2?-40:40)+modSY;
+            // Diagonal run toward near post
+            tx=M.lerp(p.x,boxX+modSX*.5,0.12);
+            ty=M.lerp(p.y,boxY,0.08);
+            // Stay onside-ish but aggressive
+            if(side==='red')tx=M.max(tx,F.W*.4);else tx=M.min(tx,F.W*.6);
+            tx=M.clamp(tx,40,F.W-40);ty=M.clamp(ty,40,F.H-40);
+            // Track box entry
+            const inBox=side==='red'?(p.x>F.W-120):(p.x<120);
+            if(inBox)st.boxEntry++;
+            teamSpace(p,allies);
         }
 
-        // ═══ RUNNER ═══
-        else if (player.duty === 'runner') {
-            const carrier = allies.find(a => a.hasBall);
-            if (carrier) {
-                targetX = carrier.x + attackDirection * modRunDepth + modSupportOffsetX;
-                const yOffset = player.baseY < FieldConstants.HEIGHT / 2 ? -55 : 55;
-                targetY = MathUtils.clamp(FieldConstants.HEIGHT / 2 + yOffset + modSupportOffsetY + modWidthOffset, 55, FieldConstants.HEIGHT - 55);
+        // ═══ WINGER — wide position for crosses ═══
+        else if(p.duty==='winger'){
+            const carrier=allies.find(a=>a.hasBall);
+            if(carrier){
+                // Go wide and forward
+                const wideY=p.baseY<F.H/2?55:F.H-55;
+                tx=carrier.x+dir*80+modSX;
+                ty=wideY+modW;
+                // If ahead of ball, make overlapping run
+                if(dir*(p.x-carrier.x)>0){tx=carrier.x+dir*120;ty=wideY}
             } else {
-                targetX = ball.x + attackDirection * 100;
-                targetY = FieldConstants.HEIGHT / 2 + (player.baseY - FieldConstants.HEIGHT / 2) * 0.5;
+                tx=ball.x+dir*60;ty=p.baseY<F.H/2?80:F.H-80;
             }
-            if (teamSide === 'red') targetX = MathUtils.max(targetX, FieldConstants.WIDTH * 0.32);
-            else targetX = MathUtils.min(targetX, FieldConstants.WIDTH * 0.68);
-            _applyTeamSpacing(player, allies, targetX, targetY);
-            if ((teamSide === 'red' && player.x > FieldConstants.WIDTH / 2) || (teamSide === 'blue' && player.x < FieldConstants.WIDTH / 2))
-                matchStats.territoryFrames += 0.1;
+            tx=M.clamp(tx,30,F.W-30);ty=M.clamp(ty,30,F.H-30);
+            teamSpace(p,allies);
         }
 
-        // ═══ SUPPORT ═══
-        else if (player.duty === 'support') {
-            const carrier = allies.find(a => a.hasBall);
-            if (carrier) {
-                const toGoalAngle = MathUtils.atan2(FieldConstants.HEIGHT / 2 - carrier.y, opponentGoalX - carrier.x);
-                const sideAngle = toGoalAngle + (player.baseY < FieldConstants.HEIGHT / 2 ? -MathUtils.PI / 3 : MathUtils.PI / 3);
-                const supportDistance = 95 + modWidthOffset;
-                targetX = carrier.x + MathUtils.cos(sideAngle) * supportDistance + modSupportOffsetX;
-                targetY = carrier.y + MathUtils.sin(sideAngle) * supportDistance + modSupportOffsetY;
-            } else {
-                targetX = ball.x - attackDirection * 55 + modSupportOffsetX;
-                targetY = ball.y + (player.baseY < FieldConstants.HEIGHT / 2 ? -75 : 75) + modSupportOffsetY;
-            }
-            _applyTeamSpacing(player, allies, targetX, targetY);
+        // ═══ RUNNER — advanced forward run ═══
+        else if(p.duty==='runner'){
+            const carrier=allies.find(a=>a.hasBall);
+            if(carrier){
+                tx=carrier.x+dir*modRunD+modSX;
+                const yOff=p.baseY<F.H/2?-50:50;
+                ty=M.clamp(F.H/2+yOff+modSY+modW,50,F.H-50);
+            } else {tx=ball.x+dir*110;ty=F.H/2+(p.baseY-F.H/2)*.4}
+            // Push forward aggressively
+            if(side==='red')tx=M.max(tx,F.W*.35);else tx=M.min(tx,F.W*.65);
+            teamSpace(p,allies);
+            if((side==='red'&&p.x>F.W/2)||(side==='blue'&&p.x<F.W/2))st.terr+=.1;
         }
 
-        // ═══ PRESSER ═══
-        else if (player.duty === 'presser') {
-            const intensity = 0.5 + modPressIntensity * 0.5;
-            targetX = MathUtils.lerp(player.baseX, ball.x + ball.vx * 4, intensity);
-            targetY = MathUtils.lerp(player.baseY, ball.y + ball.vy * 4, intensity);
+        // ═══ SUPPORT — passing angle ═══
+        else if(p.duty==='support'){
+            const carrier=allies.find(a=>a.hasBall);
+            if(carrier){
+                const tga=M.atan2(F.H/2-carrier.y,gx-carrier.x);
+                const sa=tga+(p.baseY<F.H/2?-M.PI/3:M.PI/3);
+                const sd_=100+modW;
+                tx=carrier.x+M.cos(sa)*sd_+modSX;ty=carrier.y+M.sin(sa)*sd_+modSY;
+            } else {tx=ball.x-dir*50+modSX;ty=ball.y+(p.baseY<F.H/2?-80:80)+modSY}
+            teamSpace(p,allies);
+        }
+
+        // ═══ PRESSER — chase ball AGGRESSIVELY ═══
+        else if(p.duty==='presser'){
+            const int=0.6+modPress*.4;
+            // Predict ball position
+            tx=M.lerp(p.baseX,ball.x+ball.vx*6,int);
+            ty=M.lerp(p.baseY,ball.y+ball.vy*6,int);
+            // If close, go full commitment
+            if(M.dist(p.x,p.y,ball.x,ball.y)<120){tx=ball.x+ball.vx*3;ty=ball.y+ball.vy*3}
         }
 
         // ═══ COVER ═══
-        else if (player.duty === 'cover') {
-            const coverDepth = 0.4 + modDefensiveDepth * 0.3;
-            targetX = MathUtils.lerp(player.baseX, (ball.x + ownGoalX) / 2, coverDepth) + modSupportOffsetX * 0.5;
-            targetY = MathUtils.lerp(player.baseY, (ball.y + FieldConstants.HEIGHT / 2) / 2, coverDepth) + modSupportOffsetY * 0.5;
+        else if(p.duty==='cover'){
+            const cd=.45+modDefD*.35;
+            tx=M.lerp(p.baseX,(ball.x+ox)/2,cd)+modSX*.5;
+            ty=M.lerp(p.baseY,(ball.y+F.H/2)/2,cd)+modSY*.5;
         }
 
         // ═══ SWEEPER ═══
-        else if (player.duty === 'sweeper') {
-            targetX = player.baseX + (ball.x - FieldConstants.WIDTH / 2) * 0.1;
-            targetY = player.baseY + (ball.y - FieldConstants.HEIGHT / 2) * 0.18;
+        else if(p.duty==='sweeper'){
+            tx=p.baseX+(ball.x-F.W/2)*.12;ty=p.baseY+(ball.y-F.H/2)*.2;
         }
 
         // ═══ MOVEMENT ═══
-        targetX = MathUtils.clamp(targetX, FieldConstants.PLAYER_RADIUS, FieldConstants.WIDTH - FieldConstants.PLAYER_RADIUS);
-        targetY = MathUtils.clamp(targetY, FieldConstants.PLAYER_RADIUS, FieldConstants.HEIGHT - FieldConstants.PLAYER_RADIUS);
-        const deltaX = targetX - player.x;
-        const deltaY = targetY - player.y;
-        const distanceToTarget = MathUtils.hypot(deltaX, deltaY);
-        let moveSpeed = FieldConstants.PLAYER_MAX_SPEED * player.energy;
-        if (player.duty === 'gk' && MathUtils.distance(player.x, player.y, ownGoalX, FieldConstants.HEIGHT / 2) < 150) moveSpeed *= 1.12;
-        if (player.duty === 'presser') moveSpeed *= 1.04;
+        tx=M.clamp(tx,F.PR,F.W-F.PR);ty=M.clamp(ty,F.PR,F.H-F.PR);
+        const dx=tx-p.x,dy=ty-p.y,dd=M.hypot(dx,dy);
+        let ms=F.PMAX*p.energy;
+        if(p.duty==='gk'&&M.dist(p.x,p.y,ox,F.H/2)<150)ms*=1.15;
+        if(p.duty==='presser'||p.duty==='crasher')ms*=1.08;
+        if(p.hasBall)ms*=.88;
+        if(dd>3){p.vx+=(dx/dd)*ms*F.PACC;p.vy+=(dy/dd)*ms*F.PACC}
+        p.vx*=F.PFRIC;p.vy*=F.PFRIC;
+        const ps=M.hypot(p.vx,p.vy),mps=F.PMAX*1.6;
+        if(ps>mps){p.vx=(p.vx/ps)*mps;p.vy=(p.vy/ps)*mps}
+        p.x+=p.vx;p.y+=p.vy;
+        p.x=M.clamp(p.x,p.radius,F.W-p.radius);p.y=M.clamp(p.y,p.radius,F.H-p.radius);
+        if(p.duty==='gk'){if(side==='red')p.x=M.min(p.x,155);else p.x=M.max(p.x,F.W-155)}
+        if(ps>F.PMAX*.6)p.energy=M.max(.4,p.energy-.0003);else p.energy=M.min(1,p.energy+.0006);
 
-        // ══ CHANGED: Dribbler moves slightly slower ══
-        if (player.hasBall) moveSpeed *= 0.88;
-
-        if (distanceToTarget > 3) {
-            player.vx += (deltaX / distanceToTarget) * moveSpeed * FieldConstants.PLAYER_ACCELERATION;
-            player.vy += (deltaY / distanceToTarget) * moveSpeed * FieldConstants.PLAYER_ACCELERATION;
-        }
-
-        player.vx *= FieldConstants.PLAYER_FRICTION;
-        player.vy *= FieldConstants.PLAYER_FRICTION;
-        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
-        const maxPlayerSpeed = FieldConstants.PLAYER_MAX_SPEED * 1.5;
-        if (playerSpeed > maxPlayerSpeed) {
-            player.vx = (player.vx / playerSpeed) * maxPlayerSpeed;
-            player.vy = (player.vy / playerSpeed) * maxPlayerSpeed;
-        }
-
-        player.x += player.vx;
-        player.y += player.vy;
-        player.x = MathUtils.clamp(player.x, player.radius, FieldConstants.WIDTH - player.radius);
-        player.y = MathUtils.clamp(player.y, player.radius, FieldConstants.HEIGHT - player.radius);
-        if (player.duty === 'gk') {
-            if (teamSide === 'red') player.x = MathUtils.min(player.x, 155);
-            else player.x = MathUtils.max(player.x, FieldConstants.WIDTH - 155);
-        }
-
-        if (playerSpeed > FieldConstants.PLAYER_MAX_SPEED * 0.6) player.energy = MathUtils.max(0.4, player.energy - 0.0003);
-        else player.energy = MathUtils.min(1, player.energy + 0.0006);
-
-        // ═══ BALL PICKUP ═══
-        // ══ CHANGED: Don't teleport ball — just claim ownership, ball stays where it is ══
-        if (!player.hasBall && player.kickCooldown <= 0) {
-            const ballDistance = MathUtils.distance(player.x, player.y, ball.x, ball.y);
-            if (ballDistance < FieldConstants.PICKUP_RANGE) {
-                if (!ball.owner || ball.owner.team !== teamSide) {
-                    if (ball.owner) {
-                        ball.owner.hasBall = false;
-                        ball.owner.dribbleTimer = 0;
-                        matchStats.tacklesWon++;
-                    }
-                    ball.owner = player;
-                    player.hasBall = true;
-                    player.dribbleTimer = 0;
-                    ball.lastToucher = player;
-                    // ══ CHANGED: Don't zero ball velocity — let it continue naturally ══
-                    // Just slow it down a bit as player "traps" it
-                    ball.vx *= 0.3;
-                    ball.vy *= 0.3;
-                }
+        // PICKUP
+        if(!p.hasBall&&p.kickCD<=0){
+            const bd=M.dist(p.x,p.y,ball.x,ball.y);
+            if(bd<F.PICKUP){
+                if(!ball.owner||ball.owner.team!==side){
+                    if(ball.owner){ball.owner.hasBall=false;ball.owner.dribT=0;st.tackles++}
+                    ball.owner=p;p.hasBall=true;p.dribT=0;ball.last=p;ball.vx*=.25;ball.vy*=.25}
             }
         }
-
-        // ══ REMOVED: Old "carry ball" code that teleported ball to player ══
-        // The ball is now an independent physics object. When player hasBall,
-        // they do periodic dribble touches (small kicks) in their movement
-        // direction. The ball rolls freely between touches and can be
-        // intercepted by opponents.
-
-        if (player.hasBall) {
-            matchStats.possessionFrames++;
-        }
+        if(p.hasBall)st.poss++;
     }
 }
 
-function _executePass(sender, receiver, ball, teamSide, matchStats) {
-    const leadX = receiver.x + receiver.vx * 7;
-    const leadY = receiver.y + receiver.vy * 7;
-    const passAngle = MathUtils.atan2(leadY - sender.y, leadX - sender.x);
-    const passDistance = MathUtils.distance(sender.x, sender.y, leadX, leadY);
-    const passPower = MathUtils.clamp(passDistance / 33, 3, 7);
-    const velocityX = MathUtils.cos(passAngle) * passPower;
-    const velocityY = MathUtils.sin(passAngle) * passPower;
-
-    if (FootballEngine.isKickSafe(sender.x, sender.y, velocityX, velocityY, teamSide)) {
-        ball.vx = velocityX;
-        ball.vy = velocityY;
-        ball.owner = null;
-        sender.hasBall = false;
-        sender.dribbleTimer = 0;
-        sender.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES;
-        ball.lastToucher = sender;
-        matchStats.passesCompleted++;
-    }
+function doPass(s,r,ball,side,st){
+    const lx=r.x+r.vx*8,ly=r.y+r.vy*8;
+    const a=M.atan2(ly-s.y,lx-s.x),d=M.dist(s.x,s.y,lx,ly);
+    const pw=M.clamp(d/28,3.5,8.5);
+    const vx=M.cos(a)*pw,vy=M.sin(a)*pw;
+    if(kickSafe(s.x,s.y,vx,vy,side)){
+        ball.vx=vx;ball.vy=vy;ball.owner=null;s.hasBall=false;s.dribT=0;
+        s.kickCD=F.KCD;ball.last=s;st.passes++;
+        // Check if it's a cross (from wide area toward box)
+        const inWide=s.y<100||s.y>F.H-100;
+        const towardBox=side==='red'?(r.x>F.W-130):(r.x<130);
+        if(inWide&&towardBox)st.crosses++}
 }
 
-function _executeShot(shooter, ball, opponentGoalX, teamSide, matchStats) {
-    const goalCenterY = FieldConstants.HEIGHT / 2 + (MathUtils.randomFloat() - 0.5) * FieldConstants.GOAL_WIDTH * 0.5;
-    const shotAngle = MathUtils.atan2(goalCenterY - shooter.y, opponentGoalX - shooter.x);
-    const shotPower = 8 + MathUtils.randomFloat() * 3;
-    const velocityX = MathUtils.cos(shotAngle) * shotPower;
-    const velocityY = MathUtils.sin(shotAngle) * shotPower;
-
-    if (FootballEngine.isKickSafe(shooter.x, shooter.y, velocityX, velocityY, teamSide)) {
-        ball.vx = velocityX;
-        ball.vy = velocityY;
-        ball.owner = null;
-        shooter.hasBall = false;
-        shooter.dribbleTimer = 0;
-        shooter.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES + 8;
-        ball.lastToucher = shooter;
-        matchStats.shotsOnTarget++;
-        HudManager.show(`${teamSide === 'red' ? '🔴' : '🔵'} SHOT! ${FieldConstants.ROLE_NAMES[shooter.role]}`, 70);
-    }
+function doShot(s,ball,gx,side,st){
+    const gy=F.H/2+(M.rnd()-.5)*F.GW*.6;
+    const a=M.atan2(gy-s.y,gx-s.x),pw=9+M.rnd()*4;
+    const vx=M.cos(a)*pw,vy=M.sin(a)*pw;
+    if(kickSafe(s.x,s.y,vx,vy,side)){
+        ball.vx=vx;ball.vy=vy;ball.owner=null;s.hasBall=false;s.dribT=0;
+        s.kickCD=F.KCD+8;ball.last=s;st.shots++;
+        hudShow(`${side==='red'?'🔴':'🔵'} SHOT! ${F.RNAME[s.role]}`,60)}
 }
 
-function _executeClearance(player, ball, teamSide, matchStats) {
-    const [clearX, clearY] = FootballEngine.computeSafeClearanceVector(player, teamSide);
-    if (FootballEngine.isKickSafe(player.x, player.y, clearX, clearY, teamSide)) {
-        ball.vx = clearX;
-        ball.vy = clearY;
-        ball.owner = null;
-        player.hasBall = false;
-        player.dribbleTimer = 0;
-        player.kickCooldown = FieldConstants.KICK_COOLDOWN_FRAMES + 6;
-        ball.lastToucher = player;
-        matchStats.passesCompleted++;
-    }
+function doClear(p,ball,side,st){
+    const[cx,cy]=clearVec(p,side);
+    if(kickSafe(p.x,p.y,cx,cy,side)){
+        ball.vx=cx;ball.vy=cy;ball.owner=null;p.hasBall=false;p.dribT=0;
+        p.kickCD=F.KCD+6;ball.last=p;st.passes++}
 }
 
-function _applyTeamSpacing(player, allies, targetX, targetY) {
-    for (const ally of allies) {
-        if (ally === player) continue;
-        const allyDistance = MathUtils.distance(player.x, player.y, ally.x, ally.y);
-        if (allyDistance < 55 && allyDistance > 1) {
-            const [pushX, pushY] = MathUtils.normalize(player.x - ally.x, player.y - ally.y);
-            targetX += pushX * 2.5;
-            targetY += pushY * 2.5;
-        }
-    }
+function teamSpace(p,allies){
+    for(const a of allies){if(a===p)continue;const d=M.dist(p.x,p.y,a.x,a.y);
+        if(d<50&&d>1){const[px,py]=M.norm(p.x-a.x,p.y-a.y);p.x+=px*2;p.y+=py*2}}
 }
-
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 8: MATCH STATE & ENTITIES
+//  PHYSICS
 // ═══════════════════════════════════════════════════════════════════
-
-const MatchState = {
-    mode: 3, phase: 'idle', previousPhase: 'idle', speed: 1, turboTraining: false,
-    scoreRed: 0, scoreBlue: 0, time: 0, maxTime: FieldConstants.MATCH_DURATION_FRAMES,
-    possessionRed: 0, possessionBlue: 0, possessionFrames: 0, tackleCount: 0,
-    goalAnimation: 0, goalTeam: '', kickoffTeam: 'red', kickoffTimer: 0, hudTimer: 0, matchCount: 0
-};
-
-function createEmptyMatchStats() {
-    return {
-        goalsScored: 0, goalsConceded: 0, ownGoals: 0,
-        passesCompleted: 0, shotsOnTarget: 0,
-        possessionFrames: 0, territoryFrames: 0,
-        ballProgression: 0, tacklesWon: 0,
-        spacingReward: 0, clusteringPenalty: 0,
-        dribbleSuccesses: 0
-    };
+function updBall(){
+    ball.x+=ball.vx;ball.y+=ball.vy;ball.vx*=F.BFRIC;ball.vy*=F.BFRIC;
+    if(M.abs(ball.vx)<.03)ball.vx=0;if(M.abs(ball.vy)<.03)ball.vy=0;
+    const sp=M.hypot(ball.vx,ball.vy);
+    if(sp>F.BMAX){ball.vx=(ball.vx/sp)*F.BMAX;ball.vy=(ball.vy/sp)*F.BMAX}
+    const W=F.W,H=F.H,r=ball.r,GT=F.GT,GB=F.GB,GD=F.GD;
+    if(ball.y<=r){ball.vy=M.abs(ball.vy)*.7;ball.y=r}
+    if(ball.y>=H-r){ball.vy=-M.abs(ball.vy)*.7;ball.y=H-r}
+    if(ball.x<=r&&(ball.y<GT||ball.y>GB)){ball.vx=M.abs(ball.vx)*.7;ball.x=r}
+    if(ball.x>=W-r&&(ball.y<GT||ball.y>GB)){ball.vx=-M.abs(ball.vx)*.7;ball.x=W-r}
+    for(const[px,py] of[[GD,GT],[GD,GB],[W-GD,GT],[W-GD,GB]]){
+        if(M.dist(ball.x,ball.y,px,py)<r+4){const[nx,ny]=M.norm(ball.x-px,ball.y-py);ball.vx=nx*sp*.5;ball.vy=ny*sp*.5}}
+    if(ball.x<-15){ball.x=90;ball.y=M.clamp(ball.y,90,H-90);ball.vx=0;ball.vy=0;ball.owner=null}
+    if(ball.x>W+15){ball.x=W-90;ball.y=M.clamp(ball.y,90,H-90);ball.vx=0;ball.vy=0;ball.owner=null}
+    // Ball lost by owner
+    if(ball.owner&&M.dist(ball.owner.x,ball.owner.y,ball.x,ball.y)>F.DRIB_LOSE*1.5){ball.owner.hasBall=false;ball.owner.dribT=0;ball.owner=null}
 }
 
-let redPlayers = [], bluePlayers = [];
-let gameBall = { x: 0, y: 0, vx: 0, vy: 0, radius: FieldConstants.BALL_RADIUS, owner: null, lastToucher: null };
-let redPool = null, bluePool = null;
-let redStats = createEmptyMatchStats(), blueStats = createEmptyMatchStats();
-
-function createPlayer(team, index, role, baseX, baseY) {
-    return {
-        team, index, role, baseX, baseY,
-        x: baseX, y: baseY, vx: 0, vy: 0,
-        radius: FieldConstants.PLAYER_RADIUS,
-        hasBall: false, kickCooldown: 0, energy: 1.0,
-        duty: 'sweeper',
-        dribbleTimer: 0  // ══ NEW: tracks frames since last dribble touch ══
-    };
+function ballPlayerCol(){
+    for(const p of[...rP,...bP]){
+        if(p.hasBall)continue;
+        const d=M.dist(p.x,p.y,ball.x,ball.y),md=p.radius+ball.r;
+        if(d<md&&d>0){
+            const nx=(ball.x-p.x)/d,ny=(ball.y-p.y)/d;
+            ball.x=p.x+nx*(md+.5);ball.y=p.y+ny*(md+.5);
+            const dn=ball.vx*nx+ball.vy*ny;
+            if(dn<0){ball.vx-=1.5*dn*nx;ball.vy-=1.5*dn*ny;ball.vx*=.65;ball.vy*=.65}
+            ball.last=p}}
 }
 
-function initializeGame() {
-    redPlayers = []; bluePlayers = [];
-    const formation = FieldConstants.FORMATIONS[MatchState.mode];
-    const roles = MatchState.mode === 3 ? FieldConstants.ROLES_3V3 : FieldConstants.ROLES_5V5;
-    formation.red.forEach((pos, i) => redPlayers.push(createPlayer('red', i, roles[i], pos.x * FieldConstants.WIDTH, pos.y * FieldConstants.HEIGHT)));
-    formation.blue.forEach((pos, i) => bluePlayers.push(createPlayer('blue', i, roles[i], pos.x * FieldConstants.WIDTH, pos.y * FieldConstants.HEIGHT)));
-    redPool = new EvolutionaryPool(MatchState.mode);
-    bluePool = new EvolutionaryPool(MatchState.mode);
-    document.getElementById('statNeurons').textContent = '~' + redPool.getActiveBrain().totalNeuronCount;
+function playerCol(){
+    const all=[...rP,...bP];
+    for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){
+        const a=all[i],b=all[j],dx=b.x-a.x,dy=b.y-a.y,d=M.hypot(dx,dy),md=a.radius+b.radius;
+        if(d<md&&d>0){const ov=(md-d)/2,nx=dx/d,ny=dy/d;
+            a.x-=nx*ov;a.y-=ny*ov;b.x+=nx*ov;b.y+=ny*ov;
+            const rv=a.vx-b.vx,rvy=a.vy-b.vy,dn=rv*nx+rvy*ny;
+            a.vx-=dn*nx*.35;a.vy-=dn*ny*.35;b.vx+=dn*nx*.35;b.vy+=dn*ny*.35}}
 }
 
-function resetAllPositions() {
-    const formation = FieldConstants.FORMATIONS[MatchState.mode];
-    redPlayers.forEach((player, i) => {
-        player.x = formation.red[i].x * FieldConstants.WIDTH; player.y = formation.red[i].y * FieldConstants.HEIGHT;
-        player.vx = 0; player.vy = 0; player.hasBall = false; player.kickCooldown = 0; player.energy = 1; player.duty = 'sweeper'; player.dribbleTimer = 0;
-    });
-    bluePlayers.forEach((player, i) => {
-        player.x = formation.blue[i].x * FieldConstants.WIDTH; player.y = formation.blue[i].y * FieldConstants.HEIGHT;
-        player.vx = 0; player.vy = 0; player.hasBall = false; player.kickCooldown = 0; player.energy = 1; player.duty = 'sweeper'; player.dribbleTimer = 0;
-    });
-    gameBall.x = FieldConstants.WIDTH / 2; gameBall.y = FieldConstants.HEIGHT / 2;
-    gameBall.vx = 0; gameBall.vy = 0; gameBall.owner = null; gameBall.lastToucher = null;
+function checkGoal(){
+    if(ball.x<=F.GD&&ball.y>F.GT&&ball.y<F.GB)return{s:true,t:'blue',og:ball.last&&ball.last.team==='red'};
+    if(ball.x>=F.W-F.GD&&ball.y>F.GT&&ball.y<F.GB)return{s:true,t:'red',og:ball.last&&ball.last.team==='blue'};
+    return{s:false};
 }
-
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 9: PHYSICS ENGINE
-//  CHANGED: Added ball-player bounce collisions
+//  HUD
 // ═══════════════════════════════════════════════════════════════════
-
-function updateBallPhysics() {
-    // ══ CHANGED: Ball ALWAYS moves independently — no more "if owner, skip" ══
-    gameBall.x += gameBall.vx;
-    gameBall.y += gameBall.vy;
-    gameBall.vx *= FieldConstants.BALL_FRICTION;
-    gameBall.vy *= FieldConstants.BALL_FRICTION;
-    if (MathUtils.abs(gameBall.vx) < 0.03) gameBall.vx = 0;
-    if (MathUtils.abs(gameBall.vy) < 0.03) gameBall.vy = 0;
-
-    const speed = MathUtils.hypot(gameBall.vx, gameBall.vy);
-    if (speed > FieldConstants.MAX_BALL_SPEED) {
-        gameBall.vx = (gameBall.vx / speed) * FieldConstants.MAX_BALL_SPEED;
-        gameBall.vy = (gameBall.vy / speed) * FieldConstants.MAX_BALL_SPEED;
-    }
-
-    const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT;
-    const r = gameBall.radius;
-    const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM;
-    const GD = FieldConstants.GOAL_DEPTH;
-
-    if (gameBall.y <= r) { gameBall.vy = MathUtils.abs(gameBall.vy) * 0.7; gameBall.y = r; }
-    if (gameBall.y >= H - r) { gameBall.vy = -MathUtils.abs(gameBall.vy) * 0.7; gameBall.y = H - r; }
-    if (gameBall.x <= r && (gameBall.y < GT || gameBall.y > GB)) { gameBall.vx = MathUtils.abs(gameBall.vx) * 0.7; gameBall.x = r; }
-    if (gameBall.x >= W - r && (gameBall.y < GT || gameBall.y > GB)) { gameBall.vx = -MathUtils.abs(gameBall.vx) * 0.7; gameBall.x = W - r; }
-
-    for (const [postX, postY] of [[GD, GT], [GD, GB], [W - GD, GT], [W - GD, GB]]) {
-        if (MathUtils.distance(gameBall.x, gameBall.y, postX, postY) < r + 4) {
-            const [normalX, normalY] = MathUtils.normalize(gameBall.x - postX, gameBall.y - postY);
-            gameBall.vx = normalX * speed * 0.5;
-            gameBall.vy = normalY * speed * 0.5;
-        }
-    }
-
-    if (gameBall.x < -15) { gameBall.x = 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; }
-    if (gameBall.x > W + 15) { gameBall.x = W - 90; gameBall.y = MathUtils.clamp(gameBall.y, 90, H - 90); gameBall.vx = 0; gameBall.vy = 0; }
-}
-
-// ══ NEW: Ball bounces off all non-controlling players ══
-function updateBallPlayerCollisions() {
-    const allPlayers = [...redPlayers, ...bluePlayers];
-    for (const player of allPlayers) {
-        DribbleSystem.handleBallPlayerCollision(player, gameBall);
-    }
-}
-
-function resolvePlayerCollisions() {
-    const allPlayers = [...redPlayers, ...bluePlayers];
-    for (let i = 0; i < allPlayers.length; i++) {
-        for (let j = i + 1; j < allPlayers.length; j++) {
-            const playerA = allPlayers[i], playerB = allPlayers[j];
-            const dx = playerB.x - playerA.x, dy = playerB.y - playerA.y;
-            const dist = MathUtils.hypot(dx, dy);
-            const minDist = playerA.radius + playerB.radius;
-            if (dist < minDist && dist > 0) {
-                const overlap = (minDist - dist) / 2;
-                const normalX = dx / dist, normalY = dy / dist;
-                playerA.x -= normalX * overlap; playerA.y -= normalY * overlap;
-                playerB.x += normalX * overlap; playerB.y += normalY * overlap;
-                const relVx = playerA.vx - playerB.vx, relVy = playerA.vy - playerB.vy;
-                const dotN = relVx * normalX + relVy * normalY;
-                playerA.vx -= dotN * normalX * 0.35; playerA.vy -= dotN * normalY * 0.35;
-                playerB.vx += dotN * normalX * 0.35; playerB.vy += dotN * normalY * 0.35;
-            }
-        }
-    }
-}
-
-function checkForGoal() {
-    const GD = FieldConstants.GOAL_DEPTH, GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, W = FieldConstants.WIDTH;
-    if (gameBall.x <= GD && gameBall.y > GT && gameBall.y < GB) {
-        return { scored: true, scoringTeam: 'blue', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'red' };
-    }
-    if (gameBall.x >= W - GD && gameBall.y > GT && gameBall.y < GB) {
-        return { scored: true, scoringTeam: 'red', isOwnGoal: gameBall.lastToucher && gameBall.lastToucher.team === 'blue' };
-    }
-    return { scored: false };
-}
-
+function hudShow(t,d=100){GS.hudT=d;const e=document.getElementById('hudText');e.textContent=t;e.style.opacity='1'}
+function hudHide(){document.getElementById('hudText').style.opacity='0'}
 
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 10: HUD MANAGER
+//  MATCH MANAGEMENT
 // ═══════════════════════════════════════════════════════════════════
+function startMatch(){GS.sR=0;GS.sB=0;GS.time=0;GS.possR=0;GS.possB=0;GS.possF=0;GS.tackles=0;GS.goalAnim=0;GS.koTeam='red';GS.koT=50;
+    rSt=emSt();bSt=emSt();resetPos();GS.phase='kickoff';
+    document.getElementById('scoreRed').textContent='0';document.getElementById('scoreBlue').textContent='0';hudShow('⚽ Kick Off!',50)}
 
-const HudManager = {
-    show(text, durationFrames = 100) {
-        MatchState.hudTimer = durationFrames;
-        const element = document.getElementById('hudText');
-        element.textContent = text;
-        element.style.opacity = '1';
-    },
-    hide() { document.getElementById('hudText').style.opacity = '0'; }
-};
+function handleGoal(r){
+    if(r.t==='red'){GS.sR++;rSt.goals++;bSt.conc++;if(r.og)bSt.og++;document.getElementById('scoreRed').textContent=GS.sR}
+    else{GS.sB++;bSt.goals++;rSt.conc++;if(r.og)rSt.og++;document.getElementById('scoreBlue').textContent=GS.sB}
+    GS.goalAnim=100;GS.goalTeam=r.t;GS.phase='goalPause';GS.koTeam=r.t==='red'?'blue':'red';GS.koT=90;
+    for(const p of[...rP,...bP]){p.hasBall=false;p.dribT=0}ball.owner=null;
+    hudShow(`⚽ GOAL!\n${r.t==='red'?'🔴':'🔵'} ${r.t==='red'?'Red':'Blue'} scores!${r.og?'\n(Own Goal)':''}`,90)}
 
+function endMatch(){rPool.record(rSt);bPool.record(bSt);GS.mc++;
+    if(GS.mc%POP===0){rPool.evolve();bPool.evolve()}else{rPool.next();bPool.next()}
+    document.getElementById('evoGen').textContent=rPool.gen;
+    document.getElementById('evoFitR').textContent=M.round(rPool.bestF());
+    document.getElementById('evoFitB').textContent=M.round(bPool.bestF());
+    document.getElementById('evoMatches').textContent=GS.mc}
 
-// ═══════════════════════════════════════════════════════════════════
-//  MODULE 11: MATCH MANAGER
-// ═══════════════════════════════════════════════════════════════════
-
-function startNewMatch() {
-    MatchState.scoreRed = 0; MatchState.scoreBlue = 0; MatchState.time = 0;
-    MatchState.possessionRed = 0; MatchState.possessionBlue = 0; MatchState.possessionFrames = 0;
-    MatchState.tackleCount = 0; MatchState.goalAnimation = 0;
-    MatchState.kickoffTeam = 'red'; MatchState.kickoffTimer = 50;
-    redStats = createEmptyMatchStats(); blueStats = createEmptyMatchStats();
-    resetAllPositions();
-    MatchState.phase = 'kickoff';
-    document.getElementById('scoreRed').textContent = '0';
-    document.getElementById('scoreBlue').textContent = '0';
-    HudManager.show('⚽ Kick Off!', 50);
+function tick(){
+    if(GS.phase==='playing'){
+        const steps=GS.turbo?M.max(GS.speed*4,12):GS.speed;
+        for(let s=0;s<steps;s++){
+            GS.time++;
+            execTeam(rPool.brain(),rP,bP,ball,'red',rSt);
+            execTeam(bPool.brain(),bP,rP,ball,'blue',bSt);
+            updBall();ballPlayerCol();playerCol();
+            const gr=checkGoal();
+            if(gr.s){handleGoal(gr);break}
+            if(ball.owner){GS.possF++;if(ball.owner.team==='red')GS.possR++;else GS.possB++}
+            GS.tackles=rSt.tackles+bSt.tackles;
+            if(GS.time>=GS.maxT){endMatch();
+                if(GS.turbo)startMatch();
+                else{GS.phase='fulltime';hudShow(`Full Time!\nRed ${GS.sR} – ${GS.sB} Blue\nGen ${rPool.gen}`,150);
+                    setTimeout(()=>{if(GS.phase==='fulltime')startMatch()},3000)}
+                break}}}
+    if(GS.phase==='goalPause'){GS.koT--;if(GS.koT<=0){resetPos();GS.phase='kickoff';GS.koT=40}}
+    if(GS.phase==='kickoff'){GS.koT--;if(GS.koT<=0){
+        const kp=GS.koTeam==='red'?rP:bP;const fw=kp.find(p=>p.role===3)||kp[kp.length-1];
+        ball.x=F.W/2;ball.y=F.H/2;ball.owner=fw;fw.hasBall=true;fw.dribT=0;ball.last=fw;
+        const kd=GS.koTeam==='red'?1:-1;ball.vx=kd*F.DRIB_POW;ball.vy=(M.rnd()-.5)*.5;
+        GS.phase='playing';hudHide()}}
+    if(GS.hudT>0){GS.hudT--;if(GS.hudT<=0)hudHide()}
 }
 
-function handleGoalScored(result) {
-    if (result.scoringTeam === 'red') {
-        MatchState.scoreRed++; redStats.goalsScored++; blueStats.goalsConceded++;
-        if (result.isOwnGoal) blueStats.ownGoals++;
-        document.getElementById('scoreRed').textContent = MatchState.scoreRed;
-    } else {
-        MatchState.scoreBlue++; blueStats.goalsScored++; redStats.goalsConceded++;
-        if (result.isOwnGoal) redStats.ownGoals++;
-        document.getElementById('scoreBlue').textContent = MatchState.scoreBlue;
-    }
-    MatchState.goalAnimation = 100; MatchState.goalTeam = result.scoringTeam;
-    MatchState.phase = 'goalPause'; MatchState.kickoffTeam = result.scoringTeam === 'red' ? 'blue' : 'red';
-    MatchState.kickoffTimer = 100;
-    const teamEmoji = result.scoringTeam === 'red' ? '🔴' : '🔵';
-    const teamName = result.scoringTeam === 'red' ? 'Red' : 'Blue';
-    HudManager.show(`⚽ GOAL!\n${teamEmoji} ${teamName} scores!${result.isOwnGoal ? '\n(Own Goal)' : ''}`, 100);
-}
-
-function endCurrentMatch() {
-    redPool.recordFitness(redStats); bluePool.recordFitness(blueStats); MatchState.matchCount++;
-    if (MatchState.matchCount % POPULATION_SIZE === 0) { redPool.evolve(); bluePool.evolve(); }
-    else { redPool.advanceToNextCandidate(); bluePool.advanceToNextCandidate(); }
-    document.getElementById('evoGeneration').textContent = redPool.generation;
-    document.getElementById('evoFitnessRed').textContent = MathUtils.round(redPool.getBestCurrentFitness());
-    document.getElementById('evoFitnessBlue').textContent = MathUtils.round(bluePool.getBestCurrentFitness());
-    document.getElementById('evoMatches').textContent = MatchState.matchCount;
-}
-
-function gameTick() {
-    if (MatchState.phase === 'playing') {
-        const stepsPerFrame = MatchState.turboTraining ? MathUtils.max(MatchState.speed * 4, 12) : MatchState.speed;
-        for (let step = 0; step < stepsPerFrame; step++) {
-            MatchState.time++;
-            executeTeamFrame(redPool.getActiveBrain(), redPlayers, bluePlayers, gameBall, 'red', redStats);
-            executeTeamFrame(bluePool.getActiveBrain(), bluePlayers, redPlayers, gameBall, 'blue', blueStats);
-            updateBallPhysics();
-            updateBallPlayerCollisions(); // ══ NEW ══
-            resolvePlayerCollisions();
-
-            const goalResult = checkForGoal();
-            if (goalResult.scored) { handleGoalScored(goalResult); break; }
-
-            if (gameBall.owner) {
-                MatchState.possessionFrames++;
-                if (gameBall.owner.team === 'red') MatchState.possessionRed++;
-                else MatchState.possessionBlue++;
-            }
-            MatchState.tackleCount = redStats.tacklesWon + blueStats.tacklesWon;
-
-            if (MatchState.time >= MatchState.maxTime) {
-                endCurrentMatch();
-                if (MatchState.turboTraining) startNewMatch();
-                else {
-                    MatchState.phase = 'fulltime';
-                    HudManager.show(`Full Time!\nRed ${MatchState.scoreRed} – ${MatchState.scoreBlue} Blue\nGen ${redPool.generation}`, 150);
-                    setTimeout(() => { if (MatchState.phase === 'fulltime') startNewMatch(); }, 3000);
-                }
-                break;
-            }
-        }
-    }
-
-    if (MatchState.phase === 'goalPause') {
-        MatchState.kickoffTimer--;
-        if (MatchState.kickoffTimer <= 0) { resetAllPositions(); MatchState.phase = 'kickoff'; MatchState.kickoffTimer = 45; }
-    }
-
-    if (MatchState.phase === 'kickoff') {
-        MatchState.kickoffTimer--;
-        if (MatchState.kickoffTimer <= 0) {
-            const kickoffPlayers = MatchState.kickoffTeam === 'red' ? redPlayers : bluePlayers;
-            const forward = kickoffPlayers.find(p => p.role === 3) || kickoffPlayers[kickoffPlayers.length - 1];
-            gameBall.x = FieldConstants.WIDTH / 2;
-            gameBall.y = FieldConstants.HEIGHT / 2;
-            // ══ CHANGED: Don't teleport ball to player. Place ball at center, give ownership ══
-            gameBall.owner = forward;
-            forward.hasBall = true;
-            forward.dribbleTimer = 0;
-            gameBall.lastToucher = forward;
-            // Give a small initial kick so ball moves naturally from center
-            const kickDir = MatchState.kickoffTeam === 'red' ? 1 : -1;
-            gameBall.vx = kickDir * FieldConstants.DRIBBLE_TOUCH_POWER;
-            gameBall.vy = (MathUtils.randomFloat() - 0.5) * 0.8;
-            MatchState.phase = 'playing';
-            HudManager.hide();
-        }
-    }
-
-    if (MatchState.hudTimer > 0) { MatchState.hudTimer--; if (MatchState.hudTimer <= 0) HudManager.hide(); }
-}
-
-
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 12: RENDERER
-//  CHANGED: Updated ball/player visuals for dribbling
+//  RENDERER
 // ═══════════════════════════════════════════════════════════════════
+const R=(()=>{
+    const cv=document.getElementById('pitchCanvas'),c=cv.getContext('2d');
+    cv.width=F.W;cv.height=F.H;
 
-const Renderer = (() => {
-    const canvas = document.getElementById('pitchCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = FieldConstants.WIDTH;
-    canvas.height = FieldConstants.HEIGHT;
-
-    function drawField() {
-        const W = FieldConstants.WIDTH, H = FieldConstants.HEIGHT;
-        const GD = FieldConstants.GOAL_DEPTH, GW = FieldConstants.GOAL_WIDTH;
-        const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM;
-
-        const grassGradient = ctx.createLinearGradient(0, 0, 0, H);
-        grassGradient.addColorStop(0, '#2a7e45'); grassGradient.addColorStop(0.5, '#33924e'); grassGradient.addColorStop(1, '#2a7e45');
-        ctx.fillStyle = grassGradient; ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = 'rgba(255,255,255,0.018)';
-        for (let i = 0; i < W; i += 50) if (Math.floor(i / 50) % 2 === 0) ctx.fillRect(i, 0, 50, H);
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 2;
-        ctx.strokeRect(15, 15, W - 30, H - 30);
-        ctx.beginPath(); ctx.moveTo(W / 2, 15); ctx.lineTo(W / 2, H - 15); ctx.stroke();
-        ctx.beginPath(); ctx.arc(W / 2, H / 2, 60, 0, MathUtils.TAU); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(W / 2, H / 2, 4, 0, MathUtils.TAU); ctx.fill();
-        ctx.strokeRect(15, H / 2 - 105, 105, 210); ctx.strokeRect(W - 120, H / 2 - 105, 105, 210);
-        ctx.strokeRect(15, H / 2 - 50, 40, 100); ctx.strokeRect(W - 55, H / 2 - 50, 40, 100);
-        ctx.beginPath(); ctx.arc(100, H / 2, 36, -0.9, 0.9); ctx.stroke();
-        ctx.beginPath(); ctx.arc(W - 100, H / 2, 36, MathUtils.PI - 0.9, MathUtils.PI + 0.9); ctx.stroke();
-
-        for (const [cx2, cy2, startAngle, endAngle] of [
-            [15, 15, 0, MathUtils.HALF_PI], [W - 15, 15, MathUtils.HALF_PI, MathUtils.PI],
-            [W - 15, H - 15, MathUtils.PI, MathUtils.PI * 1.5], [15, H - 15, MathUtils.PI * 1.5, MathUtils.TAU]
-        ]) { ctx.beginPath(); ctx.arc(cx2, cy2, 12, startAngle, endAngle); ctx.stroke(); }
-
-        drawGoalNet(true); drawGoalNet(false);
+    function field(){
+        const W=F.W,H=F.H,GT=F.GT,GB=F.GB,GD=F.GD,GW=F.GW;
+        const gg=c.createLinearGradient(0,0,0,H);
+        gg.addColorStop(0,'#2a7e45');gg.addColorStop(.5,'#33924e');gg.addColorStop(1,'#2a7e45');
+        c.fillStyle=gg;c.fillRect(0,0,W,H);
+        c.fillStyle='rgba(255,255,255,.018)';
+        for(let i=0;i<W;i+=50)if(~~(i/50)%2===0)c.fillRect(i,0,50,H);
+        c.strokeStyle='rgba(255,255,255,.4)';c.lineWidth=2;
+        c.strokeRect(15,15,W-30,H-30);
+        c.beginPath();c.moveTo(W/2,15);c.lineTo(W/2,H-15);c.stroke();
+        c.beginPath();c.arc(W/2,H/2,60,0,M.TAU);c.stroke();
+        c.fillStyle='rgba(255,255,255,.4)';c.beginPath();c.arc(W/2,H/2,4,0,M.TAU);c.fill();
+        c.strokeRect(15,H/2-105,105,210);c.strokeRect(W-120,H/2-105,105,210);
+        c.strokeRect(15,H/2-50,40,100);c.strokeRect(W-55,H/2-50,40,100);
+        c.beginPath();c.arc(100,H/2,36,-.9,.9);c.stroke();
+        c.beginPath();c.arc(W-100,H/2,36,M.PI-.9,M.PI+.9);c.stroke();
+        for(const[cx2,cy2,sa,ea]of[[15,15,0,M.HALF_PI],[W-15,15,M.HALF_PI,M.PI],[W-15,H-15,M.PI,M.PI*1.5],[15,H-15,M.PI*1.5,M.TAU]]){c.beginPath();c.arc(cx2,cy2,12,sa,ea);c.stroke()}
+        goalNet(true);goalNet(false);
     }
 
-    function drawGoalNet(isLeftSide) {
-        const W = FieldConstants.WIDTH, GD = FieldConstants.GOAL_DEPTH;
-        const GT = FieldConstants.GOAL_TOP, GB = FieldConstants.GOAL_BOTTOM, GW = FieldConstants.GOAL_WIDTH;
-        const netX = isLeftSide ? 15 - GD : W - 15;
-        ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(isLeftSide ? 15 - GD : W - 15, GT, GD, GW);
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5;
-        for (let y = GT; y <= GB; y += 7) { ctx.beginPath(); ctx.moveTo(netX, y); ctx.lineTo(netX + GD, y); ctx.stroke(); }
-        for (let x = 0; x <= GD; x += 7) { ctx.beginPath(); ctx.moveTo(netX + x, GT); ctx.lineTo(netX + x, GB); ctx.stroke(); }
-        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath();
-        if (isLeftSide) { ctx.moveTo(15, GT); ctx.lineTo(15 - GD, GT); ctx.lineTo(15 - GD, GB); ctx.lineTo(15, GB); }
-        else { ctx.moveTo(W - 15, GT); ctx.lineTo(W - 15 + GD, GT); ctx.lineTo(W - 15 + GD, GB); ctx.lineTo(W - 15, GB); }
-        ctx.stroke();
+    function goalNet(left){
+        const W=F.W,GT=F.GT,GB=F.GB,GD=F.GD,GW=F.GW;
+        const nx=left?15-GD:W-15;
+        c.fillStyle='rgba(255,255,255,.06)';c.fillRect(left?15-GD:W-15,GT,GD,GW);
+        c.strokeStyle='rgba(255,255,255,.08)';c.lineWidth=.5;
+        for(let y=GT;y<=GB;y+=7){c.beginPath();c.moveTo(nx,y);c.lineTo(nx+GD,y);c.stroke()}
+        for(let x=0;x<=GD;x+=7){c.beginPath();c.moveTo(nx+x,GT);c.lineTo(nx+x,GB);c.stroke()}
+        c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();
+        if(left){c.moveTo(15,GT);c.lineTo(15-GD,GT);c.lineTo(15-GD,GB);c.lineTo(15,GB)}
+        else{c.moveTo(W-15,GT);c.lineTo(W-15+GD,GT);c.lineTo(W-15+GD,GB);c.lineTo(W-15,GB)}
+        c.stroke();
     }
 
-    function drawPassingLinks(players, color) {
-        const carrier = players.find(p => p.hasBall);
-        if (!carrier) return;
-        ctx.setLineDash([3, 5]); ctx.lineWidth = 1;
-        for (const player of players) {
-            if (player === carrier) continue;
-            const dist = MathUtils.distance(player.x, player.y, carrier.x, carrier.y);
-            if (dist < 340) {
-                ctx.strokeStyle = color;
-                ctx.globalAlpha = MathUtils.clamp((300 - dist) / 300 * 0.2, 0.02, 0.2);
-                ctx.beginPath(); ctx.moveTo(carrier.x, carrier.y); ctx.lineTo(player.x, player.y); ctx.stroke();
-            }
-        }
-        ctx.setLineDash([]); ctx.globalAlpha = 1;
+    function passLinks(pls,col){
+        const car=pls.find(p=>p.hasBall);if(!car)return;
+        c.setLineDash([3,5]);c.lineWidth=1;
+        for(const p of pls){if(p===car)continue;const d=M.dist(p.x,p.y,car.x,car.y);
+            if(d<350){c.strokeStyle=col;c.globalAlpha=M.clamp((300-d)/300*.25,.02,.25);
+                c.beginPath();c.moveTo(car.x,car.y);c.lineTo(p.x,p.y);c.stroke()}}
+        c.setLineDash([]);c.globalAlpha=1;
     }
 
-    function drawPlayer(player) {
-        const isRed = player.team === 'red';
-        const PR = FieldConstants.PLAYER_RADIUS;
-
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.15)';
-        ctx.beginPath(); ctx.ellipse(player.x + 2, player.y + 4, PR, PR * 0.38, 0, 0, MathUtils.TAU); ctx.fill();
-
-        // Body
-        const bodyGradient = ctx.createRadialGradient(player.x - 3, player.y - 3, 2, player.x, player.y, PR);
-        if (isRed) { bodyGradient.addColorStop(0, '#ff9999'); bodyGradient.addColorStop(1, '#c0392b'); }
-        else { bodyGradient.addColorStop(0, '#99ccff'); bodyGradient.addColorStop(1, '#2471a3'); }
-        ctx.fillStyle = bodyGradient;
-        ctx.beginPath(); ctx.arc(player.x, player.y, PR, 0, MathUtils.TAU); ctx.fill();
-        ctx.strokeStyle = isRed ? '#922' : '#156'; ctx.lineWidth = 1.5; ctx.stroke();
-
-        // Direction arrow
-        const playerSpeed = MathUtils.hypot(player.vx, player.vy);
-        if (playerSpeed > 0.4) {
-            const directionAngle = MathUtils.atan2(player.vy, player.vx);
-            ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.moveTo(player.x, player.y);
-            ctx.lineTo(player.x + MathUtils.cos(directionAngle) * (PR + 5), player.y + MathUtils.sin(directionAngle) * (PR + 5));
-            ctx.stroke();
-        }
-
-        // Labels
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 7.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(FieldConstants.ROLE_NAMES[player.role], player.x, player.y - 1);
-        ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = 'bold 5.5px Arial';
-        ctx.fillText(FieldConstants.DUTY_LABELS[player.duty] || '', player.x, player.y + 7);
-
-        // ══ CHANGED: Dribble indicator — pulsing circle instead of static "has ball" ring ══
-        if (player.hasBall) {
-            const pulsePhase = (MatchState.time * 0.12) % (MathUtils.TAU);
-            const pulseSize = 3 + MathUtils.sin(pulsePhase) * 1.5;
-            ctx.strokeStyle = '#ffd93d'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.arc(player.x, player.y, PR + pulseSize, 0, MathUtils.TAU); ctx.stroke();
-
-            // ══ NEW: Draw a subtle line from player to ball showing "control link" ══
-            const ballDist = MathUtils.distance(player.x, player.y, gameBall.x, gameBall.y);
-            if (ballDist > 5 && ballDist < FieldConstants.DRIBBLE_LOSE_DISTANCE) {
-                ctx.strokeStyle = 'rgba(255,217,61,0.25)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([2, 3]);
-                ctx.beginPath();
-                ctx.moveTo(player.x, player.y);
-                ctx.lineTo(gameBall.x, gameBall.y);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-        }
-
-        // Energy bar
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(player.x - 10, player.y - PR - 7, 20, 3);
-        ctx.fillStyle = player.energy > 0.6 ? '#2ecc71' : player.energy > 0.4 ? '#f39c12' : '#e74c3c';
-        ctx.fillRect(player.x - 10, player.y - PR - 7, 20 * player.energy, 3);
+    function player(p){
+        const isR=p.team==='red',PR=F.PR;
+        c.fillStyle='rgba(0,0,0,.15)';c.beginPath();c.ellipse(p.x+2,p.y+4,PR,PR*.38,0,0,M.TAU);c.fill();
+        const bg=c.createRadialGradient(p.x-3,p.y-3,2,p.x,p.y,PR);
+        if(isR){bg.addColorStop(0,'#ff9999');bg.addColorStop(1,'#c0392b')}
+        else{bg.addColorStop(0,'#99ccff');bg.addColorStop(1,'#2471a3')}
+        c.fillStyle=bg;c.beginPath();c.arc(p.x,p.y,PR,0,M.TAU);c.fill();
+        c.strokeStyle=isR?'#922':'#156';c.lineWidth=1.5;c.stroke();
+        const ps=M.hypot(p.vx,p.vy);
+        if(ps>.4){const da=M.atan2(p.vy,p.vx);c.strokeStyle='rgba(255,255,255,.5)';c.lineWidth=1.5;
+            c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x+M.cos(da)*(PR+5),p.y+M.sin(da)*(PR+5));c.stroke()}
+        c.fillStyle='#fff';c.font='bold 7.5px Arial';c.textAlign='center';c.textBaseline='middle';
+        c.fillText(F.RNAME[p.role],p.x,p.y-1);
+        c.fillStyle='rgba(255,255,255,.5)';c.font='bold 6px Arial';
+        c.fillText(F.DNAME[p.duty]||'',p.x,p.y+7);
+        if(p.hasBall){
+            const pulse=3+M.sin(GS.time*.12)*1.5;
+            c.strokeStyle='#ffd93d';c.lineWidth=2;
+            c.beginPath();c.arc(p.x,p.y,PR+pulse,0,M.TAU);c.stroke();
+            const bd=M.dist(p.x,p.y,ball.x,ball.y);
+            if(bd>5&&bd<F.DRIB_LOSE){c.strokeStyle='rgba(255,217,61,.2)';c.lineWidth=1;c.setLineDash([2,3]);
+                c.beginPath();c.moveTo(p.x,p.y);c.lineTo(ball.x,ball.y);c.stroke();c.setLineDash([])}}
+        c.fillStyle='rgba(0,0,0,.25)';c.fillRect(p.x-10,p.y-PR-7,20,3);
+        c.fillStyle=p.energy>.6?'#2ecc71':p.energy>.4?'#f39c12':'#e74c3c';
+        c.fillRect(p.x-10,p.y-PR-7,20*p.energy,3);
     }
 
-    function drawBall() {
-        const BR = gameBall.radius;
-
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.18)';
-        ctx.beginPath(); ctx.ellipse(gameBall.x + 1, gameBall.y + 2, BR, BR * 0.38, 0, 0, MathUtils.TAU); ctx.fill();
-
-        // Ball body
-        const ballGradient = ctx.createRadialGradient(gameBall.x - 1.5, gameBall.y - 1.5, 1, gameBall.x, gameBall.y, BR);
-        ballGradient.addColorStop(0, '#fff'); ballGradient.addColorStop(1, '#ccc');
-        ctx.fillStyle = ballGradient;
-        ctx.beginPath(); ctx.arc(gameBall.x, gameBall.y, BR, 0, MathUtils.TAU); ctx.fill();
-        ctx.strokeStyle = '#888'; ctx.lineWidth = 0.7; ctx.stroke();
-
-        // ══ NEW: Pentagon pattern that rotates with ball movement ══
-        const ballSpeed = MathUtils.hypot(gameBall.vx, gameBall.vy);
-        const rotAngle = MatchState.time * 0.05 * ballSpeed;
-        ctx.fillStyle = 'rgba(0,0,0,0.12)';
-        for (let i = 0; i < 5; i++) {
-            const pAngle = MathUtils.TAU / 5 * i + rotAngle;
-            const px = gameBall.x + MathUtils.cos(pAngle) * BR * 0.42;
-            const py = gameBall.y + MathUtils.sin(pAngle) * BR * 0.42;
-            ctx.beginPath(); ctx.arc(px, py, 1.3, 0, MathUtils.TAU); ctx.fill();
-        }
-
-        // Speed trail
-        if (ballSpeed > 2) {
-            ctx.strokeStyle = `rgba(255,255,255,${MathUtils.min(0.3, ballSpeed / 18)})`;
-            ctx.lineWidth = 1.5; ctx.beginPath();
-            ctx.moveTo(gameBall.x, gameBall.y);
-            ctx.lineTo(gameBall.x - gameBall.vx * 3, gameBall.y - gameBall.vy * 3);
-            ctx.stroke();
-        }
+    function drawBall(){
+        const BR=ball.r,bs=M.hypot(ball.vx,ball.vy);
+        c.fillStyle='rgba(0,0,0,.18)';c.beginPath();c.ellipse(ball.x+1,ball.y+2,BR+1,BR*.4,0,0,M.TAU);c.fill();
+        const bg=c.createRadialGradient(ball.x-1.5,ball.y-1.5,1,ball.x,ball.y,BR);
+        bg.addColorStop(0,'#fff');bg.addColorStop(1,'#ccc');
+        c.fillStyle=bg;c.beginPath();c.arc(ball.x,ball.y,BR,0,M.TAU);c.fill();
+        c.strokeStyle='#888';c.lineWidth=.7;c.stroke();
+        const rot=GS.time*.05*bs;c.fillStyle='rgba(0,0,0,.12)';
+        for(let i=0;i<5;i++){const a=M.TAU/5*i+rot;c.beginPath();c.arc(ball.x+M.cos(a)*BR*.42,ball.y+M.sin(a)*BR*.42,1.3,0,M.TAU);c.fill()}
+        if(bs>2){c.strokeStyle=`rgba(255,255,255,${M.min(.3,bs/18)})`;c.lineWidth=1.5;c.beginPath();
+            c.moveTo(ball.x,ball.y);c.lineTo(ball.x-ball.vx*3,ball.y-ball.vy*3);c.stroke()}
     }
 
-    function drawGoalAnimation() {
-        if (MatchState.goalAnimation <= 0) return;
-        const alpha = MatchState.goalAnimation / 100;
-        ctx.fillStyle = `rgba(255,215,0,${alpha * 0.18})`; ctx.fillRect(0, 0, FieldConstants.WIDTH, FieldConstants.HEIGHT);
-        ctx.save(); ctx.translate(FieldConstants.WIDTH / 2, FieldConstants.HEIGHT / 2);
-        const scale = 1.4 - alpha * 0.4; ctx.scale(scale, scale);
-        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-        ctx.font = 'bold 50px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('⚽ GOAL!', 0, 0);
-        ctx.restore();
-        MatchState.goalAnimation--;
-    }
+    function goalAnim(){if(GS.goalAnim<=0)return;const a=GS.goalAnim/100;
+        c.fillStyle=`rgba(255,215,0,${a*.18})`;c.fillRect(0,0,F.W,F.H);
+        c.save();c.translate(F.W/2,F.H/2);const sc=1.4-a*.4;c.scale(sc,sc);
+        c.fillStyle=`rgba(255,255,255,${a})`;c.font='bold 50px Arial';c.textAlign='center';c.textBaseline='middle';
+        c.fillText('⚽ GOAL!',0,0);c.restore();GS.goalAnim--}
 
-    function drawBrainVisualization(brain, canvasId) {
-        const brainCanvas = document.getElementById(canvasId);
-        if (!brainCanvas || !brain) return;
-        const brainCtx = brainCanvas.getContext('2d');
-        const width = brainCanvas.width, height = brainCanvas.height;
-        brainCtx.fillStyle = '#050508'; brainCtx.fillRect(0, 0, width, height);
-        const dimension = brain.modelDimension;
-        const barWidth = width / dimension;
-        const isRedTeam = canvasId === 'brainCanvasRed';
-        for (let i = 0; i < dimension; i++) {
-            const activationValue = MathUtils.min(1, brain.activationSnapshot[i] * 2.5);
-            const r = isRedTeam ? activationValue * 220 : activationValue * 50;
-            const g = activationValue * 40;
-            const b = isRedTeam ? activationValue * 50 : activationValue * 220;
-            brainCtx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
-            brainCtx.fillRect(i * barWidth, height - activationValue * height * 0.9, barWidth - 0.5, activationValue * height * 0.9);
-        }
-    }
+    function brainViz(brain,id){
+        const bc=document.getElementById(id);if(!bc||!brain)return;
+        const bx=bc.getContext('2d'),w=bc.width,h=bc.height;
+        bx.fillStyle='#050508';bx.fillRect(0,0,w,h);
+        const D=brain.D,bw=w/D,isR=id==='brainCanvasRed';
+        for(let i=0;i<D;i++){const v=M.min(1,brain.snap[i]*2.5);
+            bx.fillStyle=`rgb(${(isR?v*220:v*50)|0},${(v*40)|0},${(isR?v*50:v*220)|0})`;
+            bx.fillRect(i*bw,h-v*h*.9,bw-.5,v*h*.9)}}
 
-    function updateStatsDisplay() {
-        const minutes = MathUtils.floor(MatchState.time / 60);
-        const seconds = MatchState.time % 60;
-        document.getElementById('clock').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        document.getElementById('statPassesRed').textContent = redStats.passesCompleted;
-        document.getElementById('statPassesBlue').textContent = blueStats.passesCompleted;
-        document.getElementById('statShotsRed').textContent = redStats.shotsOnTarget;
-        document.getElementById('statShotsBlue').textContent = blueStats.shotsOnTarget;
-        document.getElementById('statTackles').textContent = MatchState.tackleCount;
-        if (MatchState.possessionFrames > 0) {
-            const redPossPercent = MathUtils.round(MatchState.possessionRed / MatchState.possessionFrames * 100);
-            document.getElementById('statPossRed').textContent = redPossPercent + '%';
-            document.getElementById('statPossBlue').textContent = (100 - redPossPercent) + '%';
-        }
-        const phaseLabels = { idle: 'READY', kickoff: 'KICK OFF', playing: 'PLAYING', goalPause: 'GOAL!', paused: 'PAUSED', fulltime: 'FULL TIME' };
-        document.getElementById('matchPhase').textContent = (MatchState.turboTraining ? '⚡ TURBO — ' : '') + (phaseLabels[MatchState.phase] || '');
-    }
+    function stats(){
+        const m=M.floor(GS.time/60),s=GS.time%60;
+        document.getElementById('clock').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        document.getElementById('statPassesRed').textContent=rSt.passes;
+        document.getElementById('statPassesBlue').textContent=bSt.passes;
+        document.getElementById('statShotsRed').textContent=rSt.shots;
+        document.getElementById('statShotsBlue').textContent=bSt.shots;
+        document.getElementById('statTackles').textContent=GS.tackles;
+        if(GS.possF>0){const rp=M.round(GS.possR/GS.possF*100);
+            document.getElementById('statPossRed').textContent=rp+'%';
+            document.getElementById('statPossBlue').textContent=(100-rp)+'%'}
+        const lb={idle:'READY',kickoff:'KICK OFF',playing:'PLAYING',goalPause:'GOAL!',paused:'PAUSED',fulltime:'FULL TIME'};
+        document.getElementById('matchPhase').textContent=(GS.turbo?'⚡ TURBO — ':'')+(lb[GS.phase]||'')}
 
-    function renderFrame() {
-        drawField();
-        drawPassingLinks(redPlayers, 'rgba(255,100,100,0.5)');
-        drawPassingLinks(bluePlayers, 'rgba(100,150,255,0.5)');
-        for (const player of redPlayers) drawPlayer(player);
-        for (const player of bluePlayers) drawPlayer(player);
-        drawBall();
-        drawGoalAnimation();
-        updateStatsDisplay();
-        if (MatchState.time % 4 === 0 && redPool && bluePool) {
-            drawBrainVisualization(redPool.getActiveBrain(), 'brainCanvasRed');
-            drawBrainVisualization(bluePool.getActiveBrain(), 'brainCanvasBlue');
-        }
-    }
-
-    return { renderFrame };
+    function frame(){field();passLinks(rP,'rgba(255,100,100,.5)');passLinks(bP,'rgba(100,150,255,.5)');
+        for(const p of rP)player(p);for(const p of bP)player(p);drawBall();goalAnim();stats();
+        if(GS.time%4===0&&rPool&&bPool){brainViz(rPool.brain(),'brainCanvasRed');brainViz(bPool.brain(),'brainCanvasBlue')}}
+    return{frame};
 })();
 
-
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 13: USER INTERFACE CONTROLLER
+//  UI
 // ═══════════════════════════════════════════════════════════════════
-
-const UserInterface = {
-    start() {
-        if (MatchState.phase === 'idle' || MatchState.phase === 'fulltime') {
-            startNewMatch();
-            document.getElementById('buttonStart').textContent = '● Live';
-        } else if (MatchState.phase === 'paused') {
-            MatchState.phase = MatchState.previousPhase === 'paused' ? 'playing' : MatchState.previousPhase;
-            HudManager.hide();
-            document.getElementById('buttonPause').textContent = '⏸ Pause';
-        }
-    },
-    pause() {
-        if (MatchState.phase === 'playing' || MatchState.phase === 'kickoff') {
-            MatchState.previousPhase = MatchState.phase;
-            MatchState.phase = 'paused';
-            HudManager.show('⏸ PAUSED', 99999);
-            document.getElementById('buttonPause').textContent = '▶ Resume';
-        } else if (MatchState.phase === 'paused') {
-            MatchState.phase = MatchState.previousPhase;
-            HudManager.hide();
-            document.getElementById('buttonPause').textContent = '⏸ Pause';
-        }
-    },
-    reset() {
-        MatchState.phase = 'idle'; MatchState.matchCount = 0;
-        MatchState.scoreRed = 0; MatchState.scoreBlue = 0; MatchState.time = 0;
-        MatchState.possessionRed = 0; MatchState.possessionBlue = 0; MatchState.possessionFrames = 0;
-        MatchState.tackleCount = 0; MatchState.goalAnimation = 0;
-        redStats = createEmptyMatchStats(); blueStats = createEmptyMatchStats();
-        document.getElementById('scoreRed').textContent = '0';
-        document.getElementById('scoreBlue').textContent = '0';
-        document.getElementById('buttonStart').textContent = '▶ Start';
-        document.getElementById('buttonPause').textContent = '⏸ Pause';
-        document.getElementById('evoGeneration').textContent = '0';
-        document.getElementById('evoFitnessRed').textContent = '0';
-        document.getElementById('evoFitnessBlue').textContent = '0';
-        document.getElementById('evoMatches').textContent = '0';
-        initializeGame(); resetAllPositions(); HudManager.hide();
-    },
-    setMode(mode) {
-        MatchState.mode = mode;
-        document.getElementById('buttonMode3').classList.toggle('toolbar__button--active', mode === 3);
-        document.getElementById('buttonMode5').classList.toggle('toolbar__button--active', mode === 5);
-        this.reset();
-    },
-    cycleSpeed() {
-        const speeds = [1, 2, 4, 8, 16];
-        const currentIndex = speeds.indexOf(MatchState.speed);
-        MatchState.speed = speeds[(currentIndex + 1) % speeds.length];
-        document.getElementById('buttonSpeed').textContent = MatchState.speed + '×';
-    },
-    toggleTurbo() {
-        MatchState.turboTraining = !MatchState.turboTraining;
-        document.getElementById('buttonTurbo').textContent = 'Turbo: ' + (MatchState.turboTraining ? 'ON' : 'OFF');
-        if (MatchState.turboTraining && MatchState.phase === 'idle') this.start();
-    }
+const UI={
+    start(){if(GS.phase==='idle'||GS.phase==='fulltime'){startMatch();document.getElementById('buttonStart').textContent='● Live'}
+        else if(GS.phase==='paused'){GS.phase=GS.prev==='paused'?'playing':GS.prev;hudHide();document.getElementById('buttonPause').textContent='⏸ Pause'}},
+    pause(){if(GS.phase==='playing'||GS.phase==='kickoff'){GS.prev=GS.phase;GS.phase='paused';hudShow('⏸ PAUSED',99999);document.getElementById('buttonPause').textContent='▶ Resume'}
+        else if(GS.phase==='paused'){GS.phase=GS.prev;hudHide();document.getElementById('buttonPause').textContent='⏸ Pause'}},
+    reset(){GS.phase='idle';GS.mc=0;GS.sR=0;GS.sB=0;GS.time=0;GS.possR=0;GS.possB=0;GS.possF=0;GS.tackles=0;GS.goalAnim=0;
+        rSt=emSt();bSt=emSt();
+        document.getElementById('scoreRed').textContent='0';document.getElementById('scoreBlue').textContent='0';
+        document.getElementById('buttonStart').textContent='▶ Start';document.getElementById('buttonPause').textContent='⏸ Pause';
+        document.getElementById('evoGen').textContent='0';document.getElementById('evoFitR').textContent='0';
+        document.getElementById('evoFitB').textContent='0';document.getElementById('evoMatches').textContent='0';
+        init();resetPos();hudHide()},
+    setMode(m){GS.mode=m;document.getElementById('buttonMode3').classList.toggle('toolbar__button--active',m===3);
+        document.getElementById('buttonMode5').classList.toggle('toolbar__button--active',m===5);this.reset()},
+    cycleSpeed(){const sp=[1,2,4,8,16];GS.speed=sp[(sp.indexOf(GS.speed)+1)%sp.length];document.getElementById('buttonSpeed').textContent=GS.speed+'×'},
+    toggleTurbo(){GS.turbo=!GS.turbo;document.getElementById('buttonTurbo').textContent='Turbo: '+(GS.turbo?'ON':'OFF');if(GS.turbo&&GS.phase==='idle')this.start()}
 };
 
-
 // ═══════════════════════════════════════════════════════════════════
-//  MODULE 14: MAIN LOOP
+//  MAIN LOOP
 // ═══════════════════════════════════════════════════════════════════
-
-function mainLoop() {
-    gameTick();
-    Renderer.renderFrame();
-    requestAnimationFrame(mainLoop);
-}
-
-initializeGame();
-resetAllPositions();
-mainLoop();
+function loop(){tick();R.frame();requestAnimationFrame(loop)}
+init();resetPos();loop();
 </script>
 </body>
-    </html>
+   </html>
